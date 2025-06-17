@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users } from 'lucide-react';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { VisionAnalysis } from './components/VisionAnalysis';
-import { AppleLogo } from './components/AppleLogo';
+import { FoodCheckLogo } from './components/FoodCheckLogo';
 
 function App() {
   const [showModal, setShowModal] = useState(false);
@@ -80,7 +80,7 @@ function App() {
               <div className="flex items-center space-x-2">
                 <button onClick={() => navigateToPage('home')} className="flex items-center space-x-2">
                   <div className="bg-gradient-to-r from-green-500 to-blue-500 p-2 rounded-xl">
-                    <AppleLogo className="h-6 w-6 text-white" />
+                    <FoodCheckLogo className="h-6 w-6 text-white" />
                   </div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                     FoodCheck
@@ -179,7 +179,7 @@ function App() {
               <div className="flex items-center space-x-2">
                 <button onClick={() => navigateToPage('home')} className="flex items-center space-x-2">
                   <div className="bg-gradient-to-r from-green-500 to-blue-500 p-2 rounded-xl">
-                    <AppleLogo className="h-6 w-6 text-white" />
+                    <FoodCheckLogo className="h-6 w-6 text-white" />
                   </div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                     FoodCheck
@@ -308,7 +308,7 @@ function App() {
                   </button>
                   <button 
                     onClick={handleLearnMore}
-                    className="border-2 border-green-500 text-green-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-green-50 transition-all duration-200"
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                   >
                     About Us
                   </button>
@@ -431,7 +431,7 @@ function App() {
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-2">
               <div className="bg-gradient-to-r from-green-500 to-blue-500 p-2 rounded-xl">
-                <AppleLogo className="h-6 w-6 text-white" />
+                <FoodCheckLogo className="h-6 w-6 text-white" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                 FoodCheck
@@ -502,7 +502,7 @@ function App() {
               </button>
               <button 
                 onClick={handleLearnMore}
-                className="border-2 border-green-500 text-green-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-green-50 transition-all duration-200"
+                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105"
               >
                 About Us
               </button>
@@ -779,7 +779,7 @@ function App() {
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <div className="bg-gradient-to-r from-green-500 to-blue-500 p-2 rounded-xl">
-                  <AppleLogo className="h-6 w-6 text-white" />
+                  <FoodCheckLogo className="h-6 w-6 text-white" />
                 </div>
                 <span className="text-2xl font-bold">FoodCheck</span>
               </div>
