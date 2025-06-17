@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Apple, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye } from 'lucide-react';
+import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Apple, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users } from 'lucide-react';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { VisionAnalysis } from './components/VisionAnalysis';
 
@@ -444,7 +444,7 @@ function App() {
               >
                 How It Works
               </button>
-              <a href="#benefits" className="text-gray-600 hover:text-green-600 transition-colors">Benefits</a>
+              <a href="#contact" className="text-gray-600 hover:text-green-600 transition-colors">Contact</a>
               <button 
                 onClick={() => navigateToPage('chat')}
                 className="text-gray-600 hover:text-green-600 transition-colors flex items-center"
@@ -677,75 +677,93 @@ function App() {
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section id="benefits" className="py-20 bg-gradient-to-br from-green-50 to-blue-50">
+      {/* Contact Section */}
+      <section id="contact" className="py-20 bg-gradient-to-br from-green-50 to-blue-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Why Choose FoodCheck?
+              Get in Touch
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Make informed decisions about your food choices with confidence
+              We'd love to hear from you about meetings, improvements, or just to chat about FoodCheck
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="flex items-start space-x-4">
-                <div className="bg-green-500 p-2 rounded-lg">
-                  <TrendingUp className="h-6 w-6 text-white" />
+                <div className="bg-green-500 p-3 rounded-lg">
+                  <Calendar className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Better Health Decisions</h3>
-                  <p className="text-gray-600">
-                    Make informed choices based on comprehensive nutritional and health analysis
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Schedule a Meeting</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Want to discuss partnerships, collaborations, or learn more about our technology? We'd be happy to schedule a meeting with you.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start space-x-4">
-                <div className="bg-blue-500 p-2 rounded-lg">
-                  <CheckCircle className="h-6 w-6 text-white" />
+                <div className="bg-blue-500 p-3 rounded-lg">
+                  <Users className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Trusted Data</h3>
-                  <p className="text-gray-600">
-                    Access to verified nutritional databases and scientific research data
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">Share Your Ideas</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Have suggestions for improving our website or service? We value your feedback and are always looking to enhance the user experience.
                   </p>
                 </div>
               </div>
               
               <div className="flex items-start space-x-4">
-                <div className="bg-purple-500 p-2 rounded-lg">
-                  <Star className="h-6 w-6 text-white" />
+                <div className="bg-purple-500 p-3 rounded-lg">
+                  <MessageCircle className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">Personalized Insights</h3>
-                  <p className="text-gray-600">
-                    Get recommendations tailored to your dietary preferences and health goals
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">General Inquiries</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    Questions about FoodCheck, our mission, or how we can help you make better food choices? Let's start a conversation.
                   </p>
                 </div>
               </div>
             </div>
             
             <div className="bg-white p-8 rounded-2xl shadow-xl">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6">Ready to Start?</h3>
-              <p className="text-gray-600 mb-6">
-                Join thousands of users who trust FoodCheck for their food analysis needs.
-              </p>
+              <div className="text-center mb-6">
+                <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
+                  <Mail className="h-8 w-8 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">Ready to Connect?</h3>
+                <p className="text-gray-600 mb-6">
+                  Whether you want to schedule a meeting, suggest improvements, or just chat about FoodCheck, we're here to listen.
+                </p>
+              </div>
+              
+              <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg mb-6">
+                <div className="flex items-center justify-center mb-3">
+                  <Mail className="h-5 w-5 text-green-600 mr-2" />
+                  <span className="text-sm font-medium text-gray-700">Send us a message:</span>
+                </div>
+                <p className="text-xl font-bold text-green-600 text-center">vrishankjo@gmail.com</p>
+              </div>
+              
+              <div className="text-sm text-gray-600 text-center mb-6">
+                We typically respond within 24 hours and look forward to hearing from you!
+              </div>
+              
               <div className="space-y-3">
                 <button 
                   onClick={handleVisionAnalysis}
-                  className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
+                  className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center"
                 >
                   <Eye className="mr-2 h-5 w-5" />
                   Try AI Vision Analysis
                 </button>
                 <button 
                   onClick={handleStartAnalysis}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105"
                 >
-                  Get Started with Email
+                  Start Food Analysis
                 </button>
               </div>
             </div>
