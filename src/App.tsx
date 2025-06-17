@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Apple, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users } from 'lucide-react';
+import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users } from 'lucide-react';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { VisionAnalysis } from './components/VisionAnalysis';
+import { AppleLogo } from './components/AppleLogo';
 
 function App() {
   const [showModal, setShowModal] = useState(false);
@@ -79,7 +80,7 @@ function App() {
               <div className="flex items-center space-x-2">
                 <button onClick={() => navigateToPage('home')} className="flex items-center space-x-2">
                   <div className="bg-gradient-to-r from-green-500 to-blue-500 p-2 rounded-xl">
-                    <Apple className="h-6 w-6 text-white" />
+                    <AppleLogo className="h-6 w-6 text-white" />
                   </div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                     FoodCheck
@@ -178,7 +179,7 @@ function App() {
               <div className="flex items-center space-x-2">
                 <button onClick={() => navigateToPage('home')} className="flex items-center space-x-2">
                   <div className="bg-gradient-to-r from-green-500 to-blue-500 p-2 rounded-xl">
-                    <Apple className="h-6 w-6 text-white" />
+                    <AppleLogo className="h-6 w-6 text-white" />
                   </div>
                   <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                     FoodCheck
@@ -309,7 +310,7 @@ function App() {
                     onClick={handleLearnMore}
                     className="border-2 border-green-500 text-green-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-green-50 transition-all duration-200"
                   >
-                    Learn More
+                    About Us
                   </button>
                 </div>
               </div>
@@ -430,7 +431,7 @@ function App() {
           <div className="flex justify-between items-center py-6">
             <div className="flex items-center space-x-2">
               <div className="bg-gradient-to-r from-green-500 to-blue-500 p-2 rounded-xl">
-                <Apple className="h-6 w-6 text-white" />
+                <AppleLogo className="h-6 w-6 text-white" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
                 FoodCheck
@@ -503,7 +504,7 @@ function App() {
                 onClick={handleLearnMore}
                 className="border-2 border-green-500 text-green-600 px-8 py-4 rounded-full text-lg font-semibold hover:bg-green-50 transition-all duration-200"
               >
-                Learn More
+                About Us
               </button>
             </div>
           </div>
@@ -778,7 +779,7 @@ function App() {
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <div className="bg-gradient-to-r from-green-500 to-blue-500 p-2 rounded-xl">
-                  <Apple className="h-6 w-6 text-white" />
+                  <AppleLogo className="h-6 w-6 text-white" />
                 </div>
                 <span className="text-2xl font-bold">FoodCheck</span>
               </div>
@@ -872,7 +873,7 @@ function App() {
         </div>
       )}
 
-      {/* Learn More Modal */}
+      {/* About Us Modal */}
       {showLearnMoreModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-2xl max-w-lg w-full p-8 relative max-h-[90vh] overflow-y-auto">
