@@ -11,33 +11,74 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const startCamera = useCallback(async () => {
+  const startCamera = useCallback(async (preferredFacingMode: 'user' | 'environment' = 'environment') => {
     setIsLoading(true);
     setError(null);
     
     try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({
+      // Stop existing stream if any
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+
+      const constraints = {
         video: {
-          facingMode: 'environment', // Use back camera on mobile
-          width: { ideal: 1920 },
-          height: { ideal: 1080 }
+          facingMode: preferredFacingMode,
+          width: { ideal: 1920, max: 1920 },
+          height: { ideal: 1080, max: 1080 }
         }
-      });
+      };
+
+      const mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
       
       setStream(mediaStream);
+      setFacingMode(preferredFacingMode);
+      
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
+        // Ensure video plays
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play().catch(console.error);
+        };
       }
     } catch (err) {
-      setError('Unable to access camera. Please check permissions or use file upload instead.');
       console.error('Camera access error:', err);
+      
+      // Try fallback to front camera if back camera fails
+      if (preferredFacingMode === 'environment') {
+        try {
+          const fallbackConstraints = {
+            video: {
+              facingMode: 'user',
+              width: { ideal: 1920, max: 1920 },
+              height: { ideal: 1080, max: 1080 }
+            }
+          };
+          
+          const fallbackStream = await navigator.mediaDevices.getUserMedia(fallbackConstraints);
+          setStream(fallbackStream);
+          setFacingMode('user');
+          
+          if (videoRef.current) {
+            videoRef.current.srcObject = fallbackStream;
+            videoRef.current.onloadedmetadata = () => {
+              videoRef.current?.play().catch(console.error);
+            };
+          }
+        } catch (fallbackErr) {
+          setError('Unable to access camera. Please check permissions and try again.');
+        }
+      } else {
+        setError('Unable to access camera. Please check permissions and try again.');
+      }
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [stream]);
 
   const stopCamera = useCallback(() => {
     if (stream) {
@@ -45,6 +86,11 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
       setStream(null);
     }
   }, [stream]);
+
+  const switchCamera = useCallback(() => {
+    const newFacingMode = facingMode === 'environment' ? 'user' : 'environment';
+    startCamera(newFacingMode);
+  }, [facingMode, startCamera]);
 
   const capturePhoto = useCallback(() => {
     if (!videoRef.current || !canvasRef.current) return;
@@ -63,12 +109,8 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
     context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     // Convert to blob and create file
-    canvas.toBlob((blob) => {
-      if (blob) {
-        const imageUrl = canvas.toDataURL('image/jpeg', 0.8);
-        setCapturedImage(imageUrl);
-      }
-    }, 'image/jpeg', 0.8);
+    const imageUrl = canvas.toDataURL('image/jpeg', 0.9);
+    setCapturedImage(imageUrl);
   }, []);
 
   const confirmCapture = useCallback(() => {
@@ -81,7 +123,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
         stopCamera();
         onClose();
       }
-    }, 'image/jpeg', 0.8);
+    }, 'image/jpeg', 0.9);
   }, [onCapture, onClose, stopCamera]);
 
   const retakePhoto = useCallback(() => {
@@ -91,7 +133,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   React.useEffect(() => {
     startCamera();
     return () => stopCamera();
-  }, [startCamera, stopCamera]);
+  }, []);
 
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -106,19 +148,31 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
           <div>
             <h3 className="text-white font-semibold">Capture Nutrition Label</h3>
             <p className="text-gray-300 text-sm">
-              {isMobile ? 'Position label in frame' : 'Use your phone for better results'}
+              Position the nutrition facts panel in the frame
             </p>
           </div>
         </div>
-        <button 
-          onClick={() => {
-            stopCamera();
-            onClose();
-          }}
-          className="text-white hover:text-gray-300 transition-colors"
-        >
-          <X className="h-6 w-6" />
-        </button>
+        <div className="flex items-center space-x-2">
+          {/* Camera switch button */}
+          {!capturedImage && !error && (
+            <button
+              onClick={switchCamera}
+              className="bg-white bg-opacity-20 text-white p-2 rounded-full hover:bg-opacity-30 transition-colors"
+              title="Switch Camera"
+            >
+              <RotateCcw className="h-5 w-5" />
+            </button>
+          )}
+          <button 
+            onClick={() => {
+              stopCamera();
+              onClose();
+            }}
+            className="text-white hover:text-gray-300 transition-colors"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
       </div>
 
       {/* Camera View */}
@@ -130,13 +184,13 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
                 <X className="h-8 w-8 text-red-600" />
               </div>
               <h3 className="text-white text-lg font-semibold mb-2">Camera Access Error</h3>
-              <p className="text-gray-300 mb-4">{error}</p>
+              <p className="text-gray-300 mb-4 max-w-sm">{error}</p>
               <button
                 onClick={() => {
                   stopCamera();
                   onClose();
                 }}
-                className="bg-white text-gray-900 px-6 py-2 rounded-full font-semibold"
+                className="bg-white text-gray-900 px-6 py-2 rounded-full font-semibold hover:bg-gray-100 transition-colors"
               >
                 Use File Upload Instead
               </button>
@@ -171,12 +225,18 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
                 
                 {/* Camera overlay guide */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="border-2 border-white border-dashed rounded-lg w-80 h-60 flex items-center justify-center">
+                  <div className="border-2 border-white border-dashed rounded-lg w-80 h-60 flex items-center justify-center bg-black bg-opacity-20">
                     <div className="text-center text-white">
                       <Monitor className="h-8 w-8 mx-auto mb-2" />
-                      <p className="text-sm">Position nutrition label here</p>
+                      <p className="text-sm font-medium">Position nutrition label here</p>
+                      <p className="text-xs opacity-75 mt-1">Make sure text is clear and readable</p>
                     </div>
                   </div>
+                </div>
+
+                {/* Camera info */}
+                <div className="absolute top-4 left-4 bg-black bg-opacity-50 text-white px-3 py-1 rounded-full text-sm">
+                  {facingMode === 'environment' ? 'Back Camera' : 'Front Camera'}
                 </div>
               </>
             )}
@@ -210,7 +270,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
             <button
               onClick={capturePhoto}
               disabled={isLoading || !!error}
-              className="bg-white text-gray-900 p-4 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="bg-white text-gray-900 p-4 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
             >
               <Camera className="h-8 w-8" />
             </button>
@@ -218,15 +278,14 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
         )}
       </div>
 
-      {/* Mobile optimization hint */}
-      {!isMobile && (
-        <div className="absolute top-20 left-4 right-4 bg-blue-600 text-white p-3 rounded-lg text-center">
-          <div className="flex items-center justify-center space-x-2">
-            <Smartphone className="h-5 w-5" />
-            <span className="text-sm">For best results, scan the QR code with your phone to use the mobile camera</span>
-          </div>
+      {/* Tips */}
+      <div className="bg-black bg-opacity-50 px-4 pb-4">
+        <div className="text-center">
+          <p className="text-white text-sm opacity-75">
+            💡 Tip: Ensure good lighting and hold the camera steady for best results
+          </p>
         </div>
-      )}
+      </div>
     </div>
   );
 };
