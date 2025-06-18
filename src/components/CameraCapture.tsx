@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Camera, X, RotateCcw, Check, Smartphone, Monitor } from 'lucide-react';
+import { Camera, X, RotateCcw, Check, Smartphone, Monitor, Mail } from 'lucide-react';
 
 interface CameraCaptureProps {
   onCapture: (file: File) => void;
@@ -11,6 +11,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCameraError, setShowCameraError] = useState(false);
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -70,10 +71,10 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
             };
           }
         } catch (fallbackErr) {
-          setError('Unable to access camera. Please check permissions and try again.');
+          setShowCameraError(true);
         }
       } else {
-        setError('Unable to access camera. Please check permissions and try again.');
+        setShowCameraError(true);
       }
     } finally {
       setIsLoading(false);
@@ -93,24 +94,8 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   }, [facingMode, startCamera]);
 
   const capturePhoto = useCallback(() => {
-    if (!videoRef.current || !canvasRef.current) return;
-
-    const video = videoRef.current;
-    const canvas = canvasRef.current;
-    const context = canvas.getContext('2d');
-
-    if (!context) return;
-
-    // Set canvas dimensions to match video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    // Draw the video frame to canvas
-    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-    // Convert to blob and create file
-    const imageUrl = canvas.toDataURL('image/jpeg', 0.9);
-    setCapturedImage(imageUrl);
+    // Always show camera error when trying to capture
+    setShowCameraError(true);
   }, []);
 
   const confirmCapture = useCallback(() => {
@@ -130,12 +115,91 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
     setCapturedImage(null);
   }, []);
 
+  const handleSendToEmail = () => {
+    const subject = encodeURIComponent('Food Analysis Request - Nutrition Label');
+    const body = encodeURIComponent(`Hi FoodCheck Team,
+
+I would like to request a food analysis. I will attach a clear photo of the nutrition label.
+
+Please provide a comprehensive analysis including:
+- Nutrition breakdown
+- Health assessment
+- Taste evaluation
+
+Thank you!`);
+    
+    const mailtoLink = `mailto:vrishankjo@gmail.com?subject=${subject}&body=${body}`;
+    window.open(mailtoLink, '_blank');
+    
+    // Close the camera modal
+    stopCamera();
+    onClose();
+  };
+
   React.useEffect(() => {
     startCamera();
     return () => stopCamera();
   }, []);
 
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  // Show camera error modal
+  if (showCameraError) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
+          <button 
+            onClick={() => {
+              stopCamera();
+              onClose();
+            }}
+            className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            <X className="h-6 w-6" />
+          </button>
+          
+          <div className="text-center">
+            <div className="bg-red-100 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+              <Camera className="h-8 w-8 text-red-600" />
+            </div>
+            
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Camera Issues</h3>
+            
+            <p className="text-gray-600 mb-6 leading-relaxed">
+              Sorry, our camera is having issues. Please try again later.
+            </p>
+            
+            <div className="bg-blue-50 p-4 rounded-lg mb-6">
+              <p className="text-sm text-blue-700 font-medium mb-2">
+                📧 Alternative: Send via Email
+              </p>
+              <p className="text-xs text-blue-600">
+                Get the same comprehensive analysis by emailing your nutrition label photo directly to us.
+              </p>
+            </div>
+            
+            <button 
+              onClick={handleSendToEmail}
+              className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center justify-center mb-3"
+            >
+              <Mail className="h-5 w-5 mr-2" />
+              Send to Email
+            </button>
+            
+            <button 
+              onClick={() => {
+                stopCamera();
+                onClose();
+              }}
+              className="w-full bg-gray-500 text-white py-3 rounded-full font-semibold hover:bg-gray-600 transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed inset-0 bg-black z-50 flex flex-col">
