@@ -6,9 +6,10 @@ import { QRCodeModal } from './QRCodeModal';
 
 interface VisionAnalysisProps {
   onClose: () => void;
+  onCameraAnalysis?: (analysis: NutritionAnalysis) => void;
 }
 
-export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose }) => {
+export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCameraAnalysis }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -51,11 +52,27 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose }) => {
     event.preventDefault();
   };
 
-  const handleCameraCapture = (file: File) => {
+  const handleCameraCapture = async (file: File) => {
     setSelectedFile(file);
     setPreviewUrl(URL.createObjectURL(file));
     setShowCamera(false);
     setError(null);
+
+    // Automatically analyze the captured image and go to chatbot
+    setIsAnalyzing(true);
+    try {
+      const result = await analyzeNutritionLabel(file, userHealthInfo);
+      if (onCameraAnalysis) {
+        onCameraAnalysis(result);
+        onClose();
+      } else {
+        setAnalysis(result);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Analysis failed');
+    } finally {
+      setIsAnalyzing(false);
+    }
   };
 
   const handleAnalyze = async () => {
@@ -106,6 +123,30 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose }) => {
           }
         }}
       />
+    );
+  }
+
+  // Show loading screen when analyzing camera capture
+  if (isAnalyzing && selectedFile && !analysis) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-2xl max-w-md w-full p-8">
+          <div className="text-center">
+            <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+              <Loader2 className="h-8 w-8 text-white animate-spin" />
+            </div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Analyzing Your Food</h3>
+            <p className="text-gray-600 mb-6">
+              Our AI is examining the nutrition label and preparing a comprehensive analysis...
+            </p>
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <p className="text-sm text-blue-700">
+                ⚡ This usually takes just a few seconds
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     );
   }
 

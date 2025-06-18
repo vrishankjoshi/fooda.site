@@ -3,6 +3,7 @@ import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Award, ArrowRight, 
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
+import { NutritionAnalysis } from './services/visionService';
 
 function App() {
   const [showModal, setShowModal] = useState(false);
@@ -41,6 +42,45 @@ function App() {
 
   const navigateToPage = (page: string) => {
     setCurrentPage(page);
+  };
+
+  const handleCameraAnalysis = (analysis: NutritionAnalysis) => {
+    // Create a comprehensive analysis message for the chatbot
+    const analysisMessage = `I just analyzed your nutrition label! Here's what I found:
+
+🎯 **Overall Grade: ${analysis.overall.grade}**
+${analysis.overall.summary}
+
+📊 **NUTRITION BREAKDOWN:**
+• Calories: ${analysis.nutrition.calories}
+• Total Fat: ${analysis.nutrition.totalFat}
+• Sodium: ${analysis.nutrition.sodium}
+• Total Carbohydrates: ${analysis.nutrition.totalCarbohydrates}
+• Protein: ${analysis.nutrition.protein}
+
+🏥 **HEALTH ANALYSIS (Score: ${analysis.health.score}/100):**
+${analysis.health.warnings.length > 0 ? 
+  `⚠️ Health Warnings:\n${analysis.health.warnings.map(w => `• ${w}`).join('\n')}` : 
+  '✅ No major health concerns identified'}
+
+${analysis.health.recommendations.length > 0 ? 
+  `\n💡 Recommendations:\n${analysis.health.recommendations.map(r => `• ${r}`).join('\n')}` : ''}
+
+🍽️ **TASTE PROFILE (Score: ${analysis.taste.score}/100):**
+${analysis.taste.description}
+Taste characteristics: ${analysis.taste.profile.join(', ')}
+
+${analysis.health.allergens.length > 0 ? 
+  `\n🚨 Potential Allergens: ${analysis.health.allergens.join(', ')}` : ''}
+
+Feel free to ask me any questions about this analysis or if you'd like more details about any specific aspect!`;
+
+    // Add the analysis to chat messages
+    setChatMessages(prev => [...prev, { type: 'bot', message: analysisMessage }]);
+    
+    // Close vision modal and navigate to chat
+    setShowVisionModal(false);
+    setCurrentPage('chat');
   };
 
   const handleSendMessage = async () => {
@@ -87,12 +127,21 @@ function App() {
                   </span>
                 </button>
               </div>
-              <button 
-                onClick={() => navigateToPage('home')}
-                className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-              >
-                Back to Home
-              </button>
+              <div className="flex space-x-3">
+                <button 
+                  onClick={handleVisionAnalysis}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center text-sm"
+                >
+                  <Eye className="h-4 w-4 mr-1" />
+                  Analyze Another
+                </button>
+                <button 
+                  onClick={() => navigateToPage('home')}
+                  className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                >
+                  Back to Home
+                </button>
+              </div>
             </div>
           </div>
         </header>
@@ -319,7 +368,7 @@ function App() {
         </div>
 
         {/* Modals */}
-        {showVisionModal && <VisionAnalysis onClose={closeVisionModal} />}
+        {showVisionModal && <VisionAnalysis onClose={closeVisionModal} onCameraAnalysis={handleCameraAnalysis} />}
         
         {showModal && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -826,7 +875,7 @@ function App() {
       </footer>
 
       {/* Vision Analysis Modal */}
-      {showVisionModal && <VisionAnalysis onClose={closeVisionModal} />}
+      {showVisionModal && <VisionAnalysis onClose={closeVisionModal} onCameraAnalysis={handleCameraAnalysis} />}
 
       {/* Photo Upload Modal */}
       {showModal && (
