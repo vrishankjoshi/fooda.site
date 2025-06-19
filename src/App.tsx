@@ -648,27 +648,27 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
               </ul>
             </div>
 
-            {/* Brand Intelligence */}
+            {/* Vish Score */}
             <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="bg-orange-500 p-3 rounded-xl w-fit mb-6">
                 <TrendingUp className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Brand Intelligence</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Vish Score</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Advanced brand analysis and product intelligence. Instead of taking photos, just tell us the brand info and get the same comprehensive results.
+                Revolutionary scoring system that combines nutrition and taste analysis for comprehensive food evaluation and personalized recommendations.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center text-gray-700">
                   <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
-                  Brand reputation analysis
+                  Combined nutrition + taste scoring
                 </li>
                 <li className="flex items-center text-gray-700">
                   <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
-                  Product database lookup
+                  Personalized health insights
                 </li>
                 <li className="flex items-center text-gray-700">
                   <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
-                  Quick brand-based analysis
+                  Comprehensive food evaluation
                 </li>
               </ul>
             </div>
@@ -871,7 +871,7 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                 <li>Nutrition Analysis</li>
                 <li>Taste Evaluation</li>
                 <li>Health Assessment</li>
-                <li>Brand Intelligence</li>
+                <li>Vish Score</li>
               </ul>
             </div>
             
