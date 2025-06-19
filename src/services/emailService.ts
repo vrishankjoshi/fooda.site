@@ -148,6 +148,90 @@ Questions? Contact us at vrishankjo@gmail.com
 
 FoodCheck - Empowering better food choices through comprehensive analysis
     `
+  }),
+
+  personalHi: (name: string) => ({
+    subject: 'Hi from FoodCheck! 👋',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <div style="background: linear-gradient(135deg, #10b981, #3b82f6); padding: 30px; border-radius: 15px; text-align: center; margin-bottom: 30px;">
+          <h1 style="color: white; margin: 0; font-size: 32px;">Hi ${name}! 👋</h1>
+          <p style="color: #e0f2fe; margin: 10px 0 0 0; font-size: 18px;">Personal greetings from the FoodCheck team</p>
+        </div>
+        
+        <div style="background: #f8fafc; padding: 25px; border-radius: 10px; margin-bottom: 25px; text-align: center;">
+          <h2 style="color: #1f2937; margin-top: 0; font-size: 24px;">Hello there! 🌟</h2>
+          <p style="color: #4b5563; line-height: 1.6; font-size: 16px;">
+            Just wanted to say <strong>Hi</strong> and let you know we're thinking of you! We hope you're enjoying your FoodCheck experience and making healthier food choices every day.
+          </p>
+        </div>
+
+        <div style="background: linear-gradient(135deg, #dbeafe, #ecfdf5); padding: 20px; border-radius: 10px; margin-bottom: 25px;">
+          <h3 style="color: #1f2937; margin-top: 0; text-align: center;">🎉 You're Amazing!</h3>
+          <p style="color: #374151; text-align: center; line-height: 1.6;">
+            By choosing FoodCheck, you're taking control of your health and making informed decisions about what you eat. That's something to be proud of!
+          </p>
+        </div>
+
+        <div style="background: white; border: 2px solid #e5e7eb; border-radius: 10px; padding: 25px; margin-bottom: 25px;">
+          <h3 style="color: #1f2937; margin-top: 0; text-align: center;">🚀 Keep Going!</h3>
+          <p style="color: #4b5563; text-align: center; line-height: 1.6;">
+            Remember, we're here whenever you need us:
+          </p>
+          <ul style="color: #4b5563; line-height: 1.8; text-align: left; max-width: 400px; margin: 0 auto;">
+            <li>📧 Send nutrition labels to <a href="mailto:vrishankjo@gmail.com" style="color: #10b981;">vrishankjo@gmail.com</a></li>
+            <li>🤖 Try our AI Vision analysis</li>
+            <li>💬 Chat with our AI assistant</li>
+            <li>⭐ Get your Vish Score</li>
+          </ul>
+        </div>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${window.location.origin}" style="background: linear-gradient(135deg, #10b981, #3b82f6); color: white; padding: 15px 30px; border-radius: 25px; text-decoration: none; font-weight: bold; display: inline-block; font-size: 16px;">Visit FoodCheck Now</a>
+        </div>
+
+        <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center;">
+          <p style="margin: 0; color: #92400e; font-size: 14px;">
+            💝 <strong>Thank you</strong> for being part of the FoodCheck family!
+          </p>
+        </div>
+
+        <div style="text-align: center; padding: 20px; border-top: 1px solid #e5e7eb; margin-top: 30px;">
+          <p style="color: #6b7280; margin: 0; font-size: 14px;">
+            Have a wonderful day! 🌈<br>
+            The FoodCheck Team
+          </p>
+          <p style="color: #9ca3af; margin: 10px 0 0 0; font-size: 12px;">
+            <a href="mailto:vrishankjo@gmail.com" style="color: #10b981;">vrishankjo@gmail.com</a>
+          </p>
+        </div>
+      </div>
+    `,
+    text: `
+Hi ${name}! 👋
+
+Hello there! 🌟
+
+Just wanted to say Hi and let you know we're thinking of you! We hope you're enjoying your FoodCheck experience and making healthier food choices every day.
+
+🎉 You're Amazing!
+By choosing FoodCheck, you're taking control of your health and making informed decisions about what you eat. That's something to be proud of!
+
+🚀 Keep Going!
+Remember, we're here whenever you need us:
+• Send nutrition labels to vrishankjo@gmail.com
+• Try our AI Vision analysis
+• Chat with our AI assistant
+• Get your Vish Score
+
+Visit FoodCheck: ${window.location.origin}
+
+💝 Thank you for being part of the FoodCheck family!
+
+Have a wonderful day! 🌈
+The FoodCheck Team
+vrishankjo@gmail.com
+    `
   })
 };
 
@@ -193,6 +277,20 @@ export class EmailService {
     console.log('✅ Welcome email sent successfully to', user.email);
   }
 
+  // Send personal "Hi" message to a user
+  async sendPersonalHi(user: UserRegistration): Promise<void> {
+    const template = emailTemplates.personalHi(user.name);
+    
+    console.log('👋 Sending personal Hi message to:', user.email);
+    console.log('Subject:', template.subject);
+    console.log('Personal greeting prepared for:', user.name);
+    
+    // Simulate email sending delay
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    console.log('✅ Personal Hi message sent successfully to', user.email);
+  }
+
   // Send welcome emails to all registered users
   async sendWelcomeEmailToAll(): Promise<void> {
     const users = this.userDb.getAllUsers();
@@ -215,6 +313,30 @@ export class EmailService {
     }
     
     console.log('✅ Finished sending welcome emails to all users');
+  }
+
+  // Send personal "Hi" messages to all registered users
+  async sendHiToAllUsers(): Promise<void> {
+    const users = this.userDb.getAllUsers();
+    
+    if (users.length === 0) {
+      console.log('📭 No registered users found to say Hi to');
+      return;
+    }
+
+    console.log(`👋 Saying Hi to ${users.length} users...`);
+    
+    for (const user of users) {
+      try {
+        await this.sendPersonalHi(user);
+        // Add small delay between emails to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 600));
+      } catch (error) {
+        console.error(`❌ Failed to send Hi message to ${user.email}:`, error);
+      }
+    }
+    
+    console.log('✅ Finished saying Hi to all users! 🎉');
   }
 
   // Get all registered users

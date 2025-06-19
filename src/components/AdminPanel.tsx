@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Users, Calendar, TrendingUp, Send, CheckCircle, AlertTriangle, Download } from 'lucide-react';
+import { X, Mail, Users, Calendar, TrendingUp, Send, CheckCircle, AlertTriangle, Download, Heart, MessageCircle } from 'lucide-react';
 import { emailService, UserRegistration } from '../services/emailService';
 
 interface AdminPanelProps {
@@ -17,7 +17,9 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     emails: [] as string[]
   });
   const [isSendingEmails, setIsSendingEmails] = useState(false);
+  const [isSendingHi, setIsSendingHi] = useState(false);
   const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [hiStatus, setHiStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   useEffect(() => {
@@ -47,6 +49,23 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
       setTimeout(() => setEmailStatus('idle'), 3000);
     } finally {
       setIsSendingEmails(false);
+    }
+  };
+
+  const handleSendHiToAll = async () => {
+    setIsSendingHi(true);
+    setHiStatus('sending');
+    
+    try {
+      await emailService.sendHiToAllUsers();
+      setHiStatus('success');
+      setTimeout(() => setHiStatus('idle'), 3000);
+    } catch (error) {
+      console.error('Error sending Hi messages:', error);
+      setHiStatus('error');
+      setTimeout(() => setHiStatus('idle'), 3000);
+    } finally {
+      setIsSendingHi(false);
     }
   };
 
@@ -149,34 +168,84 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            {emailStatus === 'error' && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+            {hiStatus === 'success' && (
+              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <div className="flex items-center">
-                  <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
-                  <p className="text-red-700">Error sending emails. Please try again.</p>
+                  <Heart className="h-5 w-5 text-blue-600 mr-2" />
+                  <p className="text-blue-700">Personal Hi messages sent successfully to all users! 👋</p>
                 </div>
               </div>
             )}
 
-            <div className="flex flex-wrap gap-4">
-              <button
-                onClick={handleSendWelcomeEmails}
-                disabled={isSendingEmails || users.length === 0}
-                className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center"
-              >
-                {isSendingEmails ? (
-                  <>
-                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                    Sending Emails...
-                  </>
-                ) : (
-                  <>
-                    <Send className="h-5 w-5 mr-2" />
-                    Send Welcome Emails to All ({stats.total})
-                  </>
-                )}
-              </button>
+            {(emailStatus === 'error' || hiStatus === 'error') && (
+              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="flex items-center">
+                  <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
+                  <p className="text-red-700">Error sending messages. Please try again.</p>
+                </div>
+              </div>
+            )}
 
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Welcome Emails */}
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <Mail className="h-5 w-5 mr-2 text-green-600" />
+                  Welcome Emails
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Send comprehensive welcome emails with getting started guide and feature overview.
+                </p>
+                <button
+                  onClick={handleSendWelcomeEmails}
+                  disabled={isSendingEmails || users.length === 0}
+                  className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center justify-center"
+                >
+                  {isSendingEmails ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="h-5 w-5 mr-2" />
+                      Send Welcome Emails ({stats.total})
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Personal Hi Messages */}
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
+                  <MessageCircle className="h-5 w-5 mr-2 text-blue-600" />
+                  Personal Hi Messages
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Send personalized "Hi" messages to show you care about each user individually.
+                </p>
+                <button
+                  onClick={handleSendHiToAll}
+                  disabled={isSendingHi || users.length === 0}
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center justify-center"
+                >
+                  {isSendingHi ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                      Saying Hi...
+                    </>
+                  ) : (
+                    <>
+                      <Heart className="h-5 w-5 mr-2" />
+                      Say Hi to Everyone ({stats.total}) 👋
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {/* Export Button */}
+            <div className="mt-4 flex justify-center">
               <button
                 onClick={exportUserData}
                 disabled={users.length === 0}
@@ -264,17 +333,40 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* Email Preview */}
+          {/* Email Previews */}
           {users.length > 0 && (
-            <div className="mt-8 bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Welcome Email Preview</h3>
-              <div className="bg-white border border-gray-200 rounded-lg p-4">
-                <div className="text-sm text-gray-600 mb-2">Subject: Welcome to FoodCheck! 🍎</div>
-                <div className="text-sm text-gray-800">
-                  Hi [User Name]! Welcome to FoodCheck! We're excited to help you make better food choices through our comprehensive analysis tools...
+            <div className="mt-8 grid md:grid-cols-2 gap-6">
+              {/* Welcome Email Preview */}
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <Mail className="h-5 w-5 mr-2 text-green-600" />
+                  Welcome Email Preview
+                </h3>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-2">Subject: Welcome to FoodCheck! 🍎</div>
+                  <div className="text-sm text-gray-800">
+                    Hi [User Name]! Welcome to FoodCheck! We're excited to help you make better food choices through our comprehensive analysis tools...
+                  </div>
+                  <div className="mt-2 text-xs text-gray-500">
+                    Full email includes: Welcome message, getting started guide, feature overview, and contact information.
+                  </div>
                 </div>
-                <div className="mt-2 text-xs text-gray-500">
-                  Full email includes: Welcome message, getting started guide, feature overview, and contact information.
+              </div>
+
+              {/* Hi Message Preview */}
+              <div className="bg-gray-50 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                  <MessageCircle className="h-5 w-5 mr-2 text-blue-600" />
+                  Hi Message Preview
+                </h3>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 mb-2">Subject: Hi from FoodCheck! 👋</div>
+                  <div className="text-sm text-gray-800">
+                    Hi [User Name]! Just wanted to say Hi and let you know we're thinking of you! We hope you're enjoying your FoodCheck experience...
+                  </div>
+                  <div className="mt-2 text-xs text-gray-500">
+                    Personal greeting with encouragement, appreciation, and reminder of available features.
+                  </div>
                 </div>
               </div>
             </div>
