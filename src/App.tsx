@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users, LogOut, User as UserIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users, Settings } from 'lucide-react';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
 import { AuthModal } from './components/AuthModal';
-import { useAuth } from './hooks/useAuth';
+import { AdminPanel } from './components/AdminPanel';
 import { NutritionAnalysis } from './services/visionService';
+import { useAuth } from './hooks/useAuth';
+import { emailService } from './services/emailService';
 
 function App() {
   const { user, isLoading: authLoading, isAuthenticated, login, logout } = useAuth();
@@ -13,6 +15,7 @@ function App() {
   const [showLearnMoreModal, setShowLearnMoreModal] = useState(false);
   const [showVisionModal, setShowVisionModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [currentPage, setCurrentPage] = useState('home');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
@@ -21,85 +24,16 @@ function App() {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  // Rating system state
-  const [showRatingModal, setShowRatingModal] = useState(false);
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
-  const [showThankYou, setShowThankYou] = useState(false);
-  const [userEngagement, setUserEngagement] = useState({
-    chatMessages: 0,
-    visionAnalyses: 0,
-    lastActivity: Date.now()
-  });
-
-  // Check for hourly rating prompt
-  useEffect(() => {
-    const checkRatingPrompt = () => {
-      const lastRatingTime = localStorage.getItem('foodcheck_last_rating_time');
-      const engagement = JSON.parse(localStorage.getItem('foodcheck_user_engagement') || '{"chatMessages":0,"visionAnalyses":0,"lastActivity":0}');
-      
-      const now = Date.now();
-      const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
-      
-      // Check if user has been active and an hour has passed
-      if (engagement.chatMessages > 0 || engagement.visionAnalyses > 0) {
-        if (!lastRatingTime || (now - parseInt(lastRatingTime)) >= oneHour) {
-          setShowRatingModal(true);
-        }
-      }
-    };
-
-    // Check every 5 minutes
-    const interval = setInterval(checkRatingPrompt, 5 * 60 * 1000);
-    
-    // Check immediately on load
-    setTimeout(checkRatingPrompt, 2000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
-  // Update engagement tracking
-  useEffect(() => {
-    localStorage.setItem('foodcheck_user_engagement', JSON.stringify(userEngagement));
-  }, [userEngagement]);
-
   const handleStartAnalysis = () => {
-    if (!isAuthenticated) {
-      setAuthMode('login');
-      setShowAuthModal(true);
-      return;
-    }
     setShowModal(true);
   };
 
   const handleVisionAnalysis = () => {
-    if (!isAuthenticated) {
-      setAuthMode('login');
-      setShowAuthModal(true);
-      return;
-    }
     setShowVisionModal(true);
-    setUserEngagement(prev => ({
-      ...prev,
-      visionAnalyses: prev.visionAnalyses + 1,
-      lastActivity: Date.now()
-    }));
   };
 
   const handleLearnMore = () => {
     setShowLearnMoreModal(true);
-  };
-
-  const handleAuthSuccess = (userData: { email: string; name: string }) => {
-    login(userData);
-    setShowAuthModal(false);
-  };
-
-  const handleLogout = () => {
-    logout();
-    setCurrentPage('home');
-    setChatMessages([
-      { type: 'bot', message: 'Hello! I\'m your FoodCheck AI assistant. I can help you understand food nutrition, health impacts, and answer any questions about our analysis process. How can I help you today?' }
-    ]);
   };
 
   const closeModal = () => {
@@ -116,6 +50,19 @@ function App() {
 
   const navigateToPage = (page: string) => {
     setCurrentPage(page);
+  };
+
+  const handleAuthSuccess = async (userData: { email: string; name: string }) => {
+    try {
+      // Register user in our email system
+      await emailService.registerUser(userData.name, userData.email);
+      login(userData);
+      setShowAuthModal(false);
+    } catch (error) {
+      // If user already exists, just log them in
+      login(userData);
+      setShowAuthModal(false);
+    }
   };
 
   const handleCameraAnalysis = (analysis: NutritionAnalysis) => {
@@ -164,13 +111,6 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
       setInputMessage('');
       setIsLoading(true);
 
-      // Update engagement
-      setUserEngagement(prev => ({
-        ...prev,
-        chatMessages: prev.chatMessages + 1,
-        lastActivity: Date.now()
-      }));
-
       try {
         const response = await sendMessageToGroq(chatMessages, userMsg);
         setChatMessages(prev => [...prev, { type: 'bot', message: response }]);
@@ -191,32 +131,7 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
     }
   };
 
-  const handleRatingSubmit = (rating: number) => {
-    setSelectedRating(rating);
-    setShowThankYou(true);
-    
-    // Store rating data
-    const ratingData = {
-      rating,
-      timestamp: Date.now(),
-      page: currentPage,
-      user: user?.email || 'anonymous'
-    };
-    
-    const existingRatings = JSON.parse(localStorage.getItem('foodcheck_ratings') || '[]');
-    existingRatings.push(ratingData);
-    localStorage.setItem('foodcheck_ratings', JSON.stringify(existingRatings));
-    localStorage.setItem('foodcheck_last_rating_time', Date.now().toString());
-    
-    // Close modal after showing thank you
-    setTimeout(() => {
-      setShowRatingModal(false);
-      setShowThankYou(false);
-      setSelectedRating(null);
-    }, 2000);
-  };
-
-  // Show loading screen while checking authentication
+  // Show loading screen while checking auth
   if (authLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -250,10 +165,7 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
               </div>
               <div className="flex items-center space-x-3">
                 {isAuthenticated && (
-                  <div className="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-full">
-                    <UserIcon className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm text-gray-700">{user?.name}</span>
-                  </div>
+                  <span className="text-sm text-gray-600">Welcome, {user?.name}!</span>
                 )}
                 <button 
                   onClick={handleVisionAnalysis}
@@ -268,15 +180,6 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                 >
                   Back to Home
                 </button>
-                {isAuthenticated && (
-                  <button 
-                    onClick={handleLogout}
-                    className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
-                    title="Logout"
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </button>
-                )}
               </div>
             </div>
           </div>
@@ -350,65 +253,6 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
             </div>
           </div>
         </div>
-
-        {/* Rating Modal */}
-        {showRatingModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
-              <button 
-                onClick={() => setShowRatingModal(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="h-6 w-6" />
-              </button>
-              
-              <div className="text-center">
-                {showThankYou ? (
-                  <>
-                    <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
-                      <CheckCircle className="h-8 w-8 text-green-600" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Thank You!</h3>
-                    <p className="text-gray-600 mb-4">
-                      You rated FoodCheck <span className="font-bold text-green-600">{selectedRating}/10</span>
-                    </p>
-                    <p className="text-sm text-gray-500">
-                      Your feedback helps us improve our service!
-                    </p>
-                  </>
-                ) : (
-                  <>
-                    <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
-                      <Star className="h-8 w-8 text-white" />
-                    </div>
-                    
-                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Rate Your Experience</h3>
-                    
-                    <p className="text-gray-600 mb-6 leading-relaxed">
-                      How would you rate FoodCheck on a scale of 1 to 10?
-                    </p>
-                    
-                    <div className="grid grid-cols-5 gap-2 mb-6">
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
-                        <button
-                          key={rating}
-                          onClick={() => handleRatingSubmit(rating)}
-                          className="bg-gradient-to-r from-green-500 to-blue-500 text-white p-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                        >
-                          {rating}
-                        </button>
-                      ))}
-                    </div>
-                    
-                    <p className="text-xs text-gray-500">
-                      1 = Poor, 10 = Excellent
-                    </p>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   }
@@ -432,10 +276,7 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
               </div>
               <div className="flex items-center space-x-3">
                 {isAuthenticated && (
-                  <div className="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-full">
-                    <UserIcon className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm text-gray-700">{user?.name}</span>
-                  </div>
+                  <span className="text-sm text-gray-600">Welcome, {user?.name}!</span>
                 )}
                 <button 
                   onClick={() => navigateToPage('home')}
@@ -443,15 +284,6 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                 >
                   Back to Home
                 </button>
-                {isAuthenticated && (
-                  <button 
-                    onClick={handleLogout}
-                    className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
-                    title="Logout"
-                  >
-                    <LogOut className="h-4 w-4" />
-                  </button>
-                )}
               </div>
             </div>
           </div>
@@ -518,7 +350,7 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
             {/* Detailed Process */}
             <div className="bg-white rounded-2xl shadow-xl p-12 mb-20">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Our Analysis Process</h2>
-              <div className="grid md:grid-cols-4 gap-8">
+              <div className="grid md:grid-cols-3 gap-8">
                 <div className="text-center">
                   <div className="bg-green-100 p-6 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                     <BarChart3 className="h-10 w-10 text-green-600" />
@@ -541,14 +373,6 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                   </div>
                   <h4 className="text-xl font-bold text-gray-900 mb-3">Health Assessment</h4>
                   <p className="text-gray-600">Comprehensive health impact evaluation including personalized warnings for medical conditions.</p>
-                </div>
-
-                <div className="text-center">
-                  <div className="bg-yellow-100 p-6 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                    <TrendingUp className="h-10 w-10 text-yellow-600" />
-                  </div>
-                  <h4 className="text-xl font-bold text-gray-900 mb-3">Vish Score</h4>
-                  <p className="text-gray-600">Our revolutionary scoring system that combines nutrition and taste quality for comprehensive food evaluation.</p>
                 </div>
               </div>
             </div>
@@ -715,66 +539,67 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                 How It Works
               </button>
               <a href="#contact" className="text-gray-600 hover:text-green-600 transition-colors">Contact</a>
-              {isAuthenticated && (
-                <button 
-                  onClick={() => navigateToPage('chat')}
-                  className="text-gray-600 hover:text-green-600 transition-colors flex items-center"
-                >
-                  <MessageCircle className="h-4 w-4 mr-1" />
-                  Talk to AI
-                </button>
-              )}
+              <button 
+                onClick={() => navigateToPage('chat')}
+                className="text-gray-600 hover:text-green-600 transition-colors flex items-center"
+              >
+                <MessageCircle className="h-4 w-4 mr-1" />
+                Talk to AI
+              </button>
             </nav>
             <div className="flex items-center space-x-3">
               {isAuthenticated ? (
                 <>
-                  <div className="flex items-center space-x-2 bg-gray-100 px-3 py-2 rounded-full">
-                    <UserIcon className="h-4 w-4 text-gray-600" />
-                    <span className="text-sm text-gray-700">{user?.name}</span>
-                  </div>
-                  <button 
-                    onClick={handleVisionAnalysis}
-                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center text-sm"
+                  <span className="text-sm text-gray-600">Welcome, {user?.name}!</span>
+                  <button
+                    onClick={() => setShowAdminPanel(true)}
+                    className="bg-gray-600 text-white px-4 py-2 rounded-full hover:bg-gray-700 transition-colors flex items-center text-sm"
                   >
-                    <Eye className="h-4 w-4 mr-1" />
-                    AI Vision
+                    <Settings className="h-4 w-4 mr-1" />
+                    Admin
                   </button>
-                  <button 
-                    onClick={handleStartAnalysis}
-                    className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                  <button
+                    onClick={logout}
+                    className="bg-red-500 text-white px-4 py-2 rounded-full hover:bg-red-600 transition-colors text-sm"
                   >
-                    Get Started
-                  </button>
-                  <button 
-                    onClick={handleLogout}
-                    className="bg-red-500 text-white p-2 rounded-full hover:bg-red-600 transition-colors"
-                    title="Logout"
-                  >
-                    <LogOut className="h-4 w-4" />
+                    Logout
                   </button>
                 </>
               ) : (
                 <>
-                  <button 
+                  <button
                     onClick={() => {
                       setAuthMode('login');
                       setShowAuthModal(true);
                     }}
-                    className="text-gray-600 hover:text-green-600 transition-colors font-medium"
+                    className="text-gray-600 hover:text-green-600 transition-colors"
                   >
-                    Sign In
+                    Login
                   </button>
-                  <button 
+                  <button
                     onClick={() => {
                       setAuthMode('signup');
                       setShowAuthModal(true);
                     }}
-                    className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                    className="bg-gray-600 text-white px-4 py-2 rounded-full hover:bg-gray-700 transition-colors text-sm"
                   >
                     Sign Up
                   </button>
                 </>
               )}
+              <button 
+                onClick={handleVisionAnalysis}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center text-sm"
+              >
+                <Eye className="h-4 w-4 mr-1" />
+                AI Vision
+              </button>
+              <button 
+                onClick={handleStartAnalysis}
+                className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+              >
+                Get Started
+              </button>
             </div>
           </div>
         </div>
@@ -838,7 +663,7 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Nutrition Analysis</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Deep dive into macronutrients, micronutrients, vitamins, minerals, and caloric content with detailed breakdowns and daily value percentages.
+                Deep dive into macronutrients, micronutrients, vitamins, minerals, and caloric content with detailed breakdowns.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center text-gray-700">
@@ -907,25 +732,25 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
             </div>
 
             {/* Vish Score */}
-            <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="bg-yellow-500 p-3 rounded-xl w-fit mb-6">
+            <div className="bg-gradient-to-br from-yellow-50 to-orange-100 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+              <div className="bg-gradient-to-r from-yellow-500 to-orange-500 p-3 rounded-xl w-fit mb-6">
                 <TrendingUp className="h-8 w-8 text-white" />
               </div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Vish Score</h3>
               <p className="text-gray-600 mb-6 leading-relaxed">
-                Our revolutionary scoring system that combines nutrition and taste quality for comprehensive food evaluation and decision making.
+                Our revolutionary scoring system that combines nutrition and taste analysis for the ultimate food evaluation.
               </p>
               <ul className="space-y-3">
                 <li className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-yellow-500 mr-3" />
-                  Combined nutrition & taste scoring
+                  <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
+                  Combined nutrition + taste scoring
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-yellow-500 mr-3" />
+                  <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
                   Comprehensive food evaluation
                 </li>
                 <li className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-yellow-500 mr-3" />
+                  <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
                   Personalized recommendations
                 </li>
               </ul>
@@ -1157,16 +982,22 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
         </div>
       </footer>
 
-      {/* Auth Modal */}
-      <AuthModal 
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        initialMode={authMode}
-        onAuthSuccess={handleAuthSuccess}
-      />
-
-      {/* Vision Analysis Modal */}
+      {/* Modals */}
       {showVisionModal && <VisionAnalysis onClose={closeVisionModal} onCameraAnalysis={handleCameraAnalysis} />}
+      {showAuthModal && (
+        <AuthModal
+          isOpen={showAuthModal}
+          onClose={() => setShowAuthModal(false)}
+          initialMode={authMode}
+          onAuthSuccess={handleAuthSuccess}
+        />
+      )}
+      {showAdminPanel && (
+        <AdminPanel
+          isOpen={showAdminPanel}
+          onClose={() => setShowAdminPanel(false)}
+        />
+      )}
 
       {/* Photo Upload Modal */}
       {showModal && (
@@ -1280,65 +1111,6 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
               >
                 Got It!
               </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Rating Modal */}
-      {showRatingModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
-            <button 
-              onClick={() => setShowRatingModal(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            
-            <div className="text-center">
-              {showThankYou ? (
-                <>
-                  <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
-                    <CheckCircle className="h-8 w-8 text-green-600" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Thank You!</h3>
-                  <p className="text-gray-600 mb-4">
-                    You rated FoodCheck <span className="font-bold text-green-600">{selectedRating}/10</span>
-                  </p>
-                  <p className="text-sm text-gray-500">
-                    Your feedback helps us improve our service!
-                  </p>
-                </>
-              ) : (
-                <>
-                  <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
-                    <Star className="h-8 w-8 text-white" />
-                  </div>
-                  
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Rate Your Experience</h3>
-                  
-                  <p className="text-gray-600 mb-6 leading-relaxed">
-                    How would you rate FoodCheck on a scale of 1 to 10?
-                  </p>
-                  
-                  <div className="grid grid-cols-5 gap-2 mb-6">
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
-                      <button
-                        key={rating}
-                        onClick={() => handleRatingSubmit(rating)}
-                        className="bg-gradient-to-r from-green-500 to-blue-500 text-white p-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                      >
-                        {rating}
-                      </button>
-                    ))}
-                  </div>
-                  
-                  <p className="text-xs text-gray-500">
-                    1 = Poor, 10 = Excellent
-                  </p>
-                </>
-              )}
             </div>
           </div>
         </div>
