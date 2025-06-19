@@ -528,8 +528,8 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Know What You're Eating
-              <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"> and How Much to Eat?</span>
+              Know What You're
+              <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent"> Eating</span>
             </h1>
             <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
               Discover the complete nutritional profile, taste quality, and health impact of packaged foods with our comprehensive analysis tools.
@@ -565,14 +565,14 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Three Pillars of Food Analysis
+              Four Pillars of Food Analysis
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Our comprehensive approach examines every aspect of packaged food quality
             </p>
           </div>
           
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Nutrition Analysis */}
             <div className="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="bg-green-500 p-3 rounded-xl w-fit mb-6">
@@ -647,28 +647,30 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                 </li>
               </ul>
             </div>
-          </div>
 
-          {/* Vish Score Feature */}
-          <div className="mt-16 text-center">
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-8 rounded-2xl shadow-lg max-w-4xl mx-auto">
-              <div className="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
-                <Star className="h-8 w-8 text-white" />
+            {/* Brand Intelligence */}
+            <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+              <div className="bg-orange-500 p-3 rounded-xl w-fit mb-6">
+                <TrendingUp className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-3xl font-bold text-gray-900 mb-4">Introducing Vish Score</h3>
-              <p className="text-xl text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
-                Our revolutionary new feature that provides comprehensive scoring not just for nutrition, but for taste quality as well! Send your nutrition label to our email and get the complete Vish Score analysis.
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Brand Intelligence</h3>
+              <p className="text-gray-600 mb-6 leading-relaxed">
+                Advanced brand analysis and product intelligence. Instead of taking photos, just tell us the brand info and get the same comprehensive results.
               </p>
-              <div className="grid md:grid-cols-2 gap-6 text-left">
-                <div className="bg-white p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-2">🎯 Dual Analysis System</h4>
-                  <p className="text-gray-600 text-sm">Combines nutrition scoring with advanced taste profiling for complete food evaluation</p>
-                </div>
-                <div className="bg-white p-4 rounded-lg">
-                  <h4 className="font-semibold text-gray-900 mb-2">📊 Comprehensive Scoring</h4>
-                  <p className="text-gray-600 text-sm">Get detailed breakdowns of both health impact and taste characteristics in one unified score</p>
-                </div>
-              </div>
+              <ul className="space-y-3">
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
+                  Brand reputation analysis
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
+                  Product database lookup
+                </li>
+                <li className="flex items-center text-gray-700">
+                  <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
+                  Quick brand-based analysis
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -736,9 +738,9 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div className="p-8">
               <div className="text-4xl font-bold text-green-600 mb-2">500K+</div>
-              <div className="text-gray-600 text-lg mb-3">Products Analyzed</div>
-              <div className="text-sm text-gray-500 italic">
-                Instead of taking the photo of the nutrition label, just tell us the brand info and you will get same results
+              <div className="text-gray-600 text-lg">Products Analyzed</div>
+              <div className="text-sm text-gray-500 mt-2">
+                Instead of taking the photo of the nutrition label just tell us the brand info and you will get same results
               </div>
             </div>
             <div className="p-8">
@@ -869,7 +871,7 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                 <li>Nutrition Analysis</li>
                 <li>Taste Evaluation</li>
                 <li>Health Assessment</li>
-                <li>Product Database</li>
+                <li>Brand Intelligence</li>
               </ul>
             </div>
             
