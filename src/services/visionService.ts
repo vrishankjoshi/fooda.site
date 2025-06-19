@@ -114,7 +114,7 @@ Provide only the JSON response, no additional text.`;
           ]
         }
       ],
-      model: 'llama-3.2-11b-vision-preview',
+      model: 'llama-3.2-90b-vision-preview',
       temperature: 0.3,
       max_tokens: 1500,
     });
