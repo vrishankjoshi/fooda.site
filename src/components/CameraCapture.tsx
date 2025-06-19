@@ -28,9 +28,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
 
       const constraints = {
         video: {
-          facingMode: preferredFacingMode,
-          width: { ideal: 1920, max: 1920 },
-          height: { ideal: 1080, max: 1080 }
+          facingMode: preferredFacingMode
         }
       };
 
@@ -54,9 +52,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
         try {
           const fallbackConstraints = {
             video: {
-              facingMode: 'user',
-              width: { ideal: 1920, max: 1920 },
-              height: { ideal: 1080, max: 1080 }
+              facingMode: 'user'
             }
           };
           
@@ -94,8 +90,24 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onClose
   }, [facingMode, startCamera]);
 
   const capturePhoto = useCallback(() => {
-    // Always show camera error when trying to capture
-    setShowCameraError(true);
+    if (!videoRef.current || !canvasRef.current) return;
+
+    const video = videoRef.current;
+    const canvas = canvasRef.current;
+    const context = canvas.getContext('2d');
+
+    if (!context) return;
+
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+
+    // Draw the current video frame to canvas
+    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+    // Convert canvas to data URL
+    const imageDataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    setCapturedImage(imageDataUrl);
   }, []);
 
   const confirmCapture = useCallback(() => {
