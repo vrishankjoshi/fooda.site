@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
@@ -9,12 +9,41 @@ function App() {
   const [showModal, setShowModal] = useState(false);
   const [showLearnMoreModal, setShowLearnMoreModal] = useState(false);
   const [showVisionModal, setShowVisionModal] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([
     { type: 'bot', message: 'Hello! I\'m your FoodCheck AI assistant. I can help you understand food nutrition, health impacts, and answer any questions about our analysis process. How can I help you today?' }
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [userRating, setUserRating] = useState<number | null>(null);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+
+  // Check for hourly rating prompt
+  useEffect(() => {
+    const checkRatingTime = () => {
+      const lastRatingTime = localStorage.getItem('lastRatingTime');
+      const currentTime = Date.now();
+      const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+
+      if (!lastRatingTime || currentTime - parseInt(lastRatingTime) > oneHour) {
+        // Check if user has used the service (has chat messages or analyzed food)
+        const hasUsedService = chatMessages.length > 1 || localStorage.getItem('hasUsedVision') === 'true';
+        
+        if (hasUsedService) {
+          setShowRatingModal(true);
+        }
+      }
+    };
+
+    // Check every 5 minutes
+    const interval = setInterval(checkRatingTime, 5 * 60 * 1000);
+    
+    // Check immediately on load
+    setTimeout(checkRatingTime, 2000);
+
+    return () => clearInterval(interval);
+  }, [chatMessages.length]);
 
   const handleStartAnalysis = () => {
     setShowModal(true);
@@ -22,6 +51,7 @@ function App() {
 
   const handleVisionAnalysis = () => {
     setShowVisionModal(true);
+    localStorage.setItem('hasUsedVision', 'true');
   };
 
   const handleLearnMore = () => {
@@ -38,6 +68,32 @@ function App() {
 
   const closeLearnMoreModal = () => {
     setShowLearnMoreModal(false);
+  };
+
+  const closeRatingModal = () => {
+    setShowRatingModal(false);
+    localStorage.setItem('lastRatingTime', Date.now().toString());
+  };
+
+  const submitRating = (rating: number) => {
+    setUserRating(rating);
+    setRatingSubmitted(true);
+    
+    // Store rating data
+    const ratings = JSON.parse(localStorage.getItem('userRatings') || '[]');
+    ratings.push({
+      rating,
+      timestamp: Date.now(),
+      page: currentPage
+    });
+    localStorage.setItem('userRatings', JSON.stringify(ratings));
+    
+    // Close modal after 2 seconds
+    setTimeout(() => {
+      closeRatingModal();
+      setRatingSubmitted(false);
+      setUserRating(null);
+    }, 2000);
   };
 
   const navigateToPage = (page: string) => {
@@ -214,6 +270,68 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
             </div>
           </div>
         </div>
+
+        {/* Rating Modal */}
+        {showRatingModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
+              <button 
+                onClick={closeRatingModal}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+              
+              <div className="text-center">
+                {!ratingSubmitted ? (
+                  <>
+                    <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+                      <Star className="h-8 w-8 text-white" />
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">How's Your Experience?</h3>
+                    
+                    <p className="text-gray-600 mb-6 leading-relaxed">
+                      What is your rating from 1 to 10 for FoodCheck?
+                    </p>
+                    
+                    <div className="grid grid-cols-5 gap-2 mb-6">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
+                        <button
+                          key={rating}
+                          onClick={() => submitRating(rating)}
+                          className="bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 text-lg"
+                        >
+                          {rating}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    <p className="text-sm text-gray-500">
+                      Your feedback helps us improve our service!
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+                      <CheckCircle className="h-8 w-8 text-green-600" />
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Thank You!</h3>
+                    
+                    <p className="text-gray-600 mb-4">
+                      You rated us <span className="font-bold text-green-600">{userRating}/10</span>
+                    </p>
+                    
+                    <p className="text-sm text-gray-500">
+                      Your feedback is valuable and helps us serve you better!
+                    </p>
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -306,7 +424,7 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
             {/* Detailed Process */}
             <div className="bg-white rounded-2xl shadow-xl p-12 mb-20">
               <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Our Analysis Process</h2>
-              <div className="grid md:grid-cols-3 gap-8">
+              <div className="grid md:grid-cols-4 gap-8">
                 <div className="text-center">
                   <div className="bg-green-100 p-6 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
                     <BarChart3 className="h-10 w-10 text-green-600" />
@@ -329,6 +447,14 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                   </div>
                   <h4 className="text-xl font-bold text-gray-900 mb-3">Health Assessment</h4>
                   <p className="text-gray-600">Comprehensive health impact evaluation including personalized warnings for medical conditions.</p>
+                </div>
+                
+                <div className="text-center">
+                  <div className="bg-orange-100 p-6 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                    <TrendingUp className="h-10 w-10 text-orange-600" />
+                  </div>
+                  <h4 className="text-xl font-bold text-gray-900 mb-3">Vish Score</h4>
+                  <p className="text-gray-600">Revolutionary scoring system that combines nutrition and taste analysis for comprehensive food evaluation.</p>
                 </div>
               </div>
             </div>
@@ -464,6 +590,68 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                 >
                   Got It!
                 </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Rating Modal */}
+        {showRatingModal && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
+              <button 
+                onClick={closeRatingModal}
+                className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="h-6 w-6" />
+              </button>
+              
+              <div className="text-center">
+                {!ratingSubmitted ? (
+                  <>
+                    <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+                      <Star className="h-8 w-8 text-white" />
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">How's Your Experience?</h3>
+                    
+                    <p className="text-gray-600 mb-6 leading-relaxed">
+                      What is your rating from 1 to 10 for FoodCheck?
+                    </p>
+                    
+                    <div className="grid grid-cols-5 gap-2 mb-6">
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
+                        <button
+                          key={rating}
+                          onClick={() => submitRating(rating)}
+                          className="bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 text-lg"
+                        >
+                          {rating}
+                        </button>
+                      ))}
+                    </div>
+                    
+                    <p className="text-sm text-gray-500">
+                      Your feedback helps us improve our service!
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+                      <CheckCircle className="h-8 w-8 text-green-600" />
+                    </div>
+                    
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4">Thank You!</h3>
+                    
+                    <p className="text-gray-600 mb-4">
+                      You rated us <span className="font-bold text-green-600">{userRating}/10</span>
+                    </p>
+                    
+                    <p className="text-sm text-gray-500">
+                      Your feedback is valuable and helps us serve you better!
+                    </p>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -1017,6 +1205,68 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
               >
                 Got It!
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Rating Modal */}
+      {showRatingModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-8 relative">
+            <button 
+              onClick={closeRatingModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            
+            <div className="text-center">
+              {!ratingSubmitted ? (
+                <>
+                  <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+                    <Star className="h-8 w-8 text-white" />
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">How's Your Experience?</h3>
+                  
+                  <p className="text-gray-600 mb-6 leading-relaxed">
+                    What is your rating from 1 to 10 for FoodCheck?
+                  </p>
+                  
+                  <div className="grid grid-cols-5 gap-2 mb-6">
+                    {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((rating) => (
+                      <button
+                        key={rating}
+                        onClick={() => submitRating(rating)}
+                        className="bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 text-lg"
+                      >
+                        {rating}
+                      </button>
+                    ))}
+                  </div>
+                  
+                  <p className="text-sm text-gray-500">
+                    Your feedback helps us improve our service!
+                  </p>
+                </>
+              ) : (
+                <>
+                  <div className="bg-green-100 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+                    <CheckCircle className="h-8 w-8 text-green-600" />
+                  </div>
+                  
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">Thank You!</h3>
+                  
+                  <p className="text-gray-600 mb-4">
+                    You rated us <span className="font-bold text-green-600">{userRating}/10</span>
+                  </p>
+                  
+                  <p className="text-sm text-gray-500">
+                    Your feedback is valuable and helps us serve you better!
+                  </p>
+                </>
+              )}
             </div>
           </div>
         </div>
