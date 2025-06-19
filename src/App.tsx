@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users, Sparkles } from 'lucide-react';
+import { Heart, BarChart3, CheckCircle, Target, Zap, Shield, Award, ArrowRight, Star, TrendingUp, Camera, X, Upload, Info, Clock, MessageCircle, Send, Loader2, Eye, Mail, Calendar, Users } from 'lucide-react';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
@@ -565,14 +565,14 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Four Pillars of Food Analysis
+              Three Pillars of Food Analysis
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Our comprehensive approach examines every aspect of packaged food quality
             </p>
           </div>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {/* Nutrition Analysis */}
             <div className="bg-gradient-to-br from-green-50 to-green-100 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
               <div className="bg-green-500 p-3 rounded-xl w-fit mb-6">
@@ -647,30 +647,28 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                 </li>
               </ul>
             </div>
+          </div>
 
-            {/* Vish Score */}
-            <div className="bg-gradient-to-br from-yellow-50 to-orange-100 p-8 rounded-2xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
-              <div className="bg-gradient-to-r from-yellow-500 to-orange-500 p-3 rounded-xl w-fit mb-6">
-                <Sparkles className="h-8 w-8 text-white" />
+          {/* Vish Score Feature */}
+          <div className="mt-16 text-center">
+            <div className="bg-gradient-to-br from-yellow-50 to-orange-50 p-8 rounded-2xl shadow-lg max-w-4xl mx-auto">
+              <div className="bg-gradient-to-r from-yellow-500 to-orange-500 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
+                <Star className="h-8 w-8 text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Vish Score</h3>
-              <p className="text-gray-600 mb-6 leading-relaxed">
-                Revolutionary scoring system that combines nutrition and taste analysis for the ultimate food evaluation experience.
+              <h3 className="text-3xl font-bold text-gray-900 mb-4">Introducing Vish Score</h3>
+              <p className="text-xl text-gray-600 mb-6 leading-relaxed max-w-2xl mx-auto">
+                Our revolutionary new feature that provides comprehensive scoring not just for nutrition, but for taste quality as well! Send your nutrition label to our email and get the complete Vish Score analysis.
               </p>
-              <ul className="space-y-3">
-                <li className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
-                  Dual nutrition + taste scoring
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
-                  Comprehensive food profiling
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-orange-500 mr-3" />
-                  Personalized recommendations
-                </li>
-              </ul>
+              <div className="grid md:grid-cols-2 gap-6 text-left">
+                <div className="bg-white p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 mb-2">🎯 Dual Analysis System</h4>
+                  <p className="text-gray-600 text-sm">Combines nutrition scoring with advanced taste profiling for complete food evaluation</p>
+                </div>
+                <div className="bg-white p-4 rounded-lg">
+                  <h4 className="font-semibold text-gray-900 mb-2">📊 Comprehensive Scoring</h4>
+                  <p className="text-gray-600 text-sm">Get detailed breakdowns of both health impact and taste characteristics in one unified score</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -738,7 +736,10 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
           <div className="grid md:grid-cols-3 gap-8 text-center">
             <div className="p-8">
               <div className="text-4xl font-bold text-green-600 mb-2">500K+</div>
-              <div className="text-gray-600 text-lg">Products Analyzed</div>
+              <div className="text-gray-600 text-lg mb-3">Products Analyzed</div>
+              <div className="text-sm text-gray-500 italic">
+                Instead of taking the photo of the nutrition label, just tell us the brand info and you will get same results
+              </div>
             </div>
             <div className="p-8">
               <div className="text-4xl font-bold text-blue-600 mb-2">98%</div>
@@ -868,7 +869,7 @@ Feel free to ask me any questions about this analysis or if you'd like more deta
                 <li>Nutrition Analysis</li>
                 <li>Taste Evaluation</li>
                 <li>Health Assessment</li>
-                <li>Vish Score</li>
+                <li>Product Database</li>
               </ul>
             </div>
             
