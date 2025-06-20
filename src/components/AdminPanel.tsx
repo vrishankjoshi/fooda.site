@@ -108,7 +108,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden transition-colors duration-300">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6">
           <div className="flex justify-between items-center">
@@ -133,67 +133,67 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {/* Statistics */}
           <div className="grid md:grid-cols-4 gap-4 mb-8">
-            <div className="bg-blue-50 p-4 rounded-lg text-center">
-              <Users className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-blue-600">{stats.total}</div>
-              <div className="text-sm text-gray-600">Total Users</div>
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
+              <Users className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{stats.total}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Total Users</div>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg text-center">
-              <Calendar className="h-8 w-8 text-green-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-green-600">{stats.today}</div>
-              <div className="text-sm text-gray-600">Today</div>
+            <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
+              <Calendar className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-green-600 dark:text-green-400">{stats.today}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Today</div>
             </div>
-            <div className="bg-purple-50 p-4 rounded-lg text-center">
-              <TrendingUp className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-purple-600">{stats.thisWeek}</div>
-              <div className="text-sm text-gray-600">This Week</div>
+            <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg text-center">
+              <TrendingUp className="h-8 w-8 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{stats.thisWeek}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">This Week</div>
             </div>
-            <div className="bg-yellow-50 p-4 rounded-lg text-center">
-              <Mail className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold text-yellow-600">{stats.thisMonth}</div>
-              <div className="text-sm text-gray-600">This Month</div>
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg text-center">
+              <Mail className="h-8 w-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
+              <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.thisMonth}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">This Month</div>
             </div>
           </div>
 
           {/* Email Actions */}
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg mb-8">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">Email Actions</h3>
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-6 rounded-lg mb-8">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Email Actions</h3>
             
             {emailStatus === 'success' && (
-              <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+              <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
                 <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 mr-2" />
-                  <p className="text-green-700">Welcome emails sent successfully to all users!</p>
+                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mr-2" />
+                  <p className="text-green-700 dark:text-green-300">Welcome emails sent successfully to all users!</p>
                 </div>
               </div>
             )}
 
             {hiStatus === 'success' && (
-              <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+              <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                 <div className="flex items-center">
-                  <Heart className="h-5 w-5 text-blue-600 mr-2" />
-                  <p className="text-blue-700">Personal Hi messages sent successfully to all users! 👋</p>
+                  <Heart className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
+                  <p className="text-blue-700 dark:text-blue-300">Personal Hi messages sent successfully to all users! 👋</p>
                 </div>
               </div>
             )}
 
             {(emailStatus === 'error' || hiStatus === 'error') && (
-              <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                 <div className="flex items-center">
-                  <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
-                  <p className="text-red-700">Error sending messages. Please try again.</p>
+                  <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mr-2" />
+                  <p className="text-red-700 dark:text-red-300">Error sending messages. Please try again.</p>
                 </div>
               </div>
             )}
 
             <div className="grid md:grid-cols-2 gap-4">
               {/* Welcome Emails */}
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                  <Mail className="h-5 w-5 mr-2 text-green-600" />
+              <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                  <Mail className="h-5 w-5 mr-2 text-green-600 dark:text-green-400" />
                   Welcome Emails
                 </h4>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   Send comprehensive welcome emails with getting started guide and feature overview.
                 </p>
                 <button
@@ -216,12 +216,12 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               </div>
 
               {/* Personal Hi Messages */}
-              <div className="bg-white p-4 rounded-lg border border-gray-200">
-                <h4 className="font-semibold text-gray-900 mb-3 flex items-center">
-                  <MessageCircle className="h-5 w-5 mr-2 text-blue-600" />
+              <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                  <MessageCircle className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
                   Personal Hi Messages
                 </h4>
-                <p className="text-sm text-gray-600 mb-4">
+                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
                   Send personalized "Hi" messages to show you care about each user individually.
                 </p>
                 <button
@@ -249,7 +249,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               <button
                 onClick={exportUserData}
                 disabled={users.length === 0}
-                className="bg-gray-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors disabled:opacity-50 flex items-center"
+                className="bg-gray-600 dark:bg-gray-500 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-700 dark:hover:bg-gray-400 transition-colors disabled:opacity-50 flex items-center"
               >
                 <Download className="h-5 w-5 mr-2" />
                 Export User Data
@@ -258,14 +258,14 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* User List */}
-          <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
-            <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
+          <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden">
+            <div className="bg-gray-50 dark:bg-gray-600 px-6 py-4 border-b border-gray-200 dark:border-gray-600">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold text-gray-900">Registered Users</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Registered Users</h3>
                 {users.length > 0 && (
                   <button
                     onClick={handleSelectAll}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                    className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium"
                   >
                     {selectedUsers.length === users.length ? 'Deselect All' : 'Select All'}
                   </button>
@@ -275,53 +275,53 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
 
             {users.length === 0 ? (
               <div className="p-8 text-center">
-                <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h4 className="text-lg font-medium text-gray-900 mb-2">No Users Yet</h4>
-                <p className="text-gray-600">Users will appear here when they sign up for FoodCheck.</p>
+                <Users className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
+                <h4 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No Users Yet</h4>
+                <p className="text-gray-600 dark:text-gray-400">Users will appear here when they sign up for FoodCheck.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-gray-50">
+                  <thead className="bg-gray-50 dark:bg-gray-600">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         <input
                           type="checkbox"
                           checked={selectedUsers.length === users.length}
                           onChange={handleSelectAll}
-                          className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                          className="rounded border-gray-300 dark:border-gray-500 text-green-600 focus:ring-green-500"
                         />
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Registration Date</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Name</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Email</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Registration Date</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white dark:bg-gray-700 divide-y divide-gray-200 dark:divide-gray-600">
                     {users.map((user) => (
-                      <tr key={user.id} className="hover:bg-gray-50">
+                      <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-600">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <input
                             type="checkbox"
                             checked={selectedUsers.includes(user.email)}
                             onChange={() => handleSelectUser(user.email)}
-                            className="rounded border-gray-300 text-green-600 focus:ring-green-500"
+                            className="rounded border-gray-300 dark:border-gray-500 text-green-600 focus:ring-green-500"
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{user.name}</div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">{user.name}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">{user.email}</div>
+                          <div className="text-sm text-gray-900 dark:text-gray-300">{user.email}</div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">
+                          <div className="text-sm text-gray-900 dark:text-gray-300">
                             {new Date(user.createdAt).toLocaleDateString()}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-300">
                             Active
                           </span>
                         </td>
@@ -337,34 +337,34 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
           {users.length > 0 && (
             <div className="mt-8 grid md:grid-cols-2 gap-6">
               {/* Welcome Email Preview */}
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <Mail className="h-5 w-5 mr-2 text-green-600" />
+              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <Mail className="h-5 w-5 mr-2 text-green-600 dark:text-green-400" />
                   Welcome Email Preview
                 </h3>
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-2">Subject: Welcome to FoodCheck! 🍎</div>
-                  <div className="text-sm text-gray-800">
+                <div className="bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">Subject: Welcome to FoodCheck! 🍎</div>
+                  <div className="text-sm text-gray-800 dark:text-gray-200">
                     Hi [User Name]! Welcome to FoodCheck! We're excited to help you make better food choices through our comprehensive analysis tools...
                   </div>
-                  <div className="mt-2 text-xs text-gray-500">
+                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     Full email includes: Welcome message, getting started guide, feature overview, and contact information.
                   </div>
                 </div>
               </div>
 
               {/* Hi Message Preview */}
-              <div className="bg-gray-50 p-6 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                  <MessageCircle className="h-5 w-5 mr-2 text-blue-600" />
+              <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
+                  <MessageCircle className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
                   Hi Message Preview
                 </h3>
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 mb-2">Subject: Hi from FoodCheck! 👋</div>
-                  <div className="text-sm text-gray-800">
+                <div className="bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg p-4">
+                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">Subject: Hi from FoodCheck! 👋</div>
+                  <div className="text-sm text-gray-800 dark:text-gray-200">
                     Hi [User Name]! Just wanted to say Hi and let you know we're thinking of you! We hope you're enjoying your FoodCheck experience...
                   </div>
-                  <div className="mt-2 text-xs text-gray-500">
+                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                     Personal greeting with encouragement, appreciation, and reminder of available features.
                   </div>
                 </div>

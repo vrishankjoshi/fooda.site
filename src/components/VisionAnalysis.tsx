@@ -93,19 +93,19 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
 
   const getGradeColor = (grade: string) => {
     switch (grade) {
-      case 'A': return 'text-green-600 bg-green-100';
-      case 'B': return 'text-blue-600 bg-blue-100';
-      case 'C': return 'text-yellow-600 bg-yellow-100';
-      case 'D': return 'text-orange-600 bg-orange-100';
-      case 'F': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'A': return 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/20';
+      case 'B': return 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/20';
+      case 'C': return 'text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/20';
+      case 'D': return 'text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/20';
+      case 'F': return 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20';
+      default: return 'text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-900/20';
     }
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600';
-    if (score >= 60) return 'text-yellow-600';
-    return 'text-red-600';
+    if (score >= 80) return 'text-green-600 dark:text-green-400';
+    if (score >= 60) return 'text-yellow-600 dark:text-yellow-400';
+    return 'text-red-600 dark:text-red-400';
   };
 
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -130,17 +130,17 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
   if (isAnalyzing && selectedFile && !analysis) {
     return (
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl max-w-md w-full p-8">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-md w-full p-8 transition-colors duration-300">
           <div className="text-center">
             <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mx-auto mb-6 flex items-center justify-center">
               <Loader2 className="h-8 w-8 text-white animate-spin" />
             </div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Analyzing Your Food</h3>
-            <p className="text-gray-600 mb-6">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Analyzing Your Food</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               Our AI is examining the nutrition label and preparing a comprehensive analysis...
             </p>
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <p className="text-sm text-blue-700">
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+              <p className="text-sm text-blue-700 dark:text-blue-300">
                 ⚡ This usually takes just a few seconds
               </p>
             </div>
@@ -152,7 +152,7 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transition-colors duration-300">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6 rounded-t-2xl">
           <div className="flex justify-between items-center">
@@ -179,14 +179,14 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
             <>
               {/* Health Info Input */}
               <div className="mb-6">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Health Information (Optional)
                 </label>
                 <textarea
                   value={userHealthInfo}
                   onChange={(e) => setUserHealthInfo(e.target.value)}
                   placeholder="Tell us about any health conditions (diabetes, allergies, heart conditions, etc.) for personalized analysis..."
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300"
                   rows={3}
                 />
               </div>
@@ -230,7 +230,7 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
               <div
                 onDrop={handleDrop}
                 onDragOver={handleDragOver}
-                className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-green-500 transition-colors"
+                className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-8 text-center hover:border-green-500 dark:hover:border-green-400 transition-colors"
               >
                 {previewUrl ? (
                   <div className="space-y-4">
@@ -270,20 +270,20 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <Upload className="h-12 w-12 text-gray-400 mx-auto" />
+                    <Upload className="h-12 w-12 text-gray-400 dark:text-gray-500 mx-auto" />
                     <div>
-                      <p className="text-lg font-medium text-gray-900">Drag and drop an image here</p>
-                      <p className="text-gray-600">Or use one of the options above</p>
+                      <p className="text-lg font-medium text-gray-900 dark:text-white">Drag and drop an image here</p>
+                      <p className="text-gray-600 dark:text-gray-400">Or use one of the options above</p>
                     </div>
                   </div>
                 )}
               </div>
 
               {error && (
-                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                   <div className="flex items-center">
-                    <AlertTriangle className="h-5 w-5 text-red-600 mr-2" />
-                    <p className="text-red-700">{error}</p>
+                    <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mr-2" />
+                    <p className="text-red-700 dark:text-red-300">{error}</p>
                   </div>
                 </div>
               )}
@@ -296,28 +296,28 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
                 <div className={`inline-flex items-center px-6 py-3 rounded-full text-2xl font-bold ${getGradeColor(analysis.overall.grade)}`}>
                   Overall Grade: {analysis.overall.grade}
                 </div>
-                <p className="text-gray-600 mt-2">{analysis.overall.summary}</p>
+                <p className="text-gray-600 dark:text-gray-300 mt-2">{analysis.overall.summary}</p>
               </div>
 
               {/* Scores */}
               <div className="grid md:grid-cols-3 gap-4">
-                <div className="bg-green-50 p-4 rounded-lg text-center">
-                  <BarChart3 className="h-8 w-8 text-green-600 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900">Nutrition</h4>
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
+                  <BarChart3 className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Nutrition</h4>
                   <p className={`text-2xl font-bold ${getScoreColor(analysis.health.score)}`}>
                     {analysis.health.score}/100
                   </p>
                 </div>
-                <div className="bg-blue-50 p-4 rounded-lg text-center">
-                  <Star className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900">Taste</h4>
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
+                  <Star className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Taste</h4>
                   <p className={`text-2xl font-bold ${getScoreColor(analysis.taste.score)}`}>
                     {analysis.taste.score}/100
                   </p>
                 </div>
-                <div className="bg-purple-50 p-4 rounded-lg text-center">
-                  <Heart className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900">Health</h4>
+                <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg text-center">
+                  <Heart className="h-8 w-8 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Health</h4>
                   <p className={`text-2xl font-bold ${getScoreColor(analysis.health.score)}`}>
                     {analysis.health.score}/100
                   </p>
@@ -327,52 +327,52 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
               {/* Detailed Analysis */}
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Nutrition Facts */}
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                    <BarChart3 className="h-5 w-5 mr-2 text-green-600" />
+                <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                    <BarChart3 className="h-5 w-5 mr-2 text-green-600 dark:text-green-400" />
                     Nutrition Facts
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>Calories:</span>
-                      <span className="font-medium">{analysis.nutrition.calories}</span>
+                      <span className="text-gray-600 dark:text-gray-300">Calories:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.calories}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Total Fat:</span>
-                      <span className="font-medium">{analysis.nutrition.totalFat}</span>
+                      <span className="text-gray-600 dark:text-gray-300">Total Fat:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.totalFat}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Sodium:</span>
-                      <span className="font-medium">{analysis.nutrition.sodium}</span>
+                      <span className="text-gray-600 dark:text-gray-300">Sodium:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.sodium}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Total Carbs:</span>
-                      <span className="font-medium">{analysis.nutrition.totalCarbohydrates}</span>
+                      <span className="text-gray-600 dark:text-gray-300">Total Carbs:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.totalCarbohydrates}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Protein:</span>
-                      <span className="font-medium">{analysis.nutrition.protein}</span>
+                      <span className="text-gray-600 dark:text-gray-300">Protein:</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.protein}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Health Warnings */}
-                <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                    <AlertTriangle className="h-5 w-5 mr-2 text-red-600" />
+                <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                    <AlertTriangle className="h-5 w-5 mr-2 text-red-600 dark:text-red-400" />
                     Health Warnings
                   </h4>
                   {analysis.health.warnings.length > 0 ? (
                     <ul className="space-y-2">
                       {analysis.health.warnings.map((warning, index) => (
-                        <li key={index} className="text-sm text-red-700 flex items-start">
-                          <span className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                        <li key={index} className="text-sm text-red-700 dark:text-red-300 flex items-start">
+                          <span className="w-2 h-2 bg-red-500 dark:bg-red-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
                           {warning}
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="text-sm text-green-700 flex items-center">
+                    <p className="text-sm text-green-700 dark:text-green-300 flex items-center">
                       <CheckCircle className="h-4 w-4 mr-2" />
                       No major health concerns identified
                     </p>
@@ -382,12 +382,12 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
 
               {/* Recommendations */}
               {analysis.health.recommendations.length > 0 && (
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">Recommendations</h4>
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recommendations</h4>
                   <ul className="space-y-2">
                     {analysis.health.recommendations.map((rec, index) => (
-                      <li key={index} className="text-sm text-blue-700 flex items-start">
-                        <CheckCircle className="h-4 w-4 text-blue-500 mt-0.5 mr-2 flex-shrink-0" />
+                      <li key={index} className="text-sm text-blue-700 dark:text-blue-300 flex items-start">
+                        <CheckCircle className="h-4 w-4 text-blue-500 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
                         {rec}
                       </li>
                     ))}
@@ -396,15 +396,15 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
               )}
 
               {/* Taste Profile */}
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
-                  <Star className="h-5 w-5 mr-2 text-yellow-600" />
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
+                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                  <Star className="h-5 w-5 mr-2 text-yellow-600 dark:text-yellow-400" />
                   Taste Profile
                 </h4>
-                <p className="text-sm text-gray-700 mb-2">{analysis.taste.description}</p>
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">{analysis.taste.description}</p>
                 <div className="flex flex-wrap gap-2">
                   {analysis.taste.profile.map((trait, index) => (
-                    <span key={index} className="bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs">
+                    <span key={index} className="bg-yellow-200 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded-full text-xs">
                       {trait}
                     </span>
                   ))}
