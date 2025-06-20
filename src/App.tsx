@@ -9,7 +9,7 @@ import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { NutritionAnalysis } from './services/visionService';
 import { emailService } from './services/emailService';
 
-type Language = 'en' | 'es' | 'fr' | 'de' | 'zh' | 'ja';
+type Language = 'en' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'hi';
 
 interface Translations {
   [key: string]: {
@@ -24,7 +24,8 @@ const translations: Translations = {
     fr: 'FoodCheck',
     de: 'FoodCheck',
     zh: '食品检查',
-    ja: 'フードチェック'
+    ja: 'フードチェック',
+    hi: 'फूडचेक'
   },
   subtitle: {
     en: 'Analyze. Understand. Choose Better.',
@@ -32,7 +33,8 @@ const translations: Translations = {
     fr: 'Analyser. Comprendre. Choisir Mieux.',
     de: 'Analysieren. Verstehen. Besser Wählen.',
     zh: '分析。理解。更好选择。',
-    ja: '分析。理解。より良い選択。'
+    ja: '分析。理解。より良い選択。',
+    hi: 'विश्लेषण। समझें। बेहतर चुनें।'
   },
   heroTitle: {
     en: 'Analyze Your Food with',
@@ -40,7 +42,8 @@ const translations: Translations = {
     fr: 'Analysez Votre Nourriture avec',
     de: 'Analysieren Sie Ihr Essen mit',
     zh: '用AI精准分析',
-    ja: 'AI精密分析で'
+    ja: 'AI精密分析で',
+    hi: 'AI की शक्ति से'
   },
   heroSubtitle: {
     en: 'AI-Powered Precision',
@@ -48,7 +51,8 @@ const translations: Translations = {
     fr: 'Précision Alimentée par IA',
     de: 'KI-gesteuerte Präzision',
     zh: '您的食物',
-    ja: '食品を分析'
+    ja: '食品を分析',
+    hi: 'अपने भोजन का विश्लेषण करें'
   },
   heroDescription: {
     en: 'Get comprehensive nutrition analysis, health warnings, and taste evaluations for any packaged food. Make informed choices with our revolutionary AI analysis system.',
@@ -56,7 +60,8 @@ const translations: Translations = {
     fr: 'Obtenez une analyse nutritionnelle complète, des avertissements de santé et des évaluations de goût pour tout aliment emballé. Prenez des décisions éclairées avec notre système d\'analyse IA révolutionnaire.',
     de: 'Erhalten Sie umfassende Nährwertanalysen, Gesundheitswarnungen und Geschmacksbewertungen für jedes verpackte Lebensmittel. Treffen Sie informierte Entscheidungen mit unserem revolutionären KI-Analysesystem.',
     zh: '获得任何包装食品的全面营养分析、健康警告和口味评估。使用我们革命性的AI分析系统做出明智选择。',
-    ja: 'あらゆる包装食品の包括的な栄養分析、健康警告、味覚評価を取得。革新的なAI分析システムで情報に基づいた選択を。'
+    ja: 'あらゆる包装食品の包括的な栄養分析、健康警告、味覚評価を取得。革新的なAI分析システムで情報に基づいた選択を。',
+    hi: 'किसी भी पैकेज्ड फूड के लिए व्यापक पोषण विश्लेषण, स्वास्थ्य चेतावनी और स्वाद मूल्यांकन प्राप्त करें। हमारी क्रांतिकारी AI विश्लेषण प्रणाली के साथ सूचित विकल्प बनाएं।'
   },
   startAnalysis: {
     en: 'Start AI Analysis',
@@ -64,7 +69,8 @@ const translations: Translations = {
     fr: 'Commencer l\'Analyse IA',
     de: 'KI-Analyse Starten',
     zh: '开始AI分析',
-    ja: 'AI分析を開始'
+    ja: 'AI分析を開始',
+    hi: 'AI विश्लेषण शुरू करें'
   },
   aiAnalysis: {
     en: 'AI Analysis',
@@ -72,7 +78,8 @@ const translations: Translations = {
     fr: 'Analyse IA',
     de: 'KI-Analyse',
     zh: 'AI分析',
-    ja: 'AI分析'
+    ja: 'AI分析',
+    hi: 'AI विश्लेषण'
   },
   chatAssistant: {
     en: 'Chat Assistant',
@@ -80,7 +87,8 @@ const translations: Translations = {
     fr: 'Assistant de Chat',
     de: 'Chat-Assistent',
     zh: '聊天助手',
-    ja: 'チャットアシスタント'
+    ja: 'チャットアシスタント',
+    hi: 'चैट सहायक'
   },
   emailAnalysis: {
     en: 'Email Analysis',
@@ -88,7 +96,8 @@ const translations: Translations = {
     fr: 'Analyse par Email',
     de: 'E-Mail-Analyse',
     zh: '邮件分析',
-    ja: 'メール分析'
+    ja: 'メール分析',
+    hi: 'ईमेल विश्लेषण'
   },
   signIn: {
     en: 'Sign In',
@@ -96,7 +105,8 @@ const translations: Translations = {
     fr: 'Se Connecter',
     de: 'Anmelden',
     zh: '登录',
-    ja: 'サインイン'
+    ja: 'サインイン',
+    hi: 'साइन इन'
   },
   signUp: {
     en: 'Sign Up',
@@ -104,7 +114,8 @@ const translations: Translations = {
     fr: 'S\'inscrire',
     de: 'Registrieren',
     zh: '注册',
-    ja: 'サインアップ'
+    ja: 'サインアップ',
+    hi: 'साइन अप'
   },
   welcomeBack: {
     en: 'Welcome back!',
@@ -112,7 +123,8 @@ const translations: Translations = {
     fr: 'Bon retour!',
     de: 'Willkommen zurück!',
     zh: '欢迎回来！',
-    ja: 'おかえりなさい！'
+    ja: 'おかえりなさい！',
+    hi: 'वापसी पर स्वागत है!'
   },
   aiVisionTitle: {
     en: 'AI Vision Analysis',
@@ -120,7 +132,8 @@ const translations: Translations = {
     fr: 'Analyse de Vision IA',
     de: 'KI-Vision-Analyse',
     zh: 'AI视觉分析',
-    ja: 'AIビジョン分析'
+    ja: 'AIビジョン分析',
+    hi: 'AI विज़न विश्लेषण'
   },
   aiVisionDesc: {
     en: 'Upload a photo of any nutrition label and get instant, comprehensive analysis powered by advanced AI vision technology.',
@@ -128,7 +141,8 @@ const translations: Translations = {
     fr: 'Téléchargez une photo de n\'importe quelle étiquette nutritionnelle et obtenez une analyse instantanée et complète alimentée par une technologie de vision IA avancée.',
     de: 'Laden Sie ein Foto eines beliebigen Nährwertetiketts hoch und erhalten Sie sofortige, umfassende Analysen mit fortschrittlicher KI-Vision-Technologie.',
     zh: '上传任何营养标签的照片，获得由先进AI视觉技术驱动的即时、全面分析。',
-    ja: '栄養ラベルの写真をアップロードして、高度なAIビジョン技術による即座で包括的な分析を取得。'
+    ja: '栄養ラベルの写真をアップロードして、高度なAIビジョン技術による即座で包括的な分析を取得。',
+    hi: 'किसी भी पोषण लेबल की फोटो अपलोड करें और उन्नत AI विज़न तकनीक द्वारा संचालित तत्काल, व्यापक विश्लेषण प्राप्त करें।'
   },
   emailAnalysisTitle: {
     en: 'Email Analysis',
@@ -136,7 +150,8 @@ const translations: Translations = {
     fr: 'Analyse par Email',
     de: 'E-Mail-Analyse',
     zh: '邮件分析',
-    ja: 'メール分析'
+    ja: 'メール分析',
+    hi: 'ईमेल विश्लेषण'
   },
   emailAnalysisDesc: {
     en: 'Send nutrition label photos via email and receive detailed analysis reports within 1-20 minutes. Perfect for detailed reviews.',
@@ -144,7 +159,8 @@ const translations: Translations = {
     fr: 'Envoyez des photos d\'étiquettes nutritionnelles par email et recevez des rapports d\'analyse détaillés en 1-20 minutes. Parfait pour des examens détaillés.',
     de: 'Senden Sie Fotos von Nährwertetiketten per E-Mail und erhalten Sie detaillierte Analyseberichte innerhalb von 1-20 Minuten. Perfekt für detaillierte Bewertungen.',
     zh: '通过电子邮件发送营养标签照片，在1-20分钟内收到详细的分析报告。非常适合详细审查。',
-    ja: '栄養ラベルの写真をメールで送信し、1-20分以内に詳細な分析レポートを受け取ります。詳細なレビューに最適。'
+    ja: '栄养ラベルの写真をメールで送信し、1-20分以内に詳細な分析レポートを受け取ります。詳細なレビューに最適。',
+    hi: 'ईमेल के माध्यम से पोषण लेबल की फोटो भेजें और 1-20 मिनट के भीतर विस्तृत विश्लेषण रिपोर्ट प्राप्त करें। विस्तृत समीक्षा के लिए बिल्कुल सही।'
   },
   chatAssistantTitle: {
     en: 'AI Chat Assistant',
@@ -152,7 +168,8 @@ const translations: Translations = {
     fr: 'Assistant de Chat IA',
     de: 'KI-Chat-Assistent',
     zh: 'AI聊天助手',
-    ja: 'AIチャットアシスタント'
+    ja: 'AIチャットアシスタント',
+    hi: 'AI चैट सहायक'
   },
   chatAssistantDesc: {
     en: 'Ask questions about nutrition, health conditions, and food choices. Get personalized advice from our AI nutritionist.',
@@ -160,7 +177,8 @@ const translations: Translations = {
     fr: 'Posez des questions sur la nutrition, les conditions de santé et les choix alimentaires. Obtenez des conseils personnalisés de notre nutritionniste IA.',
     de: 'Stellen Sie Fragen zu Ernährung, Gesundheitszuständen und Lebensmittelwahlen. Erhalten Sie personalisierte Beratung von unserem KI-Ernährungsberater.',
     zh: '询问有关营养、健康状况和食物选择的问题。从我们的AI营养师那里获得个性化建议。',
-    ja: '栄養、健康状態、食品選択について質問してください。AIの栄養士から個人的なアドバイスを受けましょう。'
+    ja: '栄養、健康状態、食品選択について質問してください。AIの栄養士から個人的なアドバイスを受けましょう。',
+    hi: 'पोषण, स्वास्थ्य स्थितियों और भोजन विकल्पों के बारे में प्रश्न पूछें। हमारे AI पोषण विशेषज्ञ से व्यक्तिगत सलाह प्राप्त करें।'
   },
   tryAiAnalysis: {
     en: 'Try AI Analysis',
@@ -168,7 +186,8 @@ const translations: Translations = {
     fr: 'Essayer l\'Analyse IA',
     de: 'KI-Analyse Testen',
     zh: '尝试AI分析',
-    ja: 'AI分析を試す'
+    ja: 'AI分析を試す',
+    hi: 'AI विश्लेषण आज़माएं'
   },
   sendEmail: {
     en: 'Send Email',
@@ -176,7 +195,8 @@ const translations: Translations = {
     fr: 'Envoyer Email',
     de: 'E-Mail Senden',
     zh: '发送邮件',
-    ja: 'メール送信'
+    ja: 'メール送信',
+    hi: 'ईमेल भेजें'
   },
   startChatting: {
     en: 'Start Chatting',
@@ -184,7 +204,8 @@ const translations: Translations = {
     fr: 'Commencer à Chatter',
     de: 'Chat Starten',
     zh: '开始聊天',
-    ja: 'チャット開始'
+    ja: 'チャット開始',
+    hi: 'चैट शुरू करें'
   },
   howItWorks: {
     en: 'How FoodCheck Works',
@@ -192,7 +213,8 @@ const translations: Translations = {
     fr: 'Comment FoodCheck Fonctionne',
     de: 'Wie FoodCheck Funktioniert',
     zh: 'FoodCheck如何工作',
-    ja: 'FoodCheckの仕組み'
+    ja: 'FoodCheckの仕組み',
+    hi: 'FoodCheck कैसे काम करता है'
   },
   step1Title: {
     en: 'Upload or Email',
@@ -200,7 +222,8 @@ const translations: Translations = {
     fr: 'Télécharger ou Envoyer Email',
     de: 'Hochladen oder E-Mail',
     zh: '上传或发邮件',
-    ja: 'アップロードまたはメール'
+    ja: 'アップロードまたはメール',
+    hi: 'अपलोड या ईमेल'
   },
   step1Desc: {
     en: 'Take a photo of the nutrition label or send it via email',
@@ -208,7 +231,8 @@ const translations: Translations = {
     fr: 'Prenez une photo de l\'étiquette nutritionnelle ou envoyez-la par email',
     de: 'Machen Sie ein Foto des Nährwertetiketts oder senden Sie es per E-Mail',
     zh: '拍摄营养标签照片或通过电子邮件发送',
-    ja: '栄養ラベルの写真を撮るかメールで送信'
+    ja: '栄養ラベルの写真を撮るかメールで送信',
+    hi: 'पोषण लेबल की फोटो लें या ईमेल के माध्यम से भेजें'
   },
   step2Title: {
     en: 'AI Analysis',
@@ -216,7 +240,8 @@ const translations: Translations = {
     fr: 'Analyse IA',
     de: 'KI-Analyse',
     zh: 'AI分析',
-    ja: 'AI分析'
+    ja: 'AI分析',
+    hi: 'AI विश्लेषण'
   },
   step2Desc: {
     en: 'Our advanced AI analyzes nutrition, health impact, and taste',
@@ -224,7 +249,8 @@ const translations: Translations = {
     fr: 'Notre IA avancée analyse la nutrition, l\'impact sur la santé et le goût',
     de: 'Unsere fortschrittliche KI analysiert Ernährung, Gesundheitsauswirkungen und Geschmack',
     zh: '我们的先进AI分析营养、健康影响和口味',
-    ja: '高度なAIが栄養、健康への影響、味を分析'
+    ja: '高度なAIが栄養、健康への影響、味を分析',
+    hi: 'हमारी उन्नत AI पोषण, स्वास्थ्य प्रभाव और स्वाद का विश्लेषण करती है'
   },
   step3Title: {
     en: 'Get Results',
@@ -232,7 +258,8 @@ const translations: Translations = {
     fr: 'Obtenir les Résultats',
     de: 'Ergebnisse Erhalten',
     zh: '获得结果',
-    ja: '結果を取得'
+    ja: '結果を取得',
+    hi: 'परिणाम प्राप्त करें'
   },
   step3Desc: {
     en: 'Receive comprehensive analysis with personalized recommendations',
@@ -240,7 +267,8 @@ const translations: Translations = {
     fr: 'Recevez une analyse complète avec des recommandations personnalisées',
     de: 'Erhalten Sie umfassende Analysen mit personalisierten Empfehlungen',
     zh: '获得包含个性化建议的综合分析',
-    ja: '個人的な推奨事項を含む包括的な分析を受け取る'
+    ja: '個人的な推奨事項を含む包括的な分析を受け取る',
+    hi: 'व्यक्तिगत सिफारिशों के साथ व्यापक विश्लेषण प्राप्त करें'
   },
   contactUs: {
     en: 'Contact Us',
@@ -248,7 +276,8 @@ const translations: Translations = {
     fr: 'Nous Contacter',
     de: 'Kontaktieren Sie Uns',
     zh: '联系我们',
-    ja: 'お問い合わせ'
+    ja: 'お問い合わせ',
+    hi: 'संपर्क करें'
   },
   footerDesc: {
     en: 'Empowering better food choices through comprehensive AI analysis',
@@ -256,7 +285,8 @@ const translations: Translations = {
     fr: 'Autonomiser de meilleurs choix alimentaires grâce à une analyse IA complète',
     de: 'Bessere Lebensmittelentscheidungen durch umfassende KI-Analyse ermöglichen',
     zh: '通过全面的AI分析赋能更好的食物选择',
-    ja: '包括的なAI分析を通じてより良い食品選択を支援'
+    ja: '包括的なAI分析を通じてより良い食品選択を支援',
+    hi: 'व्यापक AI विश्लेषण के माध्यम से बेहतर भोजन विकल्पों को सशक्त बनाना'
   },
   nonProfit: {
     en: 'Non-profit initiative',
@@ -264,7 +294,8 @@ const translations: Translations = {
     fr: 'Initiative à but non lucratif',
     de: 'Gemeinnützige Initiative',
     zh: '非营利倡议',
-    ja: '非営利イニシアチブ'
+    ja: '非営利イニシアチブ',
+    hi: 'गैर-लाभकारी पहल'
   },
   madeWithLove: {
     en: 'Made with ❤️ for healthier eating',
@@ -272,7 +303,8 @@ const translations: Translations = {
     fr: 'Fait avec ❤️ pour une alimentation plus saine',
     de: 'Mit ❤️ für gesündere Ernährung gemacht',
     zh: '用❤️为更健康的饮食而制作',
-    ja: 'より健康的な食事のために❤️で作られました'
+    ja: 'より健康的な食事のために❤️で作られました',
+    hi: 'स्वस्थ भोजन के लिए ❤️ से बनाया गया'
   }
 };
 
@@ -304,7 +336,7 @@ function App() {
 
     // Initialize language from localStorage
     const savedLanguage = localStorage.getItem('foodcheck_language') as Language;
-    if (savedLanguage && ['en', 'es', 'fr', 'de', 'zh', 'ja'].includes(savedLanguage)) {
+    if (savedLanguage && ['en', 'es', 'fr', 'de', 'zh', 'ja', 'hi'].includes(savedLanguage)) {
       setLanguage(savedLanguage);
     }
   }, []);
@@ -338,7 +370,8 @@ function App() {
     { code: 'fr' as Language, name: 'Français', flag: '🇫🇷' },
     { code: 'de' as Language, name: 'Deutsch', flag: '🇩🇪' },
     { code: 'zh' as Language, name: '中文', flag: '🇨🇳' },
-    { code: 'ja' as Language, name: '日本語', flag: '🇯🇵' }
+    { code: 'ja' as Language, name: '日本語', flag: '🇯🇵' },
+    { code: 'hi' as Language, name: 'हिन्दी', flag: '🇮🇳' }
   ];
 
   const handleAuthSuccess = async (userData: { email: string; name: string }) => {
