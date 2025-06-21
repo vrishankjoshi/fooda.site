@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
@@ -207,6 +207,15 @@ const translations: Translations = {
     ja: 'チャット開始',
     hi: 'चैट शुरू करें'
   },
+  startFullscreenChat: {
+    en: 'Full Screen Chat',
+    es: 'Chat Pantalla Completa',
+    fr: 'Chat Plein Écran',
+    de: 'Vollbild-Chat',
+    zh: '全屏聊天',
+    ja: 'フルスクリーンチャット',
+    hi: 'फुल स्क्रीन चैट'
+  },
   vishScoreTitle: {
     en: 'Introducing Vish Score',
     es: 'Presentamos Vish Score',
@@ -368,6 +377,7 @@ function App() {
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showChatbot, setShowChatbot] = useState(false);
+  const [isFullscreenChat, setIsFullscreenChat] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [currentMessage, setCurrentMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -493,6 +503,21 @@ Want to analyze another food or have questions about these results?`;
     }
   };
 
+  const openRegularChat = () => {
+    setIsFullscreenChat(false);
+    setShowChatbot(true);
+  };
+
+  const openFullscreenChat = () => {
+    setIsFullscreenChat(true);
+    setShowChatbot(true);
+  };
+
+  const closeChatbot = () => {
+    setShowChatbot(false);
+    setIsFullscreenChat(false);
+  };
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-green-50 via-blue-50 to-purple-50'}`}>
       {/* Header */}
@@ -568,7 +593,7 @@ Want to analyze another food or have questions about these results?`;
                 {t('aiAnalysis')}
               </button>
               <button 
-                onClick={() => setShowChatbot(true)}
+                onClick={openRegularChat}
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
               >
                 {t('chatAssistant')}
@@ -711,12 +736,25 @@ Want to analyze another food or have questions about these results?`;
             <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
               {t('chatAssistantDesc')}
             </p>
-            <button
-              onClick={() => setShowChatbot(true)}
-              className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full"
-            >
-              {t('startChatting')}
-            </button>
+            
+            {/* Chat Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={openRegularChat}
+                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
+              >
+                <MessageCircle className="h-5 w-5 mr-2" />
+                {t('startChatting')}
+              </button>
+              
+              <button
+                onClick={openFullscreenChat}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
+              >
+                <Maximize className="h-5 w-5 mr-2" />
+                {t('startFullscreenChat')}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -896,10 +934,10 @@ Want to analyze another food or have questions about these results?`;
 
       {/* Chatbot */}
       {showChatbot && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-2xl w-full max-h-[80vh] flex flex-col transition-colors duration-300">
+        <div className={`fixed ${isFullscreenChat ? 'inset-0' : 'inset-0 flex items-center justify-center p-4'} bg-black bg-opacity-50 z-50`}>
+          <div className={`bg-white dark:bg-gray-800 ${isFullscreenChat ? 'w-full h-full' : 'rounded-2xl max-w-2xl w-full max-h-[80vh]'} flex flex-col transition-colors duration-300`}>
             {/* Chat Header */}
-            <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-6 rounded-t-2xl">
+            <div className={`bg-gradient-to-r from-blue-500 to-purple-500 p-6 ${isFullscreenChat ? '' : 'rounded-t-2xl'}`}>
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-3">
                   <div className="bg-white p-2 rounded-full">
@@ -910,12 +948,28 @@ Want to analyze another food or have questions about these results?`;
                     <p className="text-blue-100">Ask me anything about food, nutrition, and Vish Score!</p>
                   </div>
                 </div>
-                <button 
-                  onClick={() => setShowChatbot(false)}
-                  className="text-white hover:text-gray-200 transition-colors"
-                >
-                  ×
-                </button>
+                <div className="flex items-center space-x-2">
+                  {/* Toggle fullscreen button */}
+                  <button 
+                    onClick={() => setIsFullscreenChat(!isFullscreenChat)}
+                    className="text-white hover:text-gray-200 transition-colors p-1"
+                    title={isFullscreenChat ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                  >
+                    {isFullscreenChat ? (
+                      <Minimize className="h-5 w-5" />
+                    ) : (
+                      <Maximize className="h-5 w-5" />
+                    )}
+                  </button>
+                  
+                  {/* Close button */}
+                  <button 
+                    onClick={closeChatbot}
+                    className="text-white hover:text-gray-200 transition-colors text-2xl leading-none"
+                  >
+                    ×
+                  </button>
+                </div>
               </div>
             </div>
 
