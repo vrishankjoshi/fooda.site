@@ -962,17 +962,21 @@ Want to analyze another food or have questions about these results?`;
                     <p className="text-blue-100">Ask me anything about food, nutrition, and Vish Score!</p>
                   </div>
                 </div>
+                
+                {/* Header Controls */}
                 <div className="flex items-center space-x-2">
-                  {/* Back to Home button (only in fullscreen) */}
+                  {/* Back to Home button (only in fullscreen) - CENTERED */}
                   {isFullscreenChat && (
-                    <button 
-                      onClick={backToHome}
-                      className="text-white hover:text-gray-200 transition-colors p-2 rounded-lg hover:bg-white/10 flex items-center space-x-1"
-                      title={t('backToHome')}
-                    >
-                      <Home className="h-5 w-5" />
-                      <span className="text-sm font-medium">{t('backToHome')}</span>
-                    </button>
+                    <div className="absolute left-1/2 transform -translate-x-1/2">
+                      <button 
+                        onClick={backToHome}
+                        className="text-white hover:text-gray-200 transition-colors p-3 rounded-lg hover:bg-white/10 flex items-center space-x-2 bg-white/5 border border-white/20"
+                        title={t('backToHome')}
+                      >
+                        <Home className="h-5 w-5" />
+                        <span className="text-sm font-medium">{t('backToHome')}</span>
+                      </button>
+                    </div>
                   )}
                   
                   {/* Toggle fullscreen button */}
