@@ -72,14 +72,14 @@ const translations: Translations = {
     ja: 'AI分析を開始',
     hi: 'AI विश्लेषण शुरू करें'
   },
-  getVishScore: {
-    en: 'Get Your Vish Score',
-    es: 'Obtén tu Vish Score',
-    fr: 'Obtenez votre Vish Score',
-    de: 'Holen Sie sich Ihren Vish Score',
-    zh: '获取您的Vish Score',
-    ja: 'Vish Scoreを取得',
-    hi: 'अपना Vish Score प्राप्त करें'
+  emailAnalysisBtn: {
+    en: 'Email Analysis',
+    es: 'Análisis por Email',
+    fr: 'Analyse par Email',
+    de: 'E-Mail-Analyse',
+    zh: '邮件分析',
+    ja: 'メール分析',
+    hi: 'ईमेल विश्लेषण'
   },
   aiAnalysis: {
     en: 'AI Analysis',
@@ -685,10 +685,10 @@ Thank you!`);
             </button>
             <button
               onClick={handleSendToEmail}
-              className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center"
+              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-300 dark:border-gray-600 px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center"
             >
-              <Award className="h-6 w-6 mr-3" />
-              {t('getVishScore')}
+              <Mail className="h-6 w-6 mr-3" />
+              {t('emailAnalysisBtn')}
             </button>
           </div>
 
@@ -805,12 +805,9 @@ Thank you!`);
               </div>
             </div>
 
-            <button
-              onClick={handleSendToEmail}
-              className="bg-white text-orange-600 px-8 py-4 rounded-full text-lg font-bold hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-            >
-              {t('getVishScore')}
-            </button>
+            <p className="text-lg opacity-90 mb-6">
+              Send your nutrition label photos to <strong>vrishankjo@gmail.com</strong> to experience the revolutionary Vish Score analysis!
+            </p>
           </div>
         </div>
 
@@ -880,13 +877,12 @@ Thank you!`);
           </div>
 
           <div className="text-center mt-8">
-            <button
-              onClick={handleSendToEmail}
-              className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center mx-auto"
-            >
-              <Award className="h-6 w-6 mr-3" />
-              Experience Vish Score Now
-            </button>
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
+              Ready to experience the future of food analysis? Send your nutrition label photos to:
+            </p>
+            <div className="bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/20 dark:to-blue-900/20 p-4 rounded-lg inline-block">
+              <p className="text-xl font-bold text-gray-900 dark:text-white">vrishankjo@gmail.com</p>
+            </div>
           </div>
         </div>
       </main>
