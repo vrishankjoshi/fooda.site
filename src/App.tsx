@@ -72,14 +72,14 @@ const translations: Translations = {
     ja: 'AI分析を開始',
     hi: 'AI विश्लेषण शुरू करें'
   },
-  emailAnalysisBtn: {
-    en: 'Email Analysis',
-    es: 'Análisis por Email',
-    fr: 'Analyse par Email',
-    de: 'E-Mail-Analyse',
-    zh: '邮件分析',
-    ja: 'メール分析',
-    hi: 'ईमेल विश्लेषण'
+  emailAnalysisText: {
+    en: 'Or email your nutrition labels to:',
+    es: 'O envía tus etiquetas nutricionales a:',
+    fr: 'Ou envoyez vos étiquettes nutritionnelles à:',
+    de: 'Oder senden Sie Ihre Nährwertetiketten an:',
+    zh: '或将您的营养标签发送至：',
+    ja: '栄養ラベルをメールで送信：',
+    hi: 'या अपने पोषण लेबल ईमेल करें:'
   },
   aiAnalysis: {
     en: 'AI Analysis',
@@ -197,15 +197,6 @@ const translations: Translations = {
     zh: '尝试AI分析',
     ja: 'AI分析を試す',
     hi: 'AI विश्लेषण आज़माएं'
-  },
-  sendEmail: {
-    en: 'Send Email',
-    es: 'Enviar Email',
-    fr: 'Envoyer Email',
-    de: 'E-Mail Senden',
-    zh: '发送邮件',
-    ja: 'メール送信',
-    hi: 'ईमेल भेजें'
   },
   startChatting: {
     en: 'Start Chatting',
@@ -502,24 +493,6 @@ Want to analyze another food or have questions about these results?`;
     }
   };
 
-  const handleSendToEmail = () => {
-    const subject = encodeURIComponent('Food Analysis Request - Nutrition Label');
-    const body = encodeURIComponent(`Hi FoodCheck Team,
-
-I would like to request a food analysis. I will attach a clear photo of the nutrition label.
-
-Please provide a comprehensive analysis including:
-- Nutrition breakdown
-- Health assessment  
-- Taste evaluation
-- Vish Score calculation
-
-Thank you!`);
-    
-    const mailtoLink = `mailto:vrishankjo@gmail.com?subject=${subject}&body=${body}`;
-    window.open(mailtoLink, '_blank');
-  };
-
   return (
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-green-50 via-blue-50 to-purple-50'}`}>
       {/* Header */}
@@ -600,12 +573,6 @@ Thank you!`);
               >
                 {t('chatAssistant')}
               </button>
-              <button 
-                onClick={handleSendToEmail}
-                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium"
-              >
-                {t('emailAnalysis')}
-              </button>
             </nav>
 
             {/* User Actions */}
@@ -675,7 +642,7 @@ Thank you!`);
           </p>
           
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <button
               onClick={() => setShowVisionAnalysis(true)}
               className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center"
@@ -683,13 +650,20 @@ Thank you!`);
               <Camera className="h-6 w-6 mr-3" />
               {t('startAnalysis')}
             </button>
-            <button
-              onClick={handleSendToEmail}
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-300 dark:border-gray-600 px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center"
-            >
-              <Mail className="h-6 w-6 mr-3" />
-              {t('emailAnalysisBtn')}
-            </button>
+          </div>
+
+          {/* Email Information */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-2xl mb-12 border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-center mb-4">
+              <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400 mr-3" />
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{t('emailAnalysisText')}</h3>
+            </div>
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg inline-block border-2 border-blue-300 dark:border-blue-600">
+              <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 font-mono">vrishankjo@gmail.com</p>
+            </div>
+            <p className="text-gray-600 dark:text-gray-300 mt-4 max-w-2xl mx-auto">
+              Send clear photos of nutrition labels and receive comprehensive Vish Score analysis within 1-20 minutes. Include any health conditions for personalized recommendations.
+            </p>
           </div>
 
           {/* Trust Indicators */}
@@ -710,7 +684,7 @@ Thank you!`);
         </div>
 
         {/* Features Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* AI Vision Analysis */}
           <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700">
             <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
@@ -725,23 +699,6 @@ Thank you!`);
               className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full"
             >
               {t('tryAiAnalysis')}
-            </button>
-          </div>
-
-          {/* Email Analysis */}
-          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
-              <Mail className="h-8 w-8 text-white" />
-            </div>
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('emailAnalysisTitle')}</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-              {t('emailAnalysisDesc')}
-            </p>
-            <button
-              onClick={handleSendToEmail}
-              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full"
-            >
-              {t('sendEmail')}
             </button>
           </div>
 
