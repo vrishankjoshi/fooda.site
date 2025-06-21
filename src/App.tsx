@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
@@ -55,13 +55,13 @@ const translations: Translations = {
     hi: 'अपने भोजन का विश्लेषण करें'
   },
   heroDescription: {
-    en: 'Get comprehensive nutrition analysis, health warnings, and taste evaluations for any packaged food. Make informed choices with our revolutionary AI analysis system.',
-    es: 'Obtenga análisis nutricional integral, advertencias de salud y evaluaciones de sabor para cualquier alimento empaquetado. Tome decisiones informadas con nuestro revolucionario sistema de análisis de IA.',
-    fr: 'Obtenez une analyse nutritionnelle complète, des avertissements de santé et des évaluations de goût pour tout aliment emballé. Prenez des décisions éclairées avec notre système d\'analyse IA révolutionnaire.',
-    de: 'Erhalten Sie umfassende Nährwertanalysen, Gesundheitswarnungen und Geschmacksbewertungen für jedes verpackte Lebensmittel. Treffen Sie informierte Entscheidungen mit unserem revolutionären KI-Analysesystem.',
-    zh: '获得任何包装食品的全面营养分析、健康警告和口味评估。使用我们革命性的AI分析系统做出明智选择。',
-    ja: 'あらゆる包装食品の包括的な栄養分析、健康警告、味覚評価を取得。革新的なAI分析システムで情報に基づいた選択を。',
-    hi: 'किसी भी पैकेज्ड फूड के लिए व्यापक पोषण विश्लेषण, स्वास्थ्य चेतावनी और स्वाद मूल्यांकन प्राप्त करें। हमारी क्रांतिकारी AI विश्लेषण प्रणाली के साथ सूचित विकल्प बनाएं।'
+    en: 'Get comprehensive nutrition analysis, health warnings, and taste evaluations for any packaged food. Make informed choices with our revolutionary Vish Score system.',
+    es: 'Obtenga análisis nutricional integral, advertencias de salud y evaluaciones de sabor para cualquier alimento empaquetado. Tome decisiones informadas con nuestro revolucionario sistema Vish Score.',
+    fr: 'Obtenez une analyse nutritionnelle complète, des avertissements de santé et des évaluations de goût pour tout aliment emballé. Prenez des décisions éclairées avec notre système révolutionnaire Vish Score.',
+    de: 'Erhalten Sie umfassende Nährwertanalysen, Gesundheitswarnungen und Geschmacksbewertungen für jedes verpackte Lebensmittel. Treffen Sie informierte Entscheidungen mit unserem revolutionären Vish Score System.',
+    zh: '获得任何包装食品的全面营养分析、健康警告和口味评估。使用我们革命性的Vish Score系统做出明智选择。',
+    ja: 'あらゆる包装食品の包括的な栄養分析、健康警告、味覚評価を取得。革新的なVish Scoreシステムで情報に基づいた選択を。',
+    hi: 'किसी भी पैकेज्ड फूड के लिए व्यापक पोषण विश्लेषण, स्वास्थ्य चेतावनी और स्वाद मूल्यांकन प्राप्त करें। हमारी क्रांतिकारी Vish Score प्रणाली के साथ सूचित विकल्प बनाएं।'
   },
   startAnalysis: {
     en: 'Start AI Analysis',
@@ -71,6 +71,15 @@ const translations: Translations = {
     zh: '开始AI分析',
     ja: 'AI分析を開始',
     hi: 'AI विश्लेषण शुरू करें'
+  },
+  getVishScore: {
+    en: 'Get Your Vish Score',
+    es: 'Obtén tu Vish Score',
+    fr: 'Obtenez votre Vish Score',
+    de: 'Holen Sie sich Ihren Vish Score',
+    zh: '获取您的Vish Score',
+    ja: 'Vish Scoreを取得',
+    hi: 'अपना Vish Score प्राप्त करें'
   },
   aiAnalysis: {
     en: 'AI Analysis',
@@ -206,6 +215,60 @@ const translations: Translations = {
     zh: '开始聊天',
     ja: 'チャット開始',
     hi: 'चैट शुरू करें'
+  },
+  vishScoreTitle: {
+    en: 'Introducing Vish Score',
+    es: 'Presentamos Vish Score',
+    fr: 'Présentation du Vish Score',
+    de: 'Einführung des Vish Score',
+    zh: '介绍Vish Score',
+    ja: 'Vish Scoreのご紹介',
+    hi: 'Vish Score का परिचय'
+  },
+  vishScoreSubtitle: {
+    en: 'The world\'s first comprehensive scoring system that evaluates both nutrition AND taste quality in one revolutionary score.',
+    es: 'El primer sistema de puntuación integral del mundo que evalúa tanto la nutrición COMO la calidad del sabor en una puntuación revolucionaria.',
+    fr: 'Le premier système de notation complet au monde qui évalue à la fois la nutrition ET la qualité gustative en un score révolutionnaire.',
+    de: 'Das weltweit erste umfassende Bewertungssystem, das sowohl Ernährung ALS AUCH Geschmacksqualität in einem revolutionären Score bewertet.',
+    zh: '世界上第一个综合评分系统，在一个革命性的分数中同时评估营养和口味质量。',
+    ja: '栄養と味の品質の両方を一つの革新的なスコアで評価する世界初の包括的スコアリングシステム。',
+    hi: 'दुनिया की पहली व्यापक स्कोरिंग प्रणाली जो एक क्रांतिकारी स्कोर में पोषण और स्वाद की गुणवत्ता दोनों का मूल्यांकन करती है।'
+  },
+  nutritionAnalysisTitle: {
+    en: 'Nutrition Analysis',
+    es: 'Análisis Nutricional',
+    fr: 'Analyse Nutritionnelle',
+    de: 'Ernährungsanalyse',
+    zh: '营养分析',
+    ja: '栄養分析',
+    hi: 'पोषण विश्लेषण'
+  },
+  nutritionAnalysisDesc: {
+    en: 'Complete health impact assessment with personalized warnings',
+    es: 'Evaluación completa del impacto en la salud con advertencias personalizadas',
+    fr: 'Évaluation complète de l\'impact sur la santé avec des avertissements personnalisés',
+    de: 'Vollständige Gesundheitsauswirkungsbewertung mit personalisierten Warnungen',
+    zh: '完整的健康影响评估和个性化警告',
+    ja: '個人化された警告を含む完全な健康影響評価',
+    hi: 'व्यक्तिगत चेतावनियों के साथ पूर्ण स्वास्थ्य प्रभाव मूल्यांकन'
+  },
+  tasteEvaluationTitle: {
+    en: 'Taste Evaluation',
+    es: 'Evaluación del Sabor',
+    fr: 'Évaluation du Goût',
+    de: 'Geschmacksbewertung',
+    zh: '口味评估',
+    ja: '味覚評価',
+    hi: 'स्वाद मूल्यांकन'
+  },
+  tasteEvaluationDesc: {
+    en: 'Advanced flavor profiling and sensory analysis',
+    es: 'Perfilado avanzado de sabores y análisis sensorial',
+    fr: 'Profilage de saveur avancé et analyse sensorielle',
+    de: 'Erweiterte Geschmacksprofilierung und Sensorikanalyse',
+    zh: '先进的风味分析和感官分析',
+    ja: '高度な風味プロファイリングと感覚分析',
+    hi: 'उन्नत स्वाद प्रोफाइलिंग और संवेदी विश्लेषण'
   },
   howItWorks: {
     en: 'How FoodCheck Works',
@@ -449,6 +512,7 @@ Please provide a comprehensive analysis including:
 - Nutrition breakdown
 - Health assessment  
 - Taste evaluation
+- Vish Score calculation
 
 Thank you!`);
     
@@ -621,10 +685,10 @@ Thank you!`);
             </button>
             <button
               onClick={handleSendToEmail}
-              className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-300 dark:border-gray-600 px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center"
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center"
             >
-              <Mail className="h-6 w-6 mr-3" />
-              {t('sendEmail')}
+              <Award className="h-6 w-6 mr-3" />
+              {t('getVishScore')}
             </button>
           </div>
 
@@ -639,8 +703,8 @@ Thank you!`);
               <span>Health-Focused</span>
             </div>
             <div className="flex items-center">
-              <BarChart3 className="h-5 w-5 text-blue-500 mr-2" />
-              <span>Comprehensive Scoring</span>
+              <Award className="h-5 w-5 text-purple-500 mr-2" />
+              <span>Vish Score System</span>
             </div>
           </div>
         </div>
@@ -699,6 +763,57 @@ Thank you!`);
           </div>
         </div>
 
+        {/* Vish Score Section */}
+        <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl p-8 md:p-12 text-white mb-16 shadow-2xl">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+              <Award className="h-10 w-10 text-white" />
+            </div>
+            <h3 className="text-4xl md:text-5xl font-bold mb-6">{t('vishScoreTitle')}</h3>
+            <p className="text-xl md:text-2xl mb-8 leading-relaxed opacity-95">
+              {t('vishScoreSubtitle')}
+            </p>
+            <div className="grid md:grid-cols-2 gap-8 mb-8">
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                <BarChart3 className="h-8 w-8 mb-4 mx-auto" />
+                <h4 className="text-xl font-bold mb-2">{t('nutritionAnalysisTitle')}</h4>
+                <p className="opacity-90">{t('nutritionAnalysisDesc')}</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                <Heart className="h-8 w-8 mb-4 mx-auto" />
+                <h4 className="text-xl font-bold mb-2">{t('tasteEvaluationTitle')}</h4>
+                <p className="opacity-90">{t('tasteEvaluationDesc')}</p>
+              </div>
+            </div>
+
+            {/* Vish Score Features */}
+            <div className="grid md:grid-cols-3 gap-6 mb-8">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                <Zap className="h-6 w-6 mb-2 mx-auto" />
+                <h5 className="font-bold mb-1">Instant Analysis</h5>
+                <p className="text-sm opacity-90">Results in 1-20 minutes</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                <Target className="h-6 w-6 mb-2 mx-auto" />
+                <h5 className="font-bold mb-1">Dual Scoring</h5>
+                <p className="text-sm opacity-90">Nutrition + Taste combined</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
+                <Star className="h-6 w-6 mb-2 mx-auto" />
+                <h5 className="font-bold mb-1">Personalized</h5>
+                <p className="text-sm opacity-90">Based on your health needs</p>
+              </div>
+            </div>
+
+            <button
+              onClick={handleSendToEmail}
+              className="bg-white text-orange-600 px-8 py-4 rounded-full text-lg font-bold hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+            >
+              {t('getVishScore')}
+            </button>
+          </div>
+        </div>
+
         {/* How It Works */}
         <div className="text-center mb-16">
           <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-12">{t('howItWorks')}</h3>
@@ -718,6 +833,60 @@ Thank you!`);
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step3Title')}</h4>
               <p className="text-gray-600 dark:text-gray-300">{t('step3Desc')}</p>
             </div>
+          </div>
+        </div>
+
+        {/* What Makes Vish Score Special */}
+        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-8 md:p-12 mb-16 border border-gray-200 dark:border-gray-700">
+          <div className="text-center mb-12">
+            <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">What Makes Vish Score Revolutionary?</h3>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view of your food.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="text-center p-6 bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl">
+              <div className="bg-green-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-white" />
+              </div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Nutrition Deep Dive</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Complete macro and micronutrient analysis with health impact assessment</p>
+            </div>
+
+            <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl">
+              <div className="bg-purple-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <Heart className="h-6 w-6 text-white" />
+              </div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Taste Science</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Advanced flavor profiling using sensory analysis and consumer preference data</p>
+            </div>
+
+            <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl">
+              <div className="bg-yellow-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <Target className="h-6 w-6 text-white" />
+              </div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Personalized Warnings</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Custom health alerts based on your specific conditions and dietary needs</p>
+            </div>
+
+            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl">
+              <div className="bg-blue-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <Award className="h-6 w-6 text-white" />
+              </div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Unified Score</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Single comprehensive rating that balances health benefits with taste satisfaction</p>
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <button
+              onClick={handleSendToEmail}
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center mx-auto"
+            >
+              <Award className="h-6 w-6 mr-3" />
+              Experience Vish Score Now
+            </button>
           </div>
         </div>
       </main>
@@ -785,7 +954,7 @@ Thank you!`);
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white">AI Nutrition Assistant</h3>
-                    <p className="text-blue-100">Ask me anything about food and nutrition!</p>
+                    <p className="text-blue-100">Ask me anything about food, nutrition, and Vish Score!</p>
                   </div>
                 </div>
                 <button 
@@ -803,13 +972,16 @@ Thank you!`);
                 <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                   <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p className="text-lg font-medium mb-2">Welcome to FoodCheck AI!</p>
-                  <p className="text-sm">Ask me about nutrition, health conditions, or food analysis.</p>
+                  <p className="text-sm">Ask me about nutrition, health conditions, or our revolutionary Vish Score system.</p>
                   <div className="mt-4 space-y-2 text-xs">
                     <p className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg inline-block">
                       "What is the Vish Score?"
                     </p>
                     <p className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg inline-block">
-                      "How do I analyze food for diabetes?"
+                      "How does taste analysis work?"
+                    </p>
+                    <p className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg inline-block">
+                      "Analyze food for diabetes"
                     </p>
                   </div>
                 </div>
@@ -848,7 +1020,7 @@ Thank you!`);
                   value={currentMessage}
                   onChange={(e) => setCurrentMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about nutrition, health, or food analysis..."
+                  placeholder="Ask about nutrition, health, Vish Score, or food analysis..."
                   className="flex-1 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300"
                   disabled={isTyping}
                 />
