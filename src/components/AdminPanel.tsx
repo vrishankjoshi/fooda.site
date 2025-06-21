@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Users, Calendar, TrendingUp, Send, CheckCircle, AlertTriangle, Download, Heart, MessageCircle } from 'lucide-react';
+import { X, Users, Calendar, TrendingUp, Download, Heart, MessageCircle } from 'lucide-react';
 import { emailService, UserRegistration } from '../services/emailService';
 
 interface AdminPanelProps {
@@ -16,10 +16,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     thisMonth: 0,
     emails: [] as string[]
   });
-  const [isSendingEmails, setIsSendingEmails] = useState(false);
-  const [isSendingHi, setIsSendingHi] = useState(false);
-  const [emailStatus, setEmailStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
-  const [hiStatus, setHiStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [selectedUsers, setSelectedUsers] = useState<string[]>([]);
 
   useEffect(() => {
@@ -33,40 +29,6 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
     const userStats = emailService.getUserStats();
     setUsers(allUsers);
     setStats(userStats);
-  };
-
-  const handleSendWelcomeEmails = async () => {
-    setIsSendingEmails(true);
-    setEmailStatus('sending');
-    
-    try {
-      await emailService.sendWelcomeEmailToAll();
-      setEmailStatus('success');
-      setTimeout(() => setEmailStatus('idle'), 3000);
-    } catch (error) {
-      console.error('Error sending emails:', error);
-      setEmailStatus('error');
-      setTimeout(() => setEmailStatus('idle'), 3000);
-    } finally {
-      setIsSendingEmails(false);
-    }
-  };
-
-  const handleSendHiToAll = async () => {
-    setIsSendingHi(true);
-    setHiStatus('sending');
-    
-    try {
-      await emailService.sendHiToAllUsers();
-      setHiStatus('success');
-      setTimeout(() => setHiStatus('idle'), 3000);
-    } catch (error) {
-      console.error('Error sending Hi messages:', error);
-      setHiStatus('error');
-      setTimeout(() => setHiStatus('idle'), 3000);
-    } finally {
-      setIsSendingHi(false);
-    }
   };
 
   const handleSelectUser = (email: string) => {
@@ -118,7 +80,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white">Admin Panel</h2>
-                <p className="text-green-100">User Management & Email System</p>
+                <p className="text-green-100">User Management & Analytics</p>
               </div>
             </div>
             <button 
@@ -149,103 +111,55 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
               <div className="text-sm text-gray-600 dark:text-gray-400">This Week</div>
             </div>
             <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg text-center">
-              <Mail className="h-8 w-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
+              <MessageCircle className="h-8 w-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
               <div className="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{stats.thisMonth}</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">This Month</div>
             </div>
           </div>
 
-          {/* Email Actions */}
+          {/* User Analytics */}
           <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-6 rounded-lg mb-8">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Email Actions</h3>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">User Analytics</h3>
             
-            {emailStatus === 'success' && (
-              <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mr-2" />
-                  <p className="text-green-700 dark:text-green-300">Welcome emails sent successfully to all users!</p>
-                </div>
-              </div>
-            )}
-
-            {hiStatus === 'success' && (
-              <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <div className="flex items-center">
-                  <Heart className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
-                  <p className="text-blue-700 dark:text-blue-300">Personal Hi messages sent successfully to all users! 👋</p>
-                </div>
-              </div>
-            )}
-
-            {(emailStatus === 'error' || hiStatus === 'error') && (
-              <div className="mb-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                <div className="flex items-center">
-                  <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 mr-2" />
-                  <p className="text-red-700 dark:text-red-300">Error sending messages. Please try again.</p>
-                </div>
-              </div>
-            )}
-
-            <div className="grid md:grid-cols-2 gap-4">
-              {/* Welcome Emails */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Growth Chart Placeholder */}
               <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                  <Mail className="h-5 w-5 mr-2 text-green-600 dark:text-green-400" />
-                  Welcome Emails
+                  <TrendingUp className="h-5 w-5 mr-2 text-green-600 dark:text-green-400" />
+                  User Growth
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  Send comprehensive welcome emails with getting started guide and feature overview.
-                </p>
-                <button
-                  onClick={handleSendWelcomeEmails}
-                  disabled={isSendingEmails || users.length === 0}
-                  className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center justify-center"
-                >
-                  {isSendingEmails ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Sending...
-                    </>
-                  ) : (
-                    <>
-                      <Send className="h-5 w-5 mr-2" />
-                      Send Welcome Emails ({stats.total})
-                    </>
-                  )}
-                </button>
+                <div className="h-32 bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg flex items-center justify-center">
+                  <p className="text-gray-600 dark:text-gray-300 text-sm">
+                    📈 {stats.total} total users registered
+                  </p>
+                </div>
               </div>
 
-              {/* Personal Hi Messages */}
+              {/* Engagement Metrics */}
               <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                  <MessageCircle className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
-                  Personal Hi Messages
+                  <Heart className="h-5 w-5 mr-2 text-red-600 dark:text-red-400" />
+                  Engagement
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-300 mb-4">
-                  Send personalized "Hi" messages to show you care about each user individually.
-                </p>
-                <button
-                  onClick={handleSendHiToAll}
-                  disabled={isSendingHi || users.length === 0}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white px-4 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center justify-center"
-                >
-                  {isSendingHi ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                      Saying Hi...
-                    </>
-                  ) : (
-                    <>
-                      <Heart className="h-5 w-5 mr-2" />
-                      Say Hi to Everyone ({stats.total}) 👋
-                    </>
-                  )}
-                </button>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 dark:text-gray-300">Active Users:</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{stats.total}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 dark:text-gray-300">New This Week:</span>
+                    <span className="font-medium text-gray-900 dark:text-white">{stats.thisWeek}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600 dark:text-gray-300">Growth Rate:</span>
+                    <span className="font-medium text-green-600 dark:text-green-400">+{Math.round((stats.thisWeek / Math.max(stats.total - stats.thisWeek, 1)) * 100)}%</span>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Export Button */}
-            <div className="mt-4 flex justify-center">
+            <div className="mt-6 flex justify-center">
               <button
                 onClick={exportUserData}
                 disabled={users.length === 0}
@@ -333,39 +247,57 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          {/* Email Previews */}
+          {/* Additional Analytics */}
           {users.length > 0 && (
             <div className="mt-8 grid md:grid-cols-2 gap-6">
-              {/* Welcome Email Preview */}
+              {/* User Distribution */}
               <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                  <Mail className="h-5 w-5 mr-2 text-green-600 dark:text-green-400" />
-                  Welcome Email Preview
+                  <Users className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
+                  User Distribution
                 </h3>
-                <div className="bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">Subject: Welcome to FoodCheck! 🍎</div>
-                  <div className="text-sm text-gray-800 dark:text-gray-200">
-                    Hi [User Name]! Welcome to FoodCheck! We're excited to help you make better food choices through our comprehensive analysis tools...
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Total Registered:</span>
+                    <span className="font-semibold text-gray-900 dark:text-white">{stats.total}</span>
                   </div>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    Full email includes: Welcome message, getting started guide, feature overview, and contact information.
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">This Month:</span>
+                    <span className="font-semibold text-blue-600 dark:text-blue-400">{stats.thisMonth}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">This Week:</span>
+                    <span className="font-semibold text-green-600 dark:text-green-400">{stats.thisWeek}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-sm text-gray-600 dark:text-gray-300">Today:</span>
+                    <span className="font-semibold text-purple-600 dark:text-purple-400">{stats.today}</span>
                   </div>
                 </div>
               </div>
 
-              {/* Hi Message Preview */}
+              {/* Quick Actions */}
               <div className="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center">
-                  <MessageCircle className="h-5 w-5 mr-2 text-blue-600 dark:text-blue-400" />
-                  Hi Message Preview
+                  <Heart className="h-5 w-5 mr-2 text-red-600 dark:text-red-400" />
+                  Quick Actions
                 </h3>
-                <div className="bg-white dark:bg-gray-600 border border-gray-200 dark:border-gray-500 rounded-lg p-4">
-                  <div className="text-sm text-gray-600 dark:text-gray-300 mb-2">Subject: Hi from FoodCheck! 👋</div>
-                  <div className="text-sm text-gray-800 dark:text-gray-200">
-                    Hi [User Name]! Just wanted to say Hi and let you know we're thinking of you! We hope you're enjoying your FoodCheck experience...
+                <div className="space-y-3">
+                  <div className="bg-white dark:bg-gray-600 p-3 rounded-lg">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                      📧 Contact users directly at their registered email addresses
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Use the export feature to get email lists for marketing campaigns
+                    </p>
                   </div>
-                  <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    Personal greeting with encouragement, appreciation, and reminder of available features.
+                  <div className="bg-white dark:bg-gray-600 p-3 rounded-lg">
+                    <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                      📊 Monitor user growth and engagement trends
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Track registration patterns to optimize user acquisition
+                    </p>
                   </div>
                 </div>
               </div>

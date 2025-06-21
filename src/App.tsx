@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
@@ -215,6 +215,15 @@ const translations: Translations = {
     zh: '全屏聊天',
     ja: 'フルスクリーンチャット',
     hi: 'फुल स्क्रीन चैट'
+  },
+  backToHome: {
+    en: 'Back to Home',
+    es: 'Volver al Inicio',
+    fr: 'Retour à l\'Accueil',
+    de: 'Zurück zur Startseite',
+    zh: '返回首页',
+    ja: 'ホームに戻る',
+    hi: 'होम पर वापस जाएं'
   },
   vishScoreTitle: {
     en: 'Introducing Vish Score',
@@ -514,6 +523,11 @@ Want to analyze another food or have questions about these results?`;
   };
 
   const closeChatbot = () => {
+    setShowChatbot(false);
+    setIsFullscreenChat(false);
+  };
+
+  const backToHome = () => {
     setShowChatbot(false);
     setIsFullscreenChat(false);
   };
@@ -949,6 +963,18 @@ Want to analyze another food or have questions about these results?`;
                   </div>
                 </div>
                 <div className="flex items-center space-x-2">
+                  {/* Back to Home button (only in fullscreen) */}
+                  {isFullscreenChat && (
+                    <button 
+                      onClick={backToHome}
+                      className="text-white hover:text-gray-200 transition-colors p-2 rounded-lg hover:bg-white/10 flex items-center space-x-1"
+                      title={t('backToHome')}
+                    >
+                      <Home className="h-5 w-5" />
+                      <span className="text-sm font-medium">{t('backToHome')}</span>
+                    </button>
+                  )}
+                  
                   {/* Toggle fullscreen button */}
                   <button 
                     onClick={() => setIsFullscreenChat(!isFullscreenChat)}
