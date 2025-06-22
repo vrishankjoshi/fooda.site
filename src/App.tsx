@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Play } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Scan, Package } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
@@ -8,7 +8,8 @@ import { Tour } from './components/Tour';
 import { ChatbotCamera } from './components/ChatbotCamera';
 import { useAuth } from './hooks/useAuth';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
-import { NutritionAnalysis, analyzeNutritionLabel } from './services/visionService';
+import { NutritionAnalysis } from './services/visionService';
+import { analyzeProduct, ProductAnalysis } from './services/productAnalysisService';
 import { emailService } from './services/emailService';
 
 type Language = 'en' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'hi';
@@ -396,9 +397,8 @@ function App() {
   const [language, setLanguage] = useState<Language>('en');
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showTour, setShowTour] = useState(false);
-  const [tourCompleted, setTourCompleted] = useState(false);
   const [showChatbotCamera, setShowChatbotCamera] = useState(false);
-  const [isCameraAnalyzing, setIsCameraAnalyzing] = useState(false);
+  const [isAnalyzingProduct, setIsAnalyzingProduct] = useState(false);
   
   const { user, isAuthenticated, login, logout } = useAuth();
 
@@ -419,15 +419,10 @@ function App() {
       setLanguage(savedLanguage);
     }
 
-    // Check if tour was completed
-    const tourCompletedStatus = localStorage.getItem('foodcheck_tour_completed');
-    if (tourCompletedStatus) {
-      setTourCompleted(JSON.parse(tourCompletedStatus));
-    } else {
-      // Show tour for new users after a short delay
-      setTimeout(() => {
-        setShowTour(true);
-      }, 2000);
+    // Check if tour should be shown (first time user)
+    const hasSeenTour = localStorage.getItem('foodcheck_tour_completed');
+    if (!hasSeenTour) {
+      setTimeout(() => setShowTour(true), 1000); // Show tour after 1 second
     }
   }, []);
 
@@ -498,51 +493,53 @@ Want to analyze another food or have questions about these results?`;
     setShowChatbot(true);
   };
 
-  const handleChatbotCameraCapture = async (file: File) => {
+  const handleProductCapture = async (file: File) => {
     setShowChatbotCamera(false);
-    setIsCameraAnalyzing(true);
-
-    // Add user message about capturing photo
-    setChatMessages(prev => [...prev, { 
-      type: 'user', 
-      message: '📸 I just captured a nutrition label photo for analysis' 
-    }]);
+    setIsAnalyzingProduct(true);
 
     try {
-      const analysis = await analyzeNutritionLabel(file);
+      const analysis = await analyzeProduct(file);
       
-      // Format analysis result for chat
-      const analysisMessage = `🎉 **Analysis Complete!**
+      // Format product analysis for chat
+      const productMessage = `📦 **Product Analysis Complete!**
 
-**Overall Grade: ${analysis.overall.grade}**
-${analysis.overall.summary}
+**${analysis.product.name}** by ${analysis.product.brand}
+*${analysis.product.category}*
 
-**📊 Detailed Scores:**
-• **Nutrition Score:** ${analysis.health.score}/100
-• **Taste Score:** ${analysis.taste.score}/100
+${analysis.product.description}
 
-${analysis.health.warnings.length > 0 ? `⚠️ **Health Warnings:**\n${analysis.health.warnings.map(w => `• ${w}`).join('\n')}\n\n` : ''}
+**Overall Rating: ${analysis.rating.overall}/10** ⭐
 
-${analysis.health.recommendations.length > 0 ? `💡 **Recommendations:**\n${analysis.health.recommendations.map(r => `• ${r}`).join('\n')}\n\n` : ''}
+**Analysis Overview:**
+${analysis.analysis.overview}
 
-**🍽️ Taste Profile:** ${analysis.taste.description}
+**Key Features:**
+${analysis.analysis.keyFeatures.map(f => `• ${f}`).join('\n')}
 
-**📋 Key Nutrition Facts:**
-• Calories: ${analysis.nutrition.calories}
-• Total Fat: ${analysis.nutrition.totalFat}
-• Sodium: ${analysis.nutrition.sodium}
-• Protein: ${analysis.nutrition.protein}
+**Pros:**
+${analysis.analysis.pros.map(p => `✅ ${p}`).join('\n')}
 
-Feel free to ask me any questions about these results or capture another nutrition label! 📷`;
+${analysis.analysis.cons.length > 0 ? `**Cons:**\n${analysis.analysis.cons.map(c => `❌ ${c}`).join('\n')}\n\n` : ''}
 
-      setChatMessages(prev => [...prev, { type: 'bot', message: analysisMessage }]);
+**Ratings Breakdown:**
+• Quality: ${analysis.rating.quality}/10
+• Value: ${analysis.rating.value}/10
+• Safety: ${analysis.rating.safety}/10
+
+${analysis.analysis.recommendations.length > 0 ? `**Recommendations:**\n${analysis.analysis.recommendations.map(r => `💡 ${r}`).join('\n')}\n\n` : ''}
+
+${analysis.details.warnings && analysis.details.warnings.length > 0 ? `⚠️ **Warnings:**\n${analysis.details.warnings.map(w => `• ${w}`).join('\n')}\n\n` : ''}
+
+Want to analyze another product or have questions about this analysis?`;
+
+      setChatMessages(prev => [...prev, { type: 'bot', message: productMessage }]);
     } catch (error) {
       setChatMessages(prev => [...prev, { 
         type: 'bot', 
-        message: '❌ Sorry, I had trouble analyzing that image. Please make sure the nutrition label is clear and well-lit, then try again. You can also email the photo to vrishankjo@gmail.com for manual analysis!' 
+        message: 'Sorry, I had trouble analyzing that product. Please try again with a clearer image, or ask me any questions about products!' 
       }]);
     } finally {
-      setIsCameraAnalyzing(false);
+      setIsAnalyzingProduct(false);
     }
   };
 
@@ -591,23 +588,18 @@ Feel free to ask me any questions about these results or capture another nutriti
     setShowChatbot(false);
     setIsFullscreenChat(false);
     setShowChatbotCamera(false);
-    setIsCameraAnalyzing(false);
+    setIsAnalyzingProduct(false);
   };
 
   const backToHome = () => {
     setShowChatbot(false);
     setIsFullscreenChat(false);
     setShowChatbotCamera(false);
-    setIsCameraAnalyzing(false);
+    setIsAnalyzingProduct(false);
   };
 
   const handleTourComplete = () => {
-    setTourCompleted(true);
-    localStorage.setItem('foodcheck_tour_completed', JSON.stringify(true));
-  };
-
-  const startTour = () => {
-    setShowTour(true);
+    localStorage.setItem('foodcheck_tour_completed', 'true');
   };
 
   return (
@@ -676,15 +668,13 @@ Feel free to ask me any questions about these results or capture another nutriti
               </div>
 
               {/* Tour Button */}
-              {tourCompleted && (
-                <button
-                  onClick={startTour}
-                  className="p-2 rounded-full bg-purple-100 dark:bg-purple-900/20 hover:bg-purple-200 dark:hover:bg-purple-900/40 transition-all duration-200 transform hover:scale-105"
-                  title="Take Tour"
-                >
-                  <Play className="h-5 w-5 text-purple-600 dark:text-purple-400" />
-                </button>
-              )}
+              <button
+                onClick={() => setShowTour(true)}
+                className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/20 hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-all duration-200 transform hover:scale-105"
+                title="Take Tour"
+              >
+                <Star className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+              </button>
             </div>
 
             {/* Navigation */}
@@ -1055,8 +1045,8 @@ Feel free to ask me any questions about these results or capture another nutriti
                     <MessageCircle className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">AI Nutrition Assistant</h3>
-                    <p className="text-blue-100">Ask me anything about food, nutrition, and Vish Score!</p>
+                    <h3 className="text-xl font-bold text-white">AI Assistant</h3>
+                    <p className="text-blue-100">Ask me about food, nutrition, or scan products!</p>
                   </div>
                 </div>
                 
@@ -1102,24 +1092,23 @@ Feel free to ask me any questions about these results or capture another nutriti
 
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0">
-              {chatMessages.length === 0 && !showChatbotCamera && !isCameraAnalyzing && (
+              {/* Camera Component */}
+              {showChatbotCamera && (
+                <div className="mb-4">
+                  <ChatbotCamera
+                    onCapture={handleProductCapture}
+                    onClose={() => setShowChatbotCamera(false)}
+                    isAnalyzing={isAnalyzingProduct}
+                  />
+                </div>
+              )}
+
+              {chatMessages.length === 0 && !showChatbotCamera && (
                 <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                   <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p className="text-lg font-medium mb-2">Welcome to FoodCheck AI!</p>
-                  <p className="text-sm mb-4">Ask me about nutrition, health conditions, or our revolutionary Vish Score system.</p>
-                  
-                  {/* Camera Button */}
-                  <div className="mb-4">
-                    <button
-                      onClick={() => setShowChatbotCamera(true)}
-                      className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center mx-auto"
-                    >
-                      <Camera className="h-5 w-5 mr-2" />
-                      📸 Capture Nutrition Label
-                    </button>
-                  </div>
-                  
-                  <div className="space-y-2 text-xs">
+                  <p className="text-sm">Ask me about nutrition, health conditions, or scan products with the camera.</p>
+                  <div className="mt-4 space-y-2 text-xs">
                     <p className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg inline-block">
                       "What is the Vish Score?"
                     </p>
@@ -1129,28 +1118,6 @@ Feel free to ask me any questions about these results or capture another nutriti
                     <p className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg inline-block">
                       "Analyze food for diabetes"
                     </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Camera Component */}
-              {showChatbotCamera && (
-                <ChatbotCamera
-                  onCapture={handleChatbotCameraCapture}
-                  onClose={() => setShowChatbotCamera(false)}
-                  isAnalyzing={isCameraAnalyzing}
-                />
-              )}
-
-              {/* Camera Analysis Loading */}
-              {isCameraAnalyzing && !showChatbotCamera && (
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
-                  <div className="flex items-center space-x-3">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
-                    <div>
-                      <p className="text-blue-700 dark:text-blue-300 font-medium">Analyzing your nutrition label...</p>
-                      <p className="text-blue-600 dark:text-blue-400 text-sm">This usually takes just a few seconds</p>
-                    </div>
                   </div>
                 </div>
               )}
@@ -1183,28 +1150,29 @@ Feel free to ask me any questions about these results or capture another nutriti
             {/* Chat Input */}
             <div className="p-6 border-t border-gray-200 dark:border-gray-600">
               <div className="flex space-x-4">
-                {/* Camera Button */}
-                <button
-                  onClick={() => setShowChatbotCamera(true)}
-                  disabled={isTyping || showChatbotCamera || isCameraAnalyzing}
-                  className="bg-gradient-to-r from-green-500 to-blue-500 text-white p-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
-                  title="Capture nutrition label"
-                >
-                  <Camera className="h-5 w-5" />
-                </button>
-                
                 <input
                   type="text"
                   value={currentMessage}
                   onChange={(e) => setCurrentMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about nutrition, health, Vish Score, or capture a photo..."
+                  placeholder="Ask about nutrition, health, or scan a product..."
                   className="flex-1 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300"
-                  disabled={isTyping || showChatbotCamera || isCameraAnalyzing}
+                  disabled={isTyping || showChatbotCamera}
                 />
+                
+                {/* Camera Button */}
+                <button
+                  onClick={() => setShowChatbotCamera(!showChatbotCamera)}
+                  disabled={isTyping}
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+                  title="Scan Product"
+                >
+                  <Scan className="h-5 w-5" />
+                </button>
+                
                 <button
                   onClick={sendMessage}
-                  disabled={!currentMessage.trim() || isTyping || showChatbotCamera || isCameraAnalyzing}
+                  disabled={!currentMessage.trim() || isTyping || showChatbotCamera}
                   className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
                 >
                   Send

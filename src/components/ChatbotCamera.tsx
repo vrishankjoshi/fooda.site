@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { Camera, X, RotateCcw, Check, Loader2, Upload } from 'lucide-react';
+import { Camera, X, RotateCcw, Check, Loader2, Upload, Package, Scan } from 'lucide-react';
 
 interface ChatbotCameraProps {
   onCapture: (file: File) => void;
@@ -123,7 +123,7 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
 
     canvasRef.current.toBlob((blob) => {
       if (blob) {
-        const file = new File([blob], 'nutrition-label.jpg', { type: 'image/jpeg' });
+        const file = new File([blob], 'product-image.jpg', { type: 'image/jpeg' });
         onCapture(file);
         stopCamera();
       }
@@ -156,9 +156,9 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
           <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mx-auto mb-4 flex items-center justify-center">
             <Loader2 className="h-8 w-8 text-white animate-spin" />
           </div>
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Analyzing Your Food</h3>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Analyzing Your Product</h3>
           <p className="text-gray-600 dark:text-gray-300 text-sm">
-            Our AI is examining the nutrition label...
+            Our AI is examining the product and gathering information...
           </p>
           <div className="mt-4 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
             <p className="text-xs text-blue-700 dark:text-blue-300">
@@ -173,13 +173,13 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600 overflow-hidden transition-colors duration-300">
       {/* Header */}
-      <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4">
+      <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-2">
-            <Camera className="h-5 w-5 text-white" />
+            <Scan className="h-5 w-5 text-white" />
             <div>
-              <h3 className="text-white font-semibold">Capture Nutrition Label</h3>
-              <p className="text-green-100 text-xs">Position the label clearly in frame</p>
+              <h3 className="text-white font-semibold">Scan Product</h3>
+              <p className="text-purple-100 text-xs">Capture any product for AI analysis</p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -217,7 +217,7 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
               <div className="space-y-2">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center mx-auto"
+                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full text-sm font-medium hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center mx-auto"
                 >
                   <Upload className="h-4 w-4 mr-2" />
                   Upload Photo Instead
@@ -236,7 +236,7 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
           <div className="h-full flex items-center justify-center bg-black">
             <img 
               src={capturedImage} 
-              alt="Captured nutrition label" 
+              alt="Captured product" 
               className="max-h-full max-w-full object-contain"
             />
           </div>
@@ -245,7 +245,7 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
             {isLoading ? (
               <div className="flex items-center justify-center h-full bg-gray-100 dark:bg-gray-700">
                 <div className="text-center">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-500 mx-auto mb-3"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-3"></div>
                   <p className="text-gray-600 dark:text-gray-300 text-sm">Starting camera...</p>
                 </div>
               </div>
@@ -262,10 +262,15 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
                 {/* Camera overlay guide */}
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                   <div className="border-2 border-white border-dashed rounded-lg bg-black bg-opacity-20 p-4 text-center">
-                    <Camera className="h-6 w-6 text-white mx-auto mb-2" />
-                    <p className="text-white text-sm font-medium">Position nutrition label here</p>
-                    <p className="text-white text-xs opacity-75">Make sure text is clear</p>
+                    <Package className="h-6 w-6 text-white mx-auto mb-2" />
+                    <p className="text-white text-sm font-medium">Position product here</p>
+                    <p className="text-white text-xs opacity-75">Include packaging & labels</p>
                   </div>
+                </div>
+
+                {/* Scanning Animation */}
+                <div className="absolute inset-0 pointer-events-none">
+                  <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-purple-400 to-transparent animate-pulse"></div>
                 </div>
 
                 {/* Camera info */}
@@ -293,10 +298,10 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
             </button>
             <button
               onClick={confirmCapture}
-              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center text-sm"
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center text-sm"
             >
               <Check className="h-4 w-4 mr-2" />
-              Analyze This Photo
+              Analyze This Product
             </button>
           </div>
         ) : !error && !isLoading ? (
@@ -311,10 +316,10 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
             <button
               onClick={capturePhoto}
               disabled={!stream}
-              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center text-sm"
+              className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full font-medium hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center text-sm"
             >
-              <Camera className="h-4 w-4 mr-2" />
-              Capture Photo
+              <Scan className="h-4 w-4 mr-2" />
+              Scan Product
             </button>
             <input
               ref={fileInputRef}
@@ -329,9 +334,9 @@ export const ChatbotCamera: React.FC<ChatbotCameraProps> = ({
 
       {/* Tips */}
       <div className="px-4 pb-4">
-        <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
-          <p className="text-blue-700 dark:text-blue-300 text-xs text-center">
-            💡 <strong>Tip:</strong> Ensure good lighting and hold steady for best results
+        <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg">
+          <p className="text-purple-700 dark:text-purple-300 text-xs text-center">
+            📦 <strong>Tip:</strong> Capture the entire product including any text, labels, or barcodes for best analysis
           </p>
         </div>
       </div>
