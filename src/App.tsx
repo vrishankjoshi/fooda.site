@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Scan, Package } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Play } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
 import { Tour } from './components/Tour';
-import { ChatbotCamera } from './components/ChatbotCamera';
 import { useAuth } from './hooks/useAuth';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { NutritionAnalysis } from './services/visionService';
-import { analyzeProduct, ProductAnalysis } from './services/productAnalysisService';
 import { emailService } from './services/emailService';
 
 type Language = 'en' | 'es' | 'fr' | 'de' | 'zh' | 'ja' | 'hi';
@@ -351,7 +349,7 @@ const translations: Translations = {
     fr: 'Nous Contacter',
     de: 'Kontaktieren Sie Uns',
     zh: '联系我们',
-    ja: 'お問い合わせ',
+    ja: 'お问い合わせ',
     hi: 'संपर्क करें'
   },
   footerDesc: {
@@ -380,6 +378,15 @@ const translations: Translations = {
     zh: '用❤️为更健康的饮食而制作',
     ja: 'より健康的な食事のために❤️で作られました',
     hi: 'स्वस्थ भोजन के लिए ❤️ से बनाया गया'
+  },
+  takeTour: {
+    en: 'Take Tour',
+    es: 'Hacer Tour',
+    fr: 'Faire le Tour',
+    de: 'Tour Machen',
+    zh: '开始导览',
+    ja: 'ツアーを開始',
+    hi: 'टूर लें'
   }
 };
 
@@ -397,8 +404,6 @@ function App() {
   const [language, setLanguage] = useState<Language>('en');
   const [showLanguageMenu, setShowLanguageMenu] = useState(false);
   const [showTour, setShowTour] = useState(false);
-  const [showChatbotCamera, setShowChatbotCamera] = useState(false);
-  const [isAnalyzingProduct, setIsAnalyzingProduct] = useState(false);
   
   const { user, isAuthenticated, login, logout } = useAuth();
 
@@ -419,10 +424,11 @@ function App() {
       setLanguage(savedLanguage);
     }
 
-    // Check if tour should be shown (first time user)
+    // Check if user has seen the tour
     const hasSeenTour = localStorage.getItem('foodcheck_tour_completed');
     if (!hasSeenTour) {
-      setTimeout(() => setShowTour(true), 1000); // Show tour after 1 second
+      // Show tour after a short delay for better UX
+      setTimeout(() => setShowTour(true), 1500);
     }
   }, []);
 
@@ -493,56 +499,6 @@ Want to analyze another food or have questions about these results?`;
     setShowChatbot(true);
   };
 
-  const handleProductCapture = async (file: File) => {
-    setShowChatbotCamera(false);
-    setIsAnalyzingProduct(true);
-
-    try {
-      const analysis = await analyzeProduct(file);
-      
-      // Format product analysis for chat
-      const productMessage = `📦 **Product Analysis Complete!**
-
-**${analysis.product.name}** by ${analysis.product.brand}
-*${analysis.product.category}*
-
-${analysis.product.description}
-
-**Overall Rating: ${analysis.rating.overall}/10** ⭐
-
-**Analysis Overview:**
-${analysis.analysis.overview}
-
-**Key Features:**
-${analysis.analysis.keyFeatures.map(f => `• ${f}`).join('\n')}
-
-**Pros:**
-${analysis.analysis.pros.map(p => `✅ ${p}`).join('\n')}
-
-${analysis.analysis.cons.length > 0 ? `**Cons:**\n${analysis.analysis.cons.map(c => `❌ ${c}`).join('\n')}\n\n` : ''}
-
-**Ratings Breakdown:**
-• Quality: ${analysis.rating.quality}/10
-• Value: ${analysis.rating.value}/10
-• Safety: ${analysis.rating.safety}/10
-
-${analysis.analysis.recommendations.length > 0 ? `**Recommendations:**\n${analysis.analysis.recommendations.map(r => `💡 ${r}`).join('\n')}\n\n` : ''}
-
-${analysis.details.warnings && analysis.details.warnings.length > 0 ? `⚠️ **Warnings:**\n${analysis.details.warnings.map(w => `• ${w}`).join('\n')}\n\n` : ''}
-
-Want to analyze another product or have questions about this analysis?`;
-
-      setChatMessages(prev => [...prev, { type: 'bot', message: productMessage }]);
-    } catch (error) {
-      setChatMessages(prev => [...prev, { 
-        type: 'bot', 
-        message: 'Sorry, I had trouble analyzing that product. Please try again with a clearer image, or ask me any questions about products!' 
-      }]);
-    } finally {
-      setIsAnalyzingProduct(false);
-    }
-  };
-
   const sendMessage = async () => {
     if (!currentMessage.trim()) return;
 
@@ -587,15 +543,11 @@ Want to analyze another product or have questions about this analysis?`;
   const closeChatbot = () => {
     setShowChatbot(false);
     setIsFullscreenChat(false);
-    setShowChatbotCamera(false);
-    setIsAnalyzingProduct(false);
   };
 
   const backToHome = () => {
     setShowChatbot(false);
     setIsFullscreenChat(false);
-    setShowChatbotCamera(false);
-    setIsAnalyzingProduct(false);
   };
 
   const handleTourComplete = () => {
@@ -670,10 +622,11 @@ Want to analyze another product or have questions about this analysis?`;
               {/* Tour Button */}
               <button
                 onClick={() => setShowTour(true)}
-                className="p-2 rounded-full bg-blue-100 dark:bg-blue-900/20 hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-all duration-200 transform hover:scale-105"
-                title="Take Tour"
+                className="p-2 rounded-full bg-gradient-to-r from-green-500 to-blue-500 text-white hover:shadow-lg transition-all duration-200 transform hover:scale-105 flex items-center space-x-1"
+                title="Take a Tour"
               >
-                <Star className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <Play className="h-4 w-4" />
+                <span className="text-xs font-medium hidden sm:inline">{t('takeTour')}</span>
               </button>
             </div>
 
@@ -1025,6 +978,7 @@ Want to analyze another product or have questions about this analysis?`;
         />
       )}
 
+      {/* Tour */}
       {showTour && (
         <Tour
           isOpen={showTour}
@@ -1045,8 +999,8 @@ Want to analyze another product or have questions about this analysis?`;
                     <MessageCircle className="h-6 w-6 text-blue-600" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-white">AI Assistant</h3>
-                    <p className="text-blue-100">Ask me about food, nutrition, or scan products!</p>
+                    <h3 className="text-xl font-bold text-white">AI Nutrition Assistant</h3>
+                    <p className="text-blue-100">Ask me anything about food, nutrition, and Vish Score!</p>
                   </div>
                 </div>
                 
@@ -1092,22 +1046,11 @@ Want to analyze another product or have questions about this analysis?`;
 
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto p-6 space-y-4 min-h-0">
-              {/* Camera Component */}
-              {showChatbotCamera && (
-                <div className="mb-4">
-                  <ChatbotCamera
-                    onCapture={handleProductCapture}
-                    onClose={() => setShowChatbotCamera(false)}
-                    isAnalyzing={isAnalyzingProduct}
-                  />
-                </div>
-              )}
-
-              {chatMessages.length === 0 && !showChatbotCamera && (
+              {chatMessages.length === 0 && (
                 <div className="text-center text-gray-500 dark:text-gray-400 py-8">
                   <MessageCircle className="h-12 w-12 mx-auto mb-4 opacity-50" />
                   <p className="text-lg font-medium mb-2">Welcome to FoodCheck AI!</p>
-                  <p className="text-sm">Ask me about nutrition, health conditions, or scan products with the camera.</p>
+                  <p className="text-sm">Ask me about nutrition, health conditions, or our revolutionary Vish Score system.</p>
                   <div className="mt-4 space-y-2 text-xs">
                     <p className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg inline-block">
                       "What is the Vish Score?"
@@ -1155,24 +1098,13 @@ Want to analyze another product or have questions about this analysis?`;
                   value={currentMessage}
                   onChange={(e) => setCurrentMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  placeholder="Ask about nutrition, health, or scan a product..."
+                  placeholder="Ask about nutrition, health, Vish Score, or food analysis..."
                   className="flex-1 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300"
-                  disabled={isTyping || showChatbotCamera}
-                />
-                
-                {/* Camera Button */}
-                <button
-                  onClick={() => setShowChatbotCamera(!showChatbotCamera)}
                   disabled={isTyping}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
-                  title="Scan Product"
-                >
-                  <Scan className="h-5 w-5" />
-                </button>
-                
+                />
                 <button
                   onClick={sendMessage}
-                  disabled={!currentMessage.trim() || isTyping || showChatbotCamera}
+                  disabled={!currentMessage.trim() || isTyping}
                   className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
                 >
                   Send
