@@ -31,9 +31,17 @@ export interface NutritionAnalysis {
     profile: string[];
     description: string;
   };
+  consumer: {
+    score: number;
+    feedback: string;
+    satisfaction: string;
+    commonComplaints: string[];
+    positiveAspects: string[];
+  };
   overall: {
     grade: string;
     summary: string;
+    vishScore: number;
   };
 }
 
@@ -86,11 +94,27 @@ export const analyzeNutritionLabel = async (
     "profile": ["taste characteristics"],
     "description": "brief taste description"
   },
+  "consumer": {
+    "score": number (1-100),
+    "feedback": "general consumer sentiment",
+    "satisfaction": "overall satisfaction level",
+    "commonComplaints": ["typical consumer complaints"],
+    "positiveAspects": ["what consumers typically like"]
+  },
   "overall": {
     "grade": "A-F letter grade",
-    "summary": "brief overall assessment"
+    "summary": "brief overall assessment",
+    "vishScore": number (1-100, average of nutrition, taste, and consumer scores)
   }
 }
+
+For the consumer analysis, base it on typical consumer feedback patterns for similar products, considering factors like:
+- Taste satisfaction vs health benefits
+- Price-to-value perception
+- Ingredient quality concerns
+- Texture and mouthfeel expectations
+- Brand reputation factors
+- Nutritional value vs taste trade-offs
 
 ${userHealthInfo ? `User health information: ${userHealthInfo}. Please provide personalized warnings and recommendations based on this information.` : ''}
 
@@ -116,7 +140,7 @@ Provide only the JSON response, no additional text.`;
       ],
       model: 'llama-3.2-90b-vision-preview',
       temperature: 0.3,
-      max_tokens: 1500,
+      max_tokens: 2000,
     });
 
     const response = completion.choices[0]?.message?.content;
@@ -125,7 +149,13 @@ Provide only the JSON response, no additional text.`;
     }
 
     try {
-      return JSON.parse(response);
+      const analysis = JSON.parse(response);
+      
+      // Calculate Vish Score as average of the three components
+      const vishScore = Math.round((analysis.health.score + analysis.taste.score + analysis.consumer.score) / 3);
+      analysis.overall.vishScore = vishScore;
+      
+      return analysis;
     } catch (parseError) {
       // If JSON parsing fails, create a fallback response
       return {
@@ -154,9 +184,17 @@ Provide only the JSON response, no additional text.`;
           profile: ["Unable to determine"],
           description: "Taste analysis unavailable due to unclear label."
         },
+        consumer: {
+          score: 50,
+          feedback: "Consumer analysis unavailable due to unclear label.",
+          satisfaction: "Unknown",
+          commonComplaints: ["Image quality too poor for analysis"],
+          positiveAspects: ["Please provide clearer image"]
+        },
         overall: {
           grade: "N/A",
-          summary: "Analysis incomplete due to image quality. Please try again with a clearer photo."
+          summary: "Analysis incomplete due to image quality. Please try again with a clearer photo.",
+          vishScore: 50
         }
       };
     }

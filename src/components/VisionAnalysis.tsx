@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, X, Loader2, CheckCircle, AlertTriangle, Star, BarChart3, Heart, Smartphone, QrCode } from 'lucide-react';
+import { Camera, Upload, X, Loader2, CheckCircle, AlertTriangle, Star, BarChart3, Heart, Smartphone, QrCode, Users, TrendingUp } from 'lucide-react';
 import { analyzeNutritionLabel, NutritionAnalysis } from '../services/visionService';
 import { CameraCapture } from './CameraCapture';
 import { QRCodeModal } from './QRCodeModal';
@@ -137,11 +137,11 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
             </div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Analyzing Your Food</h3>
             <p className="text-gray-600 dark:text-gray-300 mb-6">
-              Our AI is examining the nutrition label and preparing a comprehensive analysis...
+              Our AI is examining the nutrition label and preparing a comprehensive Vish Score analysis...
             </p>
             <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
               <p className="text-sm text-blue-700 dark:text-blue-300">
-                ⚡ This usually takes just a few seconds
+                ⚡ Analyzing nutrition, taste, and consumer data...
               </p>
             </div>
           </div>
@@ -162,7 +162,7 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white">AI Vision Analysis</h2>
-                <p className="text-green-100">Upload a nutrition label for instant analysis</p>
+                <p className="text-green-100">Upload a nutrition label for comprehensive Vish Score analysis</p>
               </div>
             </div>
             <button 
@@ -262,7 +262,7 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
                         ) : (
                           <>
                             <BarChart3 className="h-4 w-4 mr-2" />
-                            Analyze Label
+                            Get Vish Score
                           </>
                         )}
                       </button>
@@ -291,15 +291,18 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
           ) : (
             /* Analysis Results */
             <div className="space-y-6">
-              {/* Overall Grade */}
+              {/* Overall Grade and Vish Score */}
               <div className="text-center">
-                <div className={`inline-flex items-center px-6 py-3 rounded-full text-2xl font-bold ${getGradeColor(analysis.overall.grade)}`}>
+                <div className={`inline-flex items-center px-6 py-3 rounded-full text-2xl font-bold ${getGradeColor(analysis.overall.grade)} mb-4`}>
                   Overall Grade: {analysis.overall.grade}
+                </div>
+                <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full text-xl font-bold inline-block mb-4">
+                  Vish Score: {analysis.overall.vishScore}/100
                 </div>
                 <p className="text-gray-600 dark:text-gray-300 mt-2">{analysis.overall.summary}</p>
               </div>
 
-              {/* Scores */}
+              {/* Three Pillar Scores */}
               <div className="grid md:grid-cols-3 gap-4">
                 <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
                   <BarChart3 className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
@@ -307,6 +310,7 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
                   <p className={`text-2xl font-bold ${getScoreColor(analysis.health.score)}`}>
                     {analysis.health.score}/100
                   </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Health Impact</p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
                   <Star className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
@@ -314,13 +318,15 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
                   <p className={`text-2xl font-bold ${getScoreColor(analysis.taste.score)}`}>
                     {analysis.taste.score}/100
                   </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Flavor Quality</p>
                 </div>
                 <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg text-center">
-                  <Heart className="h-8 w-8 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Health</h4>
-                  <p className={`text-2xl font-bold ${getScoreColor(analysis.health.score)}`}>
-                    {analysis.health.score}/100
+                  <Users className="h-8 w-8 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Consumer</h4>
+                  <p className={`text-2xl font-bold ${getScoreColor(analysis.consumer.score)}`}>
+                    {analysis.consumer.score}/100
                   </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">User Satisfaction</p>
                 </div>
               </div>
 
@@ -356,29 +362,52 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
                   </div>
                 </div>
 
-                {/* Health Warnings */}
+                {/* Consumer Insights */}
                 <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
+                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
+                    <Users className="h-5 w-5 mr-2 text-purple-600 dark:text-purple-400" />
+                    Consumer Insights
+                  </h4>
+                  <div className="space-y-3 text-sm">
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-300">Satisfaction:</span>
+                      <span className="font-medium text-gray-900 dark:text-white ml-2">{analysis.consumer.satisfaction}</span>
+                    </div>
+                    <div>
+                      <span className="text-gray-600 dark:text-gray-300">Feedback:</span>
+                      <p className="text-gray-900 dark:text-white mt-1">{analysis.consumer.feedback}</p>
+                    </div>
+                    {analysis.consumer.positiveAspects.length > 0 && (
+                      <div>
+                        <span className="text-green-600 dark:text-green-400 font-medium">👍 Liked:</span>
+                        <ul className="mt-1 space-y-1">
+                          {analysis.consumer.positiveAspects.slice(0, 2).map((aspect, index) => (
+                            <li key={index} className="text-xs text-gray-700 dark:text-gray-300">• {aspect}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Health Warnings */}
+              {analysis.health.warnings.length > 0 && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
                   <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
                     <AlertTriangle className="h-5 w-5 mr-2 text-red-600 dark:text-red-400" />
                     Health Warnings
                   </h4>
-                  {analysis.health.warnings.length > 0 ? (
-                    <ul className="space-y-2">
-                      {analysis.health.warnings.map((warning, index) => (
-                        <li key={index} className="text-sm text-red-700 dark:text-red-300 flex items-start">
-                          <span className="w-2 h-2 bg-red-500 dark:bg-red-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                          {warning}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p className="text-sm text-green-700 dark:text-green-300 flex items-center">
-                      <CheckCircle className="h-4 w-4 mr-2" />
-                      No major health concerns identified
-                    </p>
-                  )}
+                  <ul className="space-y-2">
+                    {analysis.health.warnings.map((warning, index) => (
+                      <li key={index} className="text-sm text-red-700 dark:text-red-300 flex items-start">
+                        <span className="w-2 h-2 bg-red-500 dark:bg-red-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
+                        {warning}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-              </div>
+              )}
 
               {/* Recommendations */}
               {analysis.health.recommendations.length > 0 && (
