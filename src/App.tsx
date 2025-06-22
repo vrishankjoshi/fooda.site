@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Phone } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Play, Image } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
+import { Tour } from './components/Tour';
+import { ImageGallery } from './components/ImageGallery';
 import { useAuth } from './hooks/useAuth';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { NutritionAnalysis } from './services/visionService';
@@ -80,15 +82,6 @@ const translations: Translations = {
     zh: '或将您的营养标签发送至：',
     ja: '栄養ラベルをメールで送信：',
     hi: 'या अपने पोषण लेबल ईमेल करें:'
-  },
-  callUsDirectly: {
-    en: 'Or call us directly:',
-    es: 'O llámanos directamente:',
-    fr: 'Ou appelez-nous directement:',
-    de: 'Oder rufen Sie uns direkt an:',
-    zh: '或直接致电我们：',
-    ja: '直接お電話ください：',
-    hi: 'या हमें सीधे कॉल करें:'
   },
   aiAnalysis: {
     en: 'AI Analysis',
@@ -393,6 +386,8 @@ function App() {
   const [showVisionAnalysis, setShowVisionAnalysis] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [showTour, setShowTour] = useState(false);
+  const [showImageGallery, setShowImageGallery] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showChatbot, setShowChatbot] = useState(false);
   const [isFullscreenChat, setIsFullscreenChat] = useState(false);
@@ -420,6 +415,12 @@ function App() {
     const savedLanguage = localStorage.getItem('foodcheck_language') as Language;
     if (savedLanguage && ['en', 'es', 'fr', 'de', 'zh', 'ja', 'hi'].includes(savedLanguage)) {
       setLanguage(savedLanguage);
+    }
+
+    // Check if user should see tour
+    const hasSeenTour = localStorage.getItem('foodcheck_tour_completed');
+    if (!hasSeenTour) {
+      setTimeout(() => setShowTour(true), 2000);
     }
   }, []);
 
@@ -473,16 +474,20 @@ function App() {
     const analysisMessage = `🎉 **Analysis Complete!**
 
 **Overall Grade: ${analysis.overall.grade}**
+**Vish Score: ${analysis.overall.vishScore}/100**
 ${analysis.overall.summary}
 
 **Nutrition Score: ${analysis.health.score}/100**
 **Taste Score: ${analysis.taste.score}/100**
+**Consumer Score: ${analysis.consumer.score}/100**
 
 ${analysis.health.warnings.length > 0 ? `⚠️ **Health Warnings:**\n${analysis.health.warnings.map(w => `• ${w}`).join('\n')}\n\n` : ''}
 
 ${analysis.health.recommendations.length > 0 ? `💡 **Recommendations:**\n${analysis.health.recommendations.map(r => `• ${r}`).join('\n')}\n\n` : ''}
 
 **Taste Profile:** ${analysis.taste.description}
+
+**Consumer Feedback:** ${analysis.consumer.feedback}
 
 Want to analyze another food or have questions about these results?`;
 
@@ -541,34 +546,38 @@ Want to analyze another food or have questions about these results?`;
     setIsFullscreenChat(false);
   };
 
+  const completeTour = () => {
+    localStorage.setItem('foodcheck_tour_completed', 'true');
+  };
+
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-green-50 via-blue-50 to-purple-50'}`}>
+    <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50'}`}>
       {/* Header */}
-      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 transition-colors duration-300">
+      <header className="bg-gradient-to-r from-indigo-500/80 via-purple-500/80 to-pink-500/80 dark:from-indigo-600/80 dark:via-purple-600/80 dark:to-pink-600/80 backdrop-blur-md border-b border-white/20 dark:border-gray-700/50 sticky top-0 z-40 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo and Controls */}
-            <div className="flex items-center space-x-4 foodcheck-logo">
-              <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3 foodcheck-logo">
                 <FoodCheckLogo className="h-10 w-10" />
                 <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent">
+                  <h1 className="text-2xl font-bold text-white drop-shadow-lg">
                     {t('title')}
                   </h1>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">{t('subtitle')}</p>
+                  <p className="text-xs text-white/90">{t('subtitle')}</p>
                 </div>
               </div>
               
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
-                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 dark-mode-toggle"
+                className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200 transform hover:scale-105 dark-mode-toggle"
                 title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               >
                 {darkMode ? (
-                  <Sun className="h-5 w-5 text-yellow-500" />
+                  <Sun className="h-5 w-5 text-yellow-300" />
                 ) : (
-                  <Moon className="h-5 w-5 text-gray-600" />
+                  <Moon className="h-5 w-5 text-white" />
                 )}
               </button>
 
@@ -576,11 +585,11 @@ Want to analyze another food or have questions about these results?`;
               <div className="relative language-selector">
                 <button
                   onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                  className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 flex items-center space-x-1"
+                  className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200 transform hover:scale-105 flex items-center space-x-1"
                   title="Change Language"
                 >
-                  <Globe className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
+                  <Globe className="h-5 w-5 text-white" />
+                  <span className="text-sm font-medium text-white">
                     {languages.find(l => l.code === language)?.flag}
                   </span>
                 </button>
@@ -611,15 +620,22 @@ Want to analyze another food or have questions about these results?`;
             <nav className="hidden md:flex items-center space-x-6 main-navigation">
               <button 
                 onClick={() => setShowVisionAnalysis(true)}
-                className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors font-medium"
+                className="text-white/90 hover:text-white transition-colors font-medium"
               >
                 {t('aiAnalysis')}
               </button>
               <button 
                 onClick={openRegularChat}
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
+                className="text-white/90 hover:text-white transition-colors font-medium"
               >
                 {t('chatAssistant')}
+              </button>
+              <button 
+                onClick={() => setShowImageGallery(true)}
+                className="text-white/90 hover:text-white transition-colors font-medium flex items-center space-x-1"
+              >
+                <Image className="h-4 w-4" />
+                <span>Gallery</span>
               </button>
             </nav>
 
@@ -628,20 +644,27 @@ Want to analyze another food or have questions about these results?`;
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   <div className="hidden sm:block text-right">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('welcomeBack')}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">{user?.name}</p>
+                    <p className="text-sm font-medium text-white">{t('welcomeBack')}</p>
+                    <p className="text-xs text-white/80">{user?.name}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
+                      onClick={() => setShowTour(true)}
+                      className="p-2 text-white/80 hover:text-white transition-colors"
+                      title="Take Tour"
+                    >
+                      <Play className="h-5 w-5" />
+                    </button>
+                    <button
                       onClick={() => setShowAdminPanel(true)}
-                      className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                      className="p-2 text-white/80 hover:text-white transition-colors"
                       title="Admin Panel"
                     >
                       <Settings className="h-5 w-5" />
                     </button>
                     <button
                       onClick={logout}
-                      className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                      className="p-2 text-white/80 hover:text-red-300 transition-colors"
                       title="Logout"
                     >
                       <LogOut className="h-5 w-5" />
@@ -651,11 +674,18 @@ Want to analyze another food or have questions about these results?`;
               ) : (
                 <div className="flex items-center space-x-3">
                   <button
+                    onClick={() => setShowTour(true)}
+                    className="text-white/90 hover:text-white transition-colors font-medium flex items-center space-x-1"
+                  >
+                    <Play className="h-4 w-4" />
+                    <span>Tour</span>
+                  </button>
+                  <button
                     onClick={() => {
                       setAuthMode('login');
                       setShowAuthModal(true);
                     }}
-                    className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors font-medium"
+                    className="text-white/90 hover:text-white transition-colors font-medium"
                   >
                     {t('signIn')}
                   </button>
@@ -664,7 +694,7 @@ Want to analyze another food or have questions about these results?`;
                       setAuthMode('signup');
                       setShowAuthModal(true);
                     }}
-                    className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 font-medium"
+                    className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-full transition-all duration-200 transform hover:scale-105 font-medium backdrop-blur-sm"
                   >
                     {t('signUp')}
                   </button>
@@ -677,70 +707,32 @@ Want to analyze another food or have questions about these results?`;
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Hero Section with Background */}
-        <div className="hero-section relative mb-16 rounded-3xl overflow-hidden">
-          {/* Background Image */}
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `linear-gradient(135deg, rgba(16, 185, 129, 0.9), rgba(59, 130, 246, 0.9)), url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3Ccircle cx='10' cy='10' r='2'/%3E%3Ccircle cx='50' cy='10' r='2'/%3E%3Ccircle cx='10' cy='50' r='2'/%3E%3Ccircle cx='50' cy='50' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-            }}
-          />
-          
-          {/* Floating Food Icons */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            {/* Apple */}
-            <div className="absolute top-20 left-10 animate-bounce" style={{ animationDelay: '0s', animationDuration: '3s' }}>
-              <div className="w-12 h-12 bg-red-500 rounded-full opacity-20 flex items-center justify-center">
-                🍎
-              </div>
-            </div>
+        {/* Hero Section */}
+        <div className="text-center mb-16 hero-section relative">
+          {/* Animated Background */}
+          <div className="absolute inset-0 -z-10 overflow-hidden rounded-3xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-emerald-400/20 via-cyan-400/20 to-blue-500/20 dark:from-emerald-600/30 dark:via-cyan-600/30 dark:to-blue-700/30"></div>
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.1),transparent_50%)]"></div>
             
-            {/* Carrot */}
-            <div className="absolute top-32 right-20 animate-bounce" style={{ animationDelay: '1s', animationDuration: '4s' }}>
-              <div className="w-10 h-10 bg-orange-500 rounded-full opacity-20 flex items-center justify-center">
-                🥕
-              </div>
-            </div>
-            
-            {/* Broccoli */}
-            <div className="absolute bottom-20 left-20 animate-bounce" style={{ animationDelay: '2s', animationDuration: '3.5s' }}>
-              <div className="w-14 h-14 bg-green-600 rounded-full opacity-20 flex items-center justify-center">
-                🥦
-              </div>
-            </div>
-            
-            {/* Avocado */}
-            <div className="absolute bottom-32 right-10 animate-bounce" style={{ animationDelay: '0.5s', animationDuration: '4.5s' }}>
-              <div className="w-11 h-11 bg-green-500 rounded-full opacity-20 flex items-center justify-center">
-                🥑
-              </div>
-            </div>
-            
-            {/* Tomato */}
-            <div className="absolute top-40 left-1/3 animate-bounce" style={{ animationDelay: '1.5s', animationDuration: '3.2s' }}>
-              <div className="w-9 h-9 bg-red-600 rounded-full opacity-20 flex items-center justify-center">
-                🍅
-              </div>
-            </div>
-            
-            {/* Bell Pepper */}
-            <div className="absolute bottom-40 right-1/3 animate-bounce" style={{ animationDelay: '2.5s', animationDuration: '3.8s' }}>
-              <div className="w-13 h-13 bg-yellow-500 rounded-full opacity-20 flex items-center justify-center">
-                🫑
-              </div>
+            {/* Floating Food Icons */}
+            <div className="absolute inset-0 pointer-events-none">
+              <div className="absolute top-10 left-10 text-4xl animate-bounce" style={{animationDelay: '0s', animationDuration: '3s'}}>🍎</div>
+              <div className="absolute top-20 right-20 text-3xl animate-bounce" style={{animationDelay: '0.5s', animationDuration: '2.5s'}}>🥕</div>
+              <div className="absolute bottom-20 left-20 text-3xl animate-bounce" style={{animationDelay: '1s', animationDuration: '2.8s'}}>🥦</div>
+              <div className="absolute bottom-10 right-10 text-4xl animate-bounce" style={{animationDelay: '1.5s', animationDuration: '3.2s'}}>🥑</div>
+              <div className="absolute top-1/2 left-5 text-2xl animate-bounce" style={{animationDelay: '2s', animationDuration: '2.2s'}}>🍅</div>
+              <div className="absolute top-1/3 right-5 text-2xl animate-bounce" style={{animationDelay: '2.5s', animationDuration: '2.7s'}}>🫑</div>
             </div>
           </div>
-          
-          {/* Content */}
-          <div className="relative z-10 text-center py-20 px-8">
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
+
+          <div className="relative z-10 backdrop-blur-sm bg-white/10 dark:bg-gray-800/10 rounded-3xl p-8 border border-white/20 dark:border-gray-700/20">
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight drop-shadow-lg">
               {t('heroTitle')}
-              <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-emerald-600 via-cyan-600 to-blue-600 dark:from-emerald-400 dark:via-cyan-400 dark:to-blue-400 bg-clip-text text-transparent block">
                 {t('heroSubtitle')}
               </span>
             </h2>
-            <p className="text-xl text-white mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md opacity-95">
+            <p className="text-xl text-gray-700 dark:text-gray-200 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-sm">
               {t('heroDescription')}
             </p>
             
@@ -748,7 +740,7 @@ Want to analyze another food or have questions about these results?`;
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <button
                 onClick={() => setShowVisionAnalysis(true)}
-                className="cta-button bg-white text-green-600 px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center"
+                className="bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 hover:from-emerald-600 hover:via-teal-600 hover:to-cyan-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center cta-button"
               >
                 <Camera className="h-6 w-6 mr-3" />
                 {t('startAnalysis')}
@@ -756,53 +748,48 @@ Want to analyze another food or have questions about these results?`;
             </div>
 
             {/* Contact Information Cards */}
-            <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
               {/* Email Information */}
-              <div className="email-section bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+              <div className="bg-gradient-to-br from-blue-500/20 via-indigo-500/20 to-purple-500/20 dark:from-blue-600/30 dark:via-indigo-600/30 dark:to-purple-600/30 p-6 rounded-2xl border border-blue-200/50 dark:border-blue-700/50 backdrop-blur-sm email-section">
                 <div className="flex items-center justify-center mb-4">
-                  <Mail className="h-8 w-8 text-white mr-3" />
-                  <h3 className="text-xl font-bold text-white">{t('emailAnalysisText')}</h3>
+                  <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400 mr-3" />
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{t('emailAnalysisText')}</h3>
                 </div>
-                <div className="bg-white/20 backdrop-blur-sm p-4 rounded-lg border border-white/30">
-                  <p className="text-xl font-bold text-white font-mono">vrishankjo@gmail.com</p>
+                <div className="bg-white/80 dark:bg-gray-800/80 p-4 rounded-lg inline-block border-2 border-blue-300/50 dark:border-blue-600/50 backdrop-blur-sm">
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 font-mono">vrishankjo@gmail.com</p>
                 </div>
-                <p className="text-white/90 mt-4 text-sm">
+                <p className="text-gray-700 dark:text-gray-200 mt-4 max-w-2xl mx-auto">
                   Send clear photos of nutrition labels and receive comprehensive Vish Score analysis within 1-20 minutes.
                 </p>
               </div>
 
               {/* Phone Contact */}
-              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+              <div className="bg-gradient-to-br from-green-500/20 via-emerald-500/20 to-teal-500/20 dark:from-green-600/30 dark:via-emerald-600/30 dark:to-teal-600/30 p-6 rounded-2xl border border-green-200/50 dark:border-green-700/50 backdrop-blur-sm">
                 <div className="flex items-center justify-center mb-4">
-                  <Phone className="h-8 w-8 text-white mr-3" />
-                  <h3 className="text-xl font-bold text-white">{t('callUsDirectly')}</h3>
+                  <MessageCircle className="h-8 w-8 text-green-600 dark:text-green-400 mr-3" />
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Call or Text Us</h3>
                 </div>
-                <div className="bg-white/20 backdrop-blur-sm p-4 rounded-lg border border-white/30">
-                  <a 
-                    href="tel:4702081150" 
-                    className="text-xl font-bold text-white font-mono hover:text-yellow-300 transition-colors"
-                  >
-                    (470) 208-1150
-                  </a>
+                <div className="bg-white/80 dark:bg-gray-800/80 p-4 rounded-lg inline-block border-2 border-green-300/50 dark:border-green-600/50 backdrop-blur-sm">
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400 font-mono">4702081150</p>
                 </div>
-                <p className="text-white/90 mt-4 text-sm">
-                  Call us directly for immediate assistance with food analysis questions and support.
+                <p className="text-gray-700 dark:text-gray-200 mt-4 max-w-2xl mx-auto">
+                  Have questions? Call or text us directly for personalized food analysis support.
                 </p>
               </div>
             </div>
 
             {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-white/80 mt-8">
-              <div className="flex items-center">
-                <Star className="h-5 w-5 text-yellow-300 mr-2" />
+            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-600 dark:text-gray-300">
+              <div className="flex items-center bg-yellow-100/50 dark:bg-yellow-900/20 px-3 py-2 rounded-full">
+                <Star className="h-5 w-5 text-yellow-500 mr-2" />
                 <span>AI-Powered Analysis</span>
               </div>
-              <div className="flex items-center">
-                <Heart className="h-5 w-5 text-red-300 mr-2" />
+              <div className="flex items-center bg-red-100/50 dark:bg-red-900/20 px-3 py-2 rounded-full">
+                <Heart className="h-5 w-5 text-red-500 mr-2" />
                 <span>Health-Focused</span>
               </div>
-              <div className="flex items-center">
-                <Award className="h-5 w-5 text-purple-300 mr-2" />
+              <div className="flex items-center bg-purple-100/50 dark:bg-purple-900/20 px-3 py-2 rounded-full">
+                <Award className="h-5 w-5 text-purple-500 mr-2" />
                 <span>Vish Score System</span>
               </div>
             </div>
@@ -812,29 +799,29 @@ Want to analyze another food or have questions about these results?`;
         {/* Features Grid */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* AI Vision Analysis */}
-          <div className="ai-vision-card bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700">
-            <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
+          <div className="bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-100 dark:from-cyan-900/20 dark:via-blue-900/20 dark:to-indigo-900/30 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-cyan-200/50 dark:border-cyan-700/50 ai-vision-card">
+            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
               <Camera className="h-8 w-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('aiVisionTitle')}</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+            <p className="text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">
               {t('aiVisionDesc')}
             </p>
             <button
               onClick={() => setShowVisionAnalysis(true)}
-              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full"
+              className="bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full"
             >
               {t('tryAiAnalysis')}
             </button>
           </div>
 
           {/* Chat Assistant */}
-          <div className="chat-assistant-card bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
+          <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-100 dark:from-violet-900/20 dark:via-purple-900/20 dark:to-fuchsia-900/30 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-violet-200/50 dark:border-violet-700/50 chat-assistant-card">
+            <div className="bg-gradient-to-r from-violet-500 to-purple-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
               <MessageCircle className="h-8 w-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('chatAssistantTitle')}</h3>
-            <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+            <p className="text-gray-700 dark:text-gray-200 mb-6 leading-relaxed">
               {t('chatAssistantDesc')}
             </p>
             
@@ -842,7 +829,7 @@ Want to analyze another food or have questions about these results?`;
             <div className="space-y-3">
               <button
                 onClick={openRegularChat}
-                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
+                className="bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
               >
                 <MessageCircle className="h-5 w-5 mr-2" />
                 {t('startChatting')}
@@ -850,7 +837,7 @@ Want to analyze another food or have questions about these results?`;
               
               <button
                 onClick={openFullscreenChat}
-                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
+                className="bg-gradient-to-r from-purple-500 to-fuchsia-500 hover:from-purple-600 hover:to-fuchsia-600 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
               >
                 <Maximize className="h-5 w-5 mr-2" />
                 {t('startFullscreenChat')}
@@ -860,7 +847,7 @@ Want to analyze another food or have questions about these results?`;
         </div>
 
         {/* Vish Score Section */}
-        <div className="vish-score-section bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl p-8 md:p-12 text-white mb-16 shadow-2xl">
+        <div className="bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 dark:from-amber-500 dark:via-orange-600 dark:to-red-600 rounded-3xl p-8 md:p-12 text-white mb-16 shadow-2xl vish-score-section">
           <div className="max-w-4xl mx-auto text-center">
             <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
               <Award className="h-10 w-10 text-white" />
@@ -891,8 +878,8 @@ Want to analyze another food or have questions about these results?`;
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <Target className="h-6 w-6 mb-2 mx-auto" />
-                <h5 className="font-bold mb-1">Dual Scoring</h5>
-                <p className="text-sm opacity-90">Nutrition + Taste combined</p>
+                <h5 className="font-bold mb-1">Triple Scoring</h5>
+                <p className="text-sm opacity-90">Nutrition + Taste + Consumer</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <Star className="h-6 w-6 mb-2 mx-auto" />
@@ -902,86 +889,86 @@ Want to analyze another food or have questions about these results?`;
             </div>
 
             <p className="text-lg opacity-90 mb-6">
-              Send your nutrition label photos to <strong>vrishankjo@gmail.com</strong> or call <strong>(470) 208-1150</strong> to experience the revolutionary Vish Score analysis!
+              Send your nutrition label photos to <strong>vrishankjo@gmail.com</strong> or call <strong>4702081150</strong> to experience the revolutionary Vish Score analysis!
             </p>
           </div>
         </div>
 
         {/* How It Works */}
-        <div className="how-it-works-section text-center mb-16">
+        <div className="text-center mb-16 how-it-works-section">
           <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-12">{t('howItWorks')}</h3>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center">
-              <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
+            <div className="text-center bg-gradient-to-br from-emerald-50 to-teal-100 dark:from-emerald-900/20 dark:to-teal-900/30 p-6 rounded-2xl">
+              <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step1Title')}</h4>
-              <p className="text-gray-600 dark:text-gray-300">{t('step1Desc')}</p>
+              <p className="text-gray-700 dark:text-gray-200">{t('step1Desc')}</p>
             </div>
-            <div className="text-center">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
+            <div className="text-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/30 p-6 rounded-2xl">
+              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step2Title')}</h4>
-              <p className="text-gray-600 dark:text-gray-300">{t('step2Desc')}</p>
+              <p className="text-gray-700 dark:text-gray-200">{t('step2Desc')}</p>
             </div>
-            <div className="text-center">
+            <div className="text-center bg-gradient-to-br from-purple-50 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/30 p-6 rounded-2xl">
               <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step3Title')}</h4>
-              <p className="text-gray-600 dark:text-gray-300">{t('step3Desc')}</p>
+              <p className="text-gray-700 dark:text-gray-200">{t('step3Desc')}</p>
             </div>
           </div>
         </div>
 
         {/* What Makes Vish Score Special */}
-        <div className="features-section bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-8 md:p-12 mb-16 border border-gray-200 dark:border-gray-700">
+        <div className="bg-gradient-to-br from-slate-50 via-gray-50 to-zinc-100 dark:from-slate-800/50 dark:via-gray-800/50 dark:to-zinc-800/50 backdrop-blur-sm rounded-3xl p-8 md:p-12 mb-16 border border-gray-200/50 dark:border-gray-700/50 features-section">
           <div className="text-center mb-12">
             <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">What Makes Vish Score Revolutionary?</h3>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-700 dark:text-gray-200 max-w-3xl mx-auto">
               Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view of your food.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center p-6 bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl">
+            <div className="text-center p-6 bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30 rounded-xl">
               <div className="bg-green-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <BarChart3 className="h-6 w-6 text-white" />
               </div>
               <h4 className="font-bold text-gray-900 dark:text-white mb-2">Nutrition Deep Dive</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Complete macro and micronutrient analysis with health impact assessment</p>
+              <p className="text-sm text-gray-700 dark:text-gray-200">Complete macro and micronutrient analysis with health impact assessment</p>
             </div>
 
-            <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl">
+            <div className="text-center p-6 bg-gradient-to-br from-purple-100 to-violet-100 dark:from-purple-900/30 dark:to-violet-900/30 rounded-xl">
               <div className="bg-purple-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <Heart className="h-6 w-6 text-white" />
               </div>
               <h4 className="font-bold text-gray-900 dark:text-white mb-2">Taste Science</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Advanced flavor profiling using sensory analysis and consumer preference data</p>
+              <p className="text-sm text-gray-700 dark:text-gray-200">Advanced flavor profiling using sensory analysis and consumer preference data</p>
             </div>
 
-            <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl">
+            <div className="text-center p-6 bg-gradient-to-br from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30 rounded-xl">
               <div className="bg-yellow-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <Target className="h-6 w-6 text-white" />
               </div>
               <h4 className="font-bold text-gray-900 dark:text-white mb-2">Personalized Warnings</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Custom health alerts based on your specific conditions and dietary needs</p>
+              <p className="text-sm text-gray-700 dark:text-gray-200">Custom health alerts based on your specific conditions and dietary needs</p>
             </div>
 
-            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl">
+            <div className="text-center p-6 bg-gradient-to-br from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30 rounded-xl">
               <div className="bg-blue-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <Award className="h-6 w-6 text-white" />
               </div>
               <h4 className="font-bold text-gray-900 dark:text-white mb-2">Unified Score</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Single comprehensive rating that balances health benefits with taste satisfaction</p>
+              <p className="text-sm text-gray-700 dark:text-gray-200">Single comprehensive rating that balances health benefits with taste satisfaction</p>
             </div>
           </div>
 
           <div className="text-center mt-8">
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
-              Ready to experience the future of food analysis? Contact us:
+            <p className="text-lg text-gray-700 dark:text-gray-200 mb-4">
+              Ready to experience the future of food analysis? Contact us now:
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <div className="bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/20 dark:to-blue-900/20 p-4 rounded-lg">
-                <p className="text-lg font-bold text-gray-900 dark:text-white">📧 vrishankjo@gmail.com</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-white">📧 vrishankjo@gmail.com</p>
               </div>
-              <div className="bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-lg">
-                <p className="text-lg font-bold text-gray-900 dark:text-white">📞 (470) 208-1150</p>
+              <div className="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg">
+                <p className="text-xl font-bold text-gray-900 dark:text-white">📞 4702081150</p>
               </div>
             </div>
           </div>
@@ -989,25 +976,25 @@ Want to analyze another food or have questions about these results?`;
       </main>
 
       {/* Footer */}
-      <footer className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
+      <footer className="bg-gradient-to-r from-slate-800 via-gray-800 to-zinc-800 dark:from-slate-900 dark:via-gray-900 dark:to-zinc-900 border-t border-gray-700/50 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-3 mb-4">
               <FoodCheckLogo className="h-8 w-8" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
                 {t('title')}
               </span>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-gray-300 mb-4">
               {t('footerDesc')}
             </p>
-            <div className="flex justify-center space-x-6 text-sm text-gray-600 dark:text-gray-400">
-              <a href="mailto:vrishankjo@gmail.com" className="hover:text-green-600 dark:hover:text-green-400 transition-colors">
+            <div className="flex justify-center space-x-6 text-sm text-gray-400">
+              <a href="mailto:vrishankjo@gmail.com" className="hover:text-emerald-400 transition-colors">
                 {t('contactUs')}
               </a>
               <span>•</span>
-              <a href="tel:4702081150" className="hover:text-green-600 dark:hover:text-green-400 transition-colors">
-                (470) 208-1150
+              <a href="tel:4702081150" className="hover:text-cyan-400 transition-colors">
+                📞 4702081150
               </a>
               <span>•</span>
               <span>{t('nonProfit')}</span>
@@ -1042,20 +1029,35 @@ Want to analyze another food or have questions about these results?`;
         />
       )}
 
+      {showTour && (
+        <Tour
+          isOpen={showTour}
+          onClose={() => setShowTour(false)}
+          onComplete={completeTour}
+        />
+      )}
+
+      {showImageGallery && (
+        <ImageGallery
+          isOpen={showImageGallery}
+          onClose={() => setShowImageGallery(false)}
+        />
+      )}
+
       {/* Chatbot */}
       {showChatbot && (
         <div className={`fixed ${isFullscreenChat ? 'inset-0' : 'inset-0 flex items-center justify-center p-4'} bg-black bg-opacity-50 z-50`}>
           <div className={`bg-white dark:bg-gray-800 ${isFullscreenChat ? 'w-full h-full' : 'rounded-2xl max-w-2xl w-full max-h-[80vh]'} flex flex-col transition-colors duration-300`}>
             {/* Chat Header */}
-            <div className={`bg-gradient-to-r from-blue-500 to-purple-500 p-6 ${isFullscreenChat ? '' : 'rounded-t-2xl'}`}>
+            <div className={`bg-gradient-to-r from-violet-500 to-purple-500 p-6 ${isFullscreenChat ? '' : 'rounded-t-2xl'}`}>
               <div className="flex justify-between items-center">
                 <div className="flex items-center space-x-3">
                   <div className="bg-white p-2 rounded-full">
-                    <MessageCircle className="h-6 w-6 text-blue-600" />
+                    <MessageCircle className="h-6 w-6 text-violet-600" />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white">AI Nutrition Assistant</h3>
-                    <p className="text-blue-100">Ask me anything about food, nutrition, and Vish Score!</p>
+                    <p className="text-violet-100">Ask me anything about food, nutrition, and Vish Score!</p>
                   </div>
                 </div>
                 
@@ -1124,7 +1126,7 @@ Want to analyze another food or have questions about these results?`;
                 <div key={index} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
                     msg.type === 'user' 
-                      ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white' 
+                      ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white' 
                       : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100'
                   }`}>
                     <p className="text-sm whitespace-pre-wrap">{msg.message}</p>
@@ -1154,13 +1156,13 @@ Want to analyze another food or have questions about these results?`;
                   onChange={(e) => setCurrentMessage(e.target.value)}
                   onKeyPress={handleKeyPress}
                   placeholder="Ask about nutrition, health, Vish Score, or food analysis..."
-                  className="flex-1 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300"
+                  className="flex-1 border border-gray-300 dark:border-gray-600 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300"
                   disabled={isTyping}
                 />
                 <button
                   onClick={sendMessage}
                   disabled={!currentMessage.trim() || isTyping}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
+                  className="bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none"
                 >
                   Send
                 </button>
