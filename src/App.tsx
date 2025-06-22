@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Users, TrendingUp } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Image } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
-import { Tour } from './components/Tour';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
+import { Tour } from './components/Tour';
+import { ImageGallery } from './components/ImageGallery';
 import { useAuth } from './hooks/useAuth';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { NutritionAnalysis } from './services/visionService';
@@ -236,13 +237,13 @@ const translations: Translations = {
     hi: 'Vish Score का परिचय'
   },
   vishScoreSubtitle: {
-    en: 'The world\'s first comprehensive scoring system that evaluates nutrition, taste quality, AND consumer ratings in one revolutionary score.',
-    es: 'El primer sistema de puntuación integral del mundo que evalúa nutrición, calidad del sabor Y calificaciones de consumidores en una puntuación revolucionaria.',
-    fr: 'Le premier système de notation complet au monde qui évalue la nutrition, la qualité gustative ET les évaluations des consommateurs en un score révolutionnaire.',
-    de: 'Das weltweit erste umfassende Bewertungssystem, das Ernährung, Geschmacksqualität UND Verbraucherbewertungen in einem revolutionären Score bewertet.',
-    zh: '世界上第一个综合评分系统，在一个革命性的分数中评估营养、口味质量和消费者评级。',
-    ja: '栄養、味の品質、消費者評価を一つの革新的なスコアで評価する世界初の包括的スコアリングシステム。',
-    hi: 'दुनिया की पहली व्यापक स्कोरिंग प्रणाली जो एक क्रांतिकारी स्कोर में पोषण, स्वाद की गुणवत्ता और उपभोक्ता रेटिंग का मूल्यांकन करती है।'
+    en: 'The world\'s first comprehensive scoring system that evaluates nutrition, taste quality, AND consumer satisfaction in one revolutionary score.',
+    es: 'El primer sistema de puntuación integral del mundo que evalúa nutrición, calidad del sabor Y satisfacción del consumidor en una puntuación revolucionaria.',
+    fr: 'Le premier système de notation complet au monde qui évalue la nutrition, la qualité gustative ET la satisfaction des consommateurs en un score révolutionnaire.',
+    de: 'Das weltweit erste umfassende Bewertungssystem, das Ernährung, Geschmacksqualität UND Verbraucherzufriedenheit in einem revolutionären Score bewertet.',
+    zh: '世界上第一个综合评分系统，在一个革命性的分数中评估营养、口味质量和消费者满意度。',
+    ja: '栄養、味の品質、消費者満足度を一つの革新的なスコアで評価する世界初の包括的スコアリングシステム。',
+    hi: 'दुनिया की पहली व्यापक स्कोरिंग प्रणाली जो एक क्रांतिकारी स्कोर में पोषण, स्वाद की गुणवत्ता और उपभोक्ता संतुष्टि का मूल्यांकन करती है।'
   },
   nutritionAnalysisTitle: {
     en: 'Nutrition Analysis',
@@ -282,7 +283,7 @@ const translations: Translations = {
   },
   consumerRatingsTitle: {
     en: 'Consumer Ratings',
-    es: 'Calificaciones de Consumidores',
+    es: 'Calificaciones del Consumidor',
     fr: 'Évaluations des Consommateurs',
     de: 'Verbraucherbewertungen',
     zh: '消费者评级',
@@ -290,13 +291,13 @@ const translations: Translations = {
     hi: 'उपभोक्ता रेटिंग'
   },
   consumerRatingsDesc: {
-    en: 'Real user feedback and satisfaction scores',
-    es: 'Comentarios reales de usuarios y puntuaciones de satisfacción',
-    fr: 'Commentaires d\'utilisateurs réels et scores de satisfaction',
-    de: 'Echte Nutzerfeedbacks und Zufriedenheitswerte',
-    zh: '真实用户反馈和满意度评分',
-    ja: '実際のユーザーフィードバックと満足度スコア',
-    hi: 'वास्तविक उपयोगकर्ता फीडबैक और संतुष्टि स्कोर'
+    en: 'Real user feedback and satisfaction analysis',
+    es: 'Comentarios reales de usuarios y análisis de satisfacción',
+    fr: 'Commentaires d\'utilisateurs réels et analyse de satisfaction',
+    de: 'Echte Nutzerfeedbacks und Zufriedenheitsanalyse',
+    zh: '真实用户反馈和满意度分析',
+    ja: '実際のユーザーフィードバックと満足度分析',
+    hi: 'वास्तविक उपयोगकर्ता प्रतिक्रिया और संतुष्टि विश्लेषण'
   },
   howItWorks: {
     en: 'How FoodCheck Works',
@@ -335,13 +336,13 @@ const translations: Translations = {
     hi: 'AI विश्लेषण'
   },
   step2Desc: {
-    en: 'Our advanced AI analyzes nutrition, health impact, taste, and consumer data',
-    es: 'Nuestra IA avanzada analiza nutrición, impacto en la salud, sabor y datos de consumidores',
-    fr: 'Notre IA avancée analyse la nutrition, l\'impact sur la santé, le goût et les données des consommateurs',
-    de: 'Unsere fortschrittliche KI analysiert Ernährung, Gesundheitsauswirkungen, Geschmack und Verbraucherdaten',
-    zh: '我们的先进AI分析营养、健康影响、口味和消费者数据',
-    ja: '高度なAIが栄養、健康への影響、味、消費者データを分析',
-    hi: 'हमारी उन्नत AI पोषण, स्वास्थ्य प्रभाव, स्वाद और उपभोक्ता डेटा का विश्लेषण करती है'
+    en: 'Our advanced AI analyzes nutrition, health impact, taste, and consumer satisfaction',
+    es: 'Nuestra IA avanzada analiza nutrición, impacto en la salud, sabor y satisfacción del consumidor',
+    fr: 'Notre IA avancée analyse la nutrition, l\'impact sur la santé, le goût et la satisfaction des consommateurs',
+    de: 'Unsere fortschrittliche KI analysiert Ernährung, Gesundheitsauswirkungen, Geschmack und Verbraucherzufriedenheit',
+    zh: '我们的先进AI分析营养、健康影响、口味和消费者满意度',
+    ja: '高度なAIが栄養、健康への影響、味、消費者満足度を分析',
+    hi: 'हमारी उन्नत AI पोषण, स्वास्थ्य प्रभाव, स्वाद और उपभोक्ता संतुष्टि का विश्लेषण करती है'
   },
   step3Title: {
     en: 'Get Results',
@@ -353,13 +354,13 @@ const translations: Translations = {
     hi: 'परिणाम प्राप्त करें'
   },
   step3Desc: {
-    en: 'Receive comprehensive Vish Score with nutrition, taste, and consumer insights',
-    es: 'Recibe Vish Score completo con información nutricional, de sabor y de consumidores',
-    fr: 'Recevez un Vish Score complet avec des informations nutritionnelles, gustatives et de consommateurs',
-    de: 'Erhalten Sie umfassenden Vish Score mit Ernährungs-, Geschmacks- und Verbrauchereinblicken',
-    zh: '获得包含营养、口味和消费者洞察的综合Vish Score',
-    ja: '栄養、味、消費者洞察を含む包括的なVish Scoreを受け取る',
-    hi: 'पोषण, स्वाद और उपभोक्ता अंतर्दृष्टि के साथ व्यापक Vish Score प्राप्त करें'
+    en: 'Receive comprehensive Vish Score analysis with personalized recommendations',
+    es: 'Recibe análisis completo de Vish Score con recomendaciones personalizadas',
+    fr: 'Recevez une analyse complète du Vish Score avec des recommandations personnalisées',
+    de: 'Erhalten Sie umfassende Vish Score Analysen mit personalisierten Empfehlungen',
+    zh: '获得包含个性化建议的综合Vish Score分析',
+    ja: '個人的な推奨事項を含む包括的なVish Score分析を受け取る',
+    hi: 'व्यक्तिगत सिफारिशों के साथ व्यापक Vish Score विश्लेषण प्राप्त करें'
   },
   contactUs: {
     en: 'Contact Us',
@@ -397,12 +398,21 @@ const translations: Translations = {
     ja: 'より健康的な食事のために❤️で作られました',
     hi: 'स्वस्थ भोजन के लिए ❤️ से बनाया गया'
   },
+  viewGallery: {
+    en: 'View AI Gallery',
+    es: 'Ver Galería IA',
+    fr: 'Voir la Galerie IA',
+    de: 'KI-Galerie Ansehen',
+    zh: '查看AI画廊',
+    ja: 'AIギャラリーを見る',
+    hi: 'AI गैलरी देखें'
+  },
   takeTour: {
     en: 'Take Tour',
     es: 'Hacer Tour',
     fr: 'Faire le Tour',
     de: 'Tour Machen',
-    zh: '参观导览',
+    zh: '开始导览',
     ja: 'ツアーを開始',
     hi: 'टूर लें'
   }
@@ -413,6 +423,7 @@ function App() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [showImageGallery, setShowImageGallery] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showChatbot, setShowChatbot] = useState(false);
   const [isFullscreenChat, setIsFullscreenChat] = useState(false);
@@ -446,7 +457,7 @@ function App() {
     const hasSeenTour = localStorage.getItem('foodcheck_tour_completed');
     if (!hasSeenTour) {
       // Show tour after a short delay for better UX
-      setTimeout(() => setShowTour(true), 1500);
+      setTimeout(() => setShowTour(true), 2000);
     }
   }, []);
 
@@ -499,21 +510,21 @@ function App() {
     // Add analysis result to chat
     const analysisMessage = `🎉 **Analysis Complete!**
 
-**Overall Vish Score: ${analysis.overall.grade}**
+**Overall Grade: ${analysis.overall.grade}**
+**Vish Score: ${analysis.overall.vishScore}/100**
 ${analysis.overall.summary}
 
-**📊 Detailed Scores:**
-• **Nutrition Score:** ${analysis.health.score}/100
-• **Taste Score:** ${analysis.taste.score}/100
-• **Consumer Rating:** ${analysis.consumer?.score || 'N/A'}/100
+**📊 Nutrition Score: ${analysis.health.score}/100**
+**🍽️ Taste Score: ${analysis.taste.score}/100**
+**👥 Consumer Score: ${analysis.consumer.score}/100**
 
 ${analysis.health.warnings.length > 0 ? `⚠️ **Health Warnings:**\n${analysis.health.warnings.map(w => `• ${w}`).join('\n')}\n\n` : ''}
 
 ${analysis.health.recommendations.length > 0 ? `💡 **Recommendations:**\n${analysis.health.recommendations.map(r => `• ${r}`).join('\n')}\n\n` : ''}
 
-**🍽️ Taste Profile:** ${analysis.taste.description}
+**Taste Profile:** ${analysis.taste.description}
 
-${analysis.consumer?.feedback ? `**👥 Consumer Insights:** ${analysis.consumer.feedback}\n\n` : ''}
+**Consumer Insights:** ${analysis.consumer.feedback}
 
 Want to analyze another food or have questions about these results?`;
 
@@ -640,15 +651,6 @@ Want to analyze another food or have questions about these results?`;
                   </div>
                 )}
               </div>
-
-              {/* Tour Button */}
-              <button
-                onClick={() => setShowTour(true)}
-                className="p-2 rounded-full bg-gradient-to-r from-green-500 to-blue-500 text-white hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                title={t('takeTour')}
-              >
-                <Star className="h-5 w-5" />
-              </button>
             </div>
 
             {/* Navigation */}
@@ -664,6 +666,19 @@ Want to analyze another food or have questions about these results?`;
                 className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
               >
                 {t('chatAssistant')}
+              </button>
+              <button 
+                onClick={() => setShowImageGallery(true)}
+                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium flex items-center space-x-1"
+              >
+                <Image className="h-4 w-4" />
+                <span>{t('viewGallery')}</span>
+              </button>
+              <button 
+                onClick={() => setShowTour(true)}
+                className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
+              >
+                {t('takeTour')}
               </button>
             </nav>
 
@@ -842,12 +857,12 @@ Want to analyze another food or have questions about these results?`;
                 <p className="opacity-90">{t('nutritionAnalysisDesc')}</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
-                <Heart className="h-8 w-8 mb-4 mx-auto" />
+                <Star className="h-8 w-8 mb-4 mx-auto" />
                 <h4 className="text-xl font-bold mb-2">{t('tasteEvaluationTitle')}</h4>
                 <p className="opacity-90">{t('tasteEvaluationDesc')}</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
-                <Users className="h-8 w-8 mb-4 mx-auto" />
+                <Heart className="h-8 w-8 mb-4 mx-auto" />
                 <h4 className="text-xl font-bold mb-2">{t('consumerRatingsTitle')}</h4>
                 <p className="opacity-90">{t('consumerRatingsDesc')}</p>
               </div>
@@ -866,9 +881,9 @@ Want to analyze another food or have questions about these results?`;
                 <p className="text-sm opacity-90">Nutrition + Taste + Consumer</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
-                <TrendingUp className="h-6 w-6 mb-2 mx-auto" />
-                <h5 className="font-bold mb-1">Real Data</h5>
-                <p className="text-sm opacity-90">Based on actual user feedback</p>
+                <Star className="h-6 w-6 mb-2 mx-auto" />
+                <h5 className="font-bold mb-1">Personalized</h5>
+                <p className="text-sm opacity-90">Based on your health needs</p>
               </div>
             </div>
 
@@ -905,7 +920,7 @@ Want to analyze another food or have questions about these results?`;
           <div className="text-center mb-12">
             <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">What Makes Vish Score Revolutionary?</h3>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view combining nutrition, taste, and real consumer feedback.
+              Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view of your food with three equal pillars.
             </p>
           </div>
 
@@ -920,26 +935,26 @@ Want to analyze another food or have questions about these results?`;
 
             <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl">
               <div className="bg-purple-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <Heart className="h-6 w-6 text-white" />
+                <Star className="h-6 w-6 text-white" />
               </div>
               <h4 className="font-bold text-gray-900 dark:text-white mb-2">Taste Science</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Advanced flavor profiling using sensory analysis and consumer preference data</p>
-            </div>
-
-            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl">
-              <div className="bg-blue-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <Users className="h-6 w-6 text-white" />
-              </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Consumer Insights</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Real user feedback and satisfaction scores from actual consumers</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Advanced flavor profiling using sensory analysis and culinary science</p>
             </div>
 
             <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl">
               <div className="bg-yellow-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <Target className="h-6 w-6 text-white" />
+              </div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Personalized Warnings</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Custom health alerts based on your specific conditions and dietary needs</p>
+            </div>
+
+            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl">
+              <div className="bg-blue-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <Award className="h-6 w-6 text-white" />
               </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Unified Score</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Single comprehensive rating that balances health, taste, and consumer satisfaction</p>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Consumer Validation</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Real user feedback and satisfaction data integrated into scoring</p>
             </div>
           </div>
 
@@ -1012,6 +1027,13 @@ Want to analyze another food or have questions about these results?`;
         />
       )}
 
+      {showImageGallery && (
+        <ImageGallery
+          isOpen={showImageGallery}
+          onClose={() => setShowImageGallery(false)}
+        />
+      )}
+
       {/* Chatbot */}
       {showChatbot && (
         <div className={`fixed ${isFullscreenChat ? 'inset-0' : 'inset-0 flex items-center justify-center p-4'} bg-black bg-opacity-50 z-50`}>
@@ -1081,7 +1103,7 @@ Want to analyze another food or have questions about these results?`;
                       "What is the Vish Score?"
                     </p>
                     <p className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg inline-block">
-                      "How does consumer rating work?"
+                      "How does taste analysis work?"
                     </p>
                     <p className="bg-gray-100 dark:bg-gray-700 p-2 rounded-lg inline-block">
                       "Analyze food for diabetes"
