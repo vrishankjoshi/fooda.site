@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Play } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
+import { Tour } from './components/Tour';
 import { useAuth } from './hooks/useAuth';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { NutritionAnalysis } from './services/visionService';
@@ -225,6 +226,15 @@ const translations: Translations = {
     ja: 'ホームに戻る',
     hi: 'होम पर वापस जाएं'
   },
+  takeTour: {
+    en: 'Take Tour',
+    es: 'Hacer Tour',
+    fr: 'Faire le Tour',
+    de: 'Tour Machen',
+    zh: '开始导览',
+    ja: 'ツアーを開始',
+    hi: 'टूर लें'
+  },
   vishScoreTitle: {
     en: 'Introducing Vish Score',
     es: 'Presentamos Vish Score',
@@ -384,6 +394,7 @@ function App() {
   const [showVisionAnalysis, setShowVisionAnalysis] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [showTour, setShowTour] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showChatbot, setShowChatbot] = useState(false);
   const [isFullscreenChat, setIsFullscreenChat] = useState(false);
@@ -411,6 +422,13 @@ function App() {
     const savedLanguage = localStorage.getItem('foodcheck_language') as Language;
     if (savedLanguage && ['en', 'es', 'fr', 'de', 'zh', 'ja', 'hi'].includes(savedLanguage)) {
       setLanguage(savedLanguage);
+    }
+
+    // Check if user has seen the tour
+    const hasSeenTour = localStorage.getItem('foodcheck_tour_completed');
+    if (!hasSeenTour) {
+      // Show tour after a short delay for better UX
+      setTimeout(() => setShowTour(true), 2000);
     }
   }, []);
 
@@ -532,6 +550,14 @@ Want to analyze another food or have questions about these results?`;
     setIsFullscreenChat(false);
   };
 
+  const handleTourComplete = () => {
+    localStorage.setItem('foodcheck_tour_completed', 'true');
+  };
+
+  const startTour = () => {
+    setShowTour(true);
+  };
+
   return (
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-green-50 via-blue-50 to-purple-50'}`}>
       {/* Header */}
@@ -540,7 +566,7 @@ Want to analyze another food or have questions about these results?`;
           <div className="flex justify-between items-center h-16">
             {/* Logo and Controls */}
             <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3 foodcheck-logo">
                 <FoodCheckLogo className="h-10 w-10" />
                 <div>
                   <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent">
@@ -553,7 +579,7 @@ Want to analyze another food or have questions about these results?`;
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
-                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 transform hover:scale-105"
+                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 dark-mode-toggle"
                 title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               >
                 {darkMode ? (
@@ -564,7 +590,7 @@ Want to analyze another food or have questions about these results?`;
               </button>
 
               {/* Language Selector */}
-              <div className="relative">
+              <div className="relative language-selector">
                 <button
                   onClick={() => setShowLanguageMenu(!showLanguageMenu)}
                   className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 flex items-center space-x-1"
@@ -596,10 +622,19 @@ Want to analyze another food or have questions about these results?`;
                   </div>
                 )}
               </div>
+
+              {/* Tour Button */}
+              <button
+                onClick={startTour}
+                className="p-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                title={t('takeTour')}
+              >
+                <Play className="h-5 w-5" />
+              </button>
             </div>
 
             {/* Navigation */}
-            <nav className="hidden md:flex items-center space-x-6">
+            <nav className="hidden md:flex items-center space-x-6 main-navigation">
               <button 
                 onClick={() => setShowVisionAnalysis(true)}
                 className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors font-medium"
@@ -615,7 +650,7 @@ Want to analyze another food or have questions about these results?`;
             </nav>
 
             {/* User Actions */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 auth-buttons">
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   <div className="hidden sm:block text-right">
@@ -669,7 +704,7 @@ Want to analyze another food or have questions about these results?`;
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 hero-section">
           <h2 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
             {t('heroTitle')}
             <span className="bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent block">
@@ -684,7 +719,7 @@ Want to analyze another food or have questions about these results?`;
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
             <button
               onClick={() => setShowVisionAnalysis(true)}
-              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center"
+              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center cta-button"
             >
               <Camera className="h-6 w-6 mr-3" />
               {t('startAnalysis')}
@@ -692,7 +727,7 @@ Want to analyze another food or have questions about these results?`;
           </div>
 
           {/* Email Information */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-2xl mb-12 border border-blue-200 dark:border-blue-800">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-2xl mb-12 border border-blue-200 dark:border-blue-800 email-section">
             <div className="flex items-center justify-center mb-4">
               <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400 mr-3" />
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{t('emailAnalysisText')}</h3>
@@ -725,7 +760,7 @@ Want to analyze another food or have questions about these results?`;
         {/* Features Grid */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* AI Vision Analysis */}
-          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700 ai-vision-card">
             <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
               <Camera className="h-8 w-8 text-white" />
             </div>
@@ -742,7 +777,7 @@ Want to analyze another food or have questions about these results?`;
           </div>
 
           {/* Chat Assistant */}
-          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700">
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700 chat-assistant-card">
             <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
               <MessageCircle className="h-8 w-8 text-white" />
             </div>
@@ -773,7 +808,7 @@ Want to analyze another food or have questions about these results?`;
         </div>
 
         {/* Vish Score Section */}
-        <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl p-8 md:p-12 text-white mb-16 shadow-2xl">
+        <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl p-8 md:p-12 text-white mb-16 shadow-2xl vish-score-section">
           <div className="max-w-4xl mx-auto text-center">
             <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
               <Award className="h-10 w-10 text-white" />
@@ -821,7 +856,7 @@ Want to analyze another food or have questions about these results?`;
         </div>
 
         {/* How It Works */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-16 how-it-works-section">
           <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-12">{t('howItWorks')}</h3>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
@@ -843,7 +878,7 @@ Want to analyze another food or have questions about these results?`;
         </div>
 
         {/* What Makes Vish Score Special */}
-        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-8 md:p-12 mb-16 border border-gray-200 dark:border-gray-700">
+        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-8 md:p-12 mb-16 border border-gray-200 dark:border-gray-700 features-section">
           <div className="text-center mb-12">
             <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">What Makes Vish Score Revolutionary?</h3>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
@@ -945,6 +980,13 @@ Want to analyze another food or have questions about these results?`;
           onClose={() => setShowAdminPanel(false)}
         />
       )}
+
+      {/* Tour */}
+      <Tour
+        isOpen={showTour}
+        onClose={() => setShowTour(false)}
+        onComplete={handleTourComplete}
+      />
 
       {/* Chatbot */}
       {showChatbot && (
