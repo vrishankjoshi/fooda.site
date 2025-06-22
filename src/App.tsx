@@ -3,9 +3,8 @@ import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogO
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
-import { FoodCheckLogo } from './components/FoodCheckLogo';
-import { Tour } from './components/Tour';
 import { ImageGallery } from './components/ImageGallery';
+import { FoodCheckLogo } from './components/FoodCheckLogo';
 import { useAuth } from './hooks/useAuth';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { NutritionAnalysis } from './services/visionService';
@@ -227,6 +226,15 @@ const translations: Translations = {
     ja: 'ホームに戻る',
     hi: 'होम पर वापस जाएं'
   },
+  viewGallery: {
+    en: 'View AI Gallery',
+    es: 'Ver Galería IA',
+    fr: 'Voir la Galerie IA',
+    de: 'KI-Galerie Ansehen',
+    zh: '查看AI画廊',
+    ja: 'AIギャラリーを見る',
+    hi: 'AI गैलरी देखें'
+  },
   vishScoreTitle: {
     en: 'Introducing Vish Score',
     es: 'Presentamos Vish Score',
@@ -291,13 +299,13 @@ const translations: Translations = {
     hi: 'उपभोक्ता रेटिंग'
   },
   consumerRatingsDesc: {
-    en: 'Real user feedback and satisfaction analysis',
-    es: 'Comentarios reales de usuarios y análisis de satisfacción',
-    fr: 'Commentaires d\'utilisateurs réels et analyse de satisfaction',
-    de: 'Echte Nutzerfeedbacks und Zufriedenheitsanalyse',
-    zh: '真实用户反馈和满意度分析',
-    ja: '実際のユーザーフィードバックと満足度分析',
-    hi: 'वास्तविक उपयोगकर्ता प्रतिक्रिया और संतुष्टि विश्लेषण'
+    en: 'Real user feedback and satisfaction data',
+    es: 'Comentarios reales de usuarios y datos de satisfacción',
+    fr: 'Commentaires d\'utilisateurs réels et données de satisfaction',
+    de: 'Echte Nutzerfeedbacks und Zufriedenheitsdaten',
+    zh: '真实用户反馈和满意度数据',
+    ja: '実際のユーザーフィードバックと満足度データ',
+    hi: 'वास्तविक उपयोगकर्ता फीडबैक और संतुष्टि डेटा'
   },
   howItWorks: {
     en: 'How FoodCheck Works',
@@ -336,13 +344,13 @@ const translations: Translations = {
     hi: 'AI विश्लेषण'
   },
   step2Desc: {
-    en: 'Our advanced AI analyzes nutrition, health impact, taste, and consumer satisfaction',
-    es: 'Nuestra IA avanzada analiza nutrición, impacto en la salud, sabor y satisfacción del consumidor',
-    fr: 'Notre IA avancée analyse la nutrition, l\'impact sur la santé, le goût et la satisfaction des consommateurs',
-    de: 'Unsere fortschrittliche KI analysiert Ernährung, Gesundheitsauswirkungen, Geschmack und Verbraucherzufriedenheit',
-    zh: '我们的先进AI分析营养、健康影响、口味和消费者满意度',
-    ja: '高度なAIが栄養、健康への影響、味、消費者満足度を分析',
-    hi: 'हमारी उन्नत AI पोषण, स्वास्थ्य प्रभाव, स्वाद और उपभोक्ता संतुष्टि का विश्लेषण करती है'
+    en: 'Our advanced AI analyzes nutrition, health impact, taste, and consumer data',
+    es: 'Nuestra IA avanzada analiza nutrición, impacto en la salud, sabor y datos del consumidor',
+    fr: 'Notre IA avancée analyse la nutrition, l\'impact sur la santé, le goût et les données des consommateurs',
+    de: 'Unsere fortschrittliche KI analysiert Ernährung, Gesundheitsauswirkungen, Geschmack und Verbraucherdaten',
+    zh: '我们的先进AI分析营养、健康影响、口味和消费者数据',
+    ja: '高度なAIが栄養、健康への影響、味、消費者データを分析',
+    hi: 'हमारी उन्नत AI पोषण, स्वास्थ्य प्रभाव, स्वाद और उपभोक्ता डेटा का विश्लेषण करती है'
   },
   step3Title: {
     en: 'Get Results',
@@ -357,7 +365,7 @@ const translations: Translations = {
     en: 'Receive comprehensive Vish Score analysis with personalized recommendations',
     es: 'Recibe análisis completo de Vish Score con recomendaciones personalizadas',
     fr: 'Recevez une analyse complète du Vish Score avec des recommandations personnalisées',
-    de: 'Erhalten Sie umfassende Vish Score Analysen mit personalisierten Empfehlungen',
+    de: 'Erhalten Sie umfassende Vish Score-Analysen mit personalisierten Empfehlungen',
     zh: '获得包含个性化建议的综合Vish Score分析',
     ja: '個人的な推奨事項を含む包括的なVish Score分析を受け取る',
     hi: 'व्यक्तिगत सिफारिशों के साथ व्यापक Vish Score विश्लेषण प्राप्त करें'
@@ -397,24 +405,6 @@ const translations: Translations = {
     zh: '用❤️为更健康的饮食而制作',
     ja: 'より健康的な食事のために❤️で作られました',
     hi: 'स्वस्थ भोजन के लिए ❤️ से बनाया गया'
-  },
-  viewGallery: {
-    en: 'View AI Gallery',
-    es: 'Ver Galería IA',
-    fr: 'Voir la Galerie IA',
-    de: 'KI-Galerie Ansehen',
-    zh: '查看AI画廊',
-    ja: 'AIギャラリーを見る',
-    hi: 'AI गैलरी देखें'
-  },
-  takeTour: {
-    en: 'Take Tour',
-    es: 'Hacer Tour',
-    fr: 'Faire le Tour',
-    de: 'Tour Machen',
-    zh: '开始导览',
-    ja: 'ツアーを開始',
-    hi: 'टूर लें'
   }
 };
 
@@ -422,7 +412,6 @@ function App() {
   const [showVisionAnalysis, setShowVisionAnalysis] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
-  const [showTour, setShowTour] = useState(false);
   const [showImageGallery, setShowImageGallery] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showChatbot, setShowChatbot] = useState(false);
@@ -451,13 +440,6 @@ function App() {
     const savedLanguage = localStorage.getItem('foodcheck_language') as Language;
     if (savedLanguage && ['en', 'es', 'fr', 'de', 'zh', 'ja', 'hi'].includes(savedLanguage)) {
       setLanguage(savedLanguage);
-    }
-
-    // Check if user has seen the tour
-    const hasSeenTour = localStorage.getItem('foodcheck_tour_completed');
-    if (!hasSeenTour) {
-      // Show tour after a short delay for better UX
-      setTimeout(() => setShowTour(true), 2000);
     }
   }, []);
 
@@ -514,17 +496,18 @@ function App() {
 **Vish Score: ${analysis.overall.vishScore}/100**
 ${analysis.overall.summary}
 
-**📊 Nutrition Score: ${analysis.health.score}/100**
-**🍽️ Taste Score: ${analysis.taste.score}/100**
-**👥 Consumer Score: ${analysis.consumer.score}/100**
+**📊 Three Pillar Breakdown:**
+• **Nutrition Score: ${analysis.health.score}/100** - Health Impact
+• **Taste Score: ${analysis.taste.score}/100** - Flavor Quality  
+• **Consumer Score: ${analysis.consumer.score}/100** - User Satisfaction
 
 ${analysis.health.warnings.length > 0 ? `⚠️ **Health Warnings:**\n${analysis.health.warnings.map(w => `• ${w}`).join('\n')}\n\n` : ''}
 
 ${analysis.health.recommendations.length > 0 ? `💡 **Recommendations:**\n${analysis.health.recommendations.map(r => `• ${r}`).join('\n')}\n\n` : ''}
 
-**Taste Profile:** ${analysis.taste.description}
+**🍽️ Taste Profile:** ${analysis.taste.description}
 
-**Consumer Insights:** ${analysis.consumer.feedback}
+**👥 Consumer Insights:** ${analysis.consumer.feedback}
 
 Want to analyze another food or have questions about these results?`;
 
@@ -581,10 +564,6 @@ Want to analyze another food or have questions about these results?`;
   const backToHome = () => {
     setShowChatbot(false);
     setIsFullscreenChat(false);
-  };
-
-  const handleTourComplete = () => {
-    localStorage.setItem('foodcheck_tour_completed', 'true');
   };
 
   return (
@@ -673,12 +652,6 @@ Want to analyze another food or have questions about these results?`;
               >
                 <Image className="h-4 w-4" />
                 <span>{t('viewGallery')}</span>
-              </button>
-              <button 
-                onClick={() => setShowTour(true)}
-                className="text-gray-700 dark:text-gray-300 hover:text-orange-600 dark:hover:text-orange-400 transition-colors font-medium"
-              >
-                {t('takeTour')}
               </button>
             </nav>
 
@@ -862,7 +835,7 @@ Want to analyze another food or have questions about these results?`;
                 <p className="opacity-90">{t('tasteEvaluationDesc')}</p>
               </div>
               <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
-                <Heart className="h-8 w-8 mb-4 mx-auto" />
+                <Users className="h-8 w-8 mb-4 mx-auto" />
                 <h4 className="text-xl font-bold mb-2">{t('consumerRatingsTitle')}</h4>
                 <p className="opacity-90">{t('consumerRatingsDesc')}</p>
               </div>
@@ -920,7 +893,7 @@ Want to analyze another food or have questions about these results?`;
           <div className="text-center mb-12">
             <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">What Makes Vish Score Revolutionary?</h3>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view of your food with three equal pillars.
+              Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view of your food with three key dimensions.
             </p>
           </div>
 
@@ -938,23 +911,23 @@ Want to analyze another food or have questions about these results?`;
                 <Star className="h-6 w-6 text-white" />
               </div>
               <h4 className="font-bold text-gray-900 dark:text-white mb-2">Taste Science</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Advanced flavor profiling using sensory analysis and culinary science</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Advanced flavor profiling using sensory analysis and consumer preference data</p>
             </div>
 
-            <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl">
-              <div className="bg-yellow-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <Target className="h-6 w-6 text-white" />
+            <div className="text-center p-6 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl">
+              <div className="bg-orange-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <Users className="h-6 w-6 text-white" />
               </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Personalized Warnings</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Custom health alerts based on your specific conditions and dietary needs</p>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Consumer Insights</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Real user feedback and satisfaction data from actual consumers</p>
             </div>
 
             <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl">
               <div className="bg-blue-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
                 <Award className="h-6 w-6 text-white" />
               </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Consumer Validation</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Real user feedback and satisfaction data integrated into scoring</p>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Unified Score</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Single comprehensive rating that balances health, taste, and consumer satisfaction</p>
             </div>
           </div>
 
@@ -1016,14 +989,6 @@ Want to analyze another food or have questions about these results?`;
         <AdminPanel
           isOpen={showAdminPanel}
           onClose={() => setShowAdminPanel(false)}
-        />
-      )}
-
-      {showTour && (
-        <Tour
-          isOpen={showTour}
-          onClose={() => setShowTour(false)}
-          onComplete={handleTourComplete}
         />
       )}
 

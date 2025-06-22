@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { X, ChevronLeft, ChevronRight, Download, Heart, Star, BarChart3, Users, Camera, Zap } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Download, Heart, Star, BarChart3, Users, Camera, Zap, Beaker, Brain, TrendingUp, Award } from 'lucide-react';
 
 interface ImageItem {
   id: string;
   title: string;
   description: string;
   category: 'nutrition' | 'taste' | 'consumer' | 'general';
-  url: string;
+  component: React.ReactNode;
   alt: string;
 }
 
@@ -15,87 +15,281 @@ interface ImageGalleryProps {
   onClose: () => void;
 }
 
-// AI-generated images related to food analysis and Vish Score
+// Original AI-generated visual components (no copyrighted content)
+const AIVisualizationCard: React.FC<{ title: string; icon: React.ReactNode; color: string; data: string[] }> = ({ title, icon, color, data }) => (
+  <div className={`w-full h-48 ${color} rounded-lg p-6 flex flex-col justify-between`}>
+    <div className="flex items-center space-x-3 text-white">
+      {icon}
+      <h3 className="text-lg font-bold">{title}</h3>
+    </div>
+    <div className="space-y-2">
+      {data.map((item, index) => (
+        <div key={index} className="bg-white bg-opacity-20 rounded-full h-2">
+          <div 
+            className="bg-white rounded-full h-2 transition-all duration-1000"
+            style={{ width: `${Math.random() * 80 + 20}%` }}
+          />
+        </div>
+      ))}
+    </div>
+    <div className="text-white text-sm opacity-90">AI Analysis in Progress...</div>
+  </div>
+);
+
+const NutritionChart: React.FC = () => (
+  <div className="w-full h-48 bg-gradient-to-br from-green-400 to-blue-500 rounded-lg p-6 relative overflow-hidden">
+    <div className="absolute inset-0 bg-white bg-opacity-10">
+      <div className="grid grid-cols-4 gap-2 p-4 h-full">
+        {Array.from({ length: 16 }).map((_, i) => (
+          <div 
+            key={i}
+            className="bg-white bg-opacity-30 rounded animate-pulse"
+            style={{ 
+              height: `${Math.random() * 80 + 20}%`,
+              animationDelay: `${i * 0.1}s`
+            }}
+          />
+        ))}
+      </div>
+    </div>
+    <div className="relative z-10 text-white">
+      <h3 className="text-xl font-bold mb-2">Nutrition Analysis</h3>
+      <p className="text-sm opacity-90">Real-time nutritional breakdown</p>
+    </div>
+  </div>
+);
+
+const TasteProfile: React.FC = () => (
+  <div className="w-full h-48 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg p-6 relative">
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-32 h-32 border-4 border-white border-opacity-30 rounded-full relative">
+        <div className="absolute inset-2 border-2 border-white border-opacity-50 rounded-full">
+          <div className="absolute inset-2 border border-white border-opacity-70 rounded-full flex items-center justify-center">
+            <Star className="h-8 w-8 text-white" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div className="relative z-10 text-white">
+      <h3 className="text-xl font-bold mb-2">Taste Science</h3>
+      <p className="text-sm opacity-90">Flavor compound analysis</p>
+    </div>
+  </div>
+);
+
+const ConsumerRating: React.FC = () => (
+  <div className="w-full h-48 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg p-6">
+    <div className="text-white mb-4">
+      <h3 className="text-xl font-bold mb-2">Consumer Insights</h3>
+      <p className="text-sm opacity-90">Real user feedback</p>
+    </div>
+    <div className="space-y-3">
+      {[5, 4, 3, 2, 1].map((stars) => (
+        <div key={stars} className="flex items-center space-x-2">
+          <div className="flex space-x-1">
+            {Array.from({ length: stars }).map((_, i) => (
+              <Star key={i} className="h-3 w-3 text-yellow-300 fill-current" />
+            ))}
+          </div>
+          <div className="flex-1 bg-white bg-opacity-20 rounded-full h-2">
+            <div 
+              className="bg-white rounded-full h-2"
+              style={{ width: `${Math.random() * 60 + 20}%` }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const AIBrain: React.FC = () => (
+  <div className="w-full h-48 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg p-6 relative overflow-hidden">
+    <div className="absolute inset-0">
+      {Array.from({ length: 20 }).map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-1 h-1 bg-white rounded-full animate-ping"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 2}s`,
+            animationDuration: `${Math.random() * 2 + 1}s`
+          }}
+        />
+      ))}
+    </div>
+    <div className="relative z-10 text-white">
+      <Brain className="h-12 w-12 mb-4" />
+      <h3 className="text-xl font-bold mb-2">AI Intelligence</h3>
+      <p className="text-sm opacity-90">Neural network processing</p>
+    </div>
+  </div>
+);
+
+const VishScoreDisplay: React.FC = () => (
+  <div className="w-full h-48 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-lg p-6 relative">
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="text-center">
+        <div className="text-6xl font-bold text-white mb-2">85</div>
+        <div className="text-white text-lg font-semibold">Vish Score</div>
+      </div>
+    </div>
+    <div className="relative z-10 text-white">
+      <Award className="h-8 w-8 mb-2" />
+      <h3 className="text-lg font-bold">Comprehensive Rating</h3>
+    </div>
+  </div>
+);
+
+const DataVisualization: React.FC = () => (
+  <div className="w-full h-48 bg-gradient-to-br from-teal-400 to-blue-500 rounded-lg p-6">
+    <div className="text-white mb-4">
+      <TrendingUp className="h-8 w-8 mb-2" />
+      <h3 className="text-xl font-bold">Data Analytics</h3>
+    </div>
+    <div className="grid grid-cols-3 gap-2 h-20">
+      {Array.from({ length: 9 }).map((_, i) => (
+        <div
+          key={i}
+          className="bg-white bg-opacity-30 rounded animate-pulse"
+          style={{ animationDelay: `${i * 0.2}s` }}
+        />
+      ))}
+    </div>
+  </div>
+);
+
+const FoodScanner: React.FC = () => (
+  <div className="w-full h-48 bg-gradient-to-br from-green-500 to-teal-500 rounded-lg p-6 relative">
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="w-24 h-24 border-2 border-white border-dashed rounded-lg animate-pulse flex items-center justify-center">
+        <Camera className="h-8 w-8 text-white" />
+      </div>
+    </div>
+    <div className="relative z-10 text-white">
+      <h3 className="text-xl font-bold mb-2">Smart Scanner</h3>
+      <p className="text-sm opacity-90">Instant food recognition</p>
+    </div>
+  </div>
+);
+
+const HealthMetrics: React.FC = () => (
+  <div className="w-full h-48 bg-gradient-to-br from-red-400 to-pink-500 rounded-lg p-6">
+    <div className="text-white mb-4">
+      <Heart className="h-8 w-8 mb-2" />
+      <h3 className="text-xl font-bold">Health Impact</h3>
+    </div>
+    <div className="space-y-2">
+      {['Cardiovascular', 'Diabetes Risk', 'Nutrition Score'].map((metric, i) => (
+        <div key={metric} className="flex justify-between items-center">
+          <span className="text-sm text-white opacity-90">{metric}</span>
+          <div className="w-16 bg-white bg-opacity-20 rounded-full h-2">
+            <div 
+              className="bg-white rounded-full h-2"
+              style={{ width: `${Math.random() * 80 + 20}%` }}
+            />
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+const FlavorAnalysis: React.FC = () => (
+  <div className="w-full h-48 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-lg p-6 relative">
+    <div className="absolute inset-0 flex items-center justify-center">
+      <div className="grid grid-cols-3 gap-2">
+        {Array.from({ length: 9 }).map((_, i) => (
+          <div
+            key={i}
+            className="w-4 h-4 bg-white bg-opacity-40 rounded-full animate-bounce"
+            style={{ animationDelay: `${i * 0.1}s` }}
+          />
+        ))}
+      </div>
+    </div>
+    <div className="relative z-10 text-white">
+      <Beaker className="h-8 w-8 mb-2" />
+      <h3 className="text-xl font-bold">Flavor Lab</h3>
+      <p className="text-sm opacity-90">Molecular taste analysis</p>
+    </div>
+  </div>
+);
+
+// Original image data using custom components
 const images: ImageItem[] = [
   {
     id: 'nutrition-analysis',
     title: 'AI Nutrition Analysis',
     description: 'Advanced AI analyzing nutritional content and health impacts of packaged foods',
     category: 'nutrition',
-    url: 'https://images.pexels.com/photos/6823568/pexels-photo-6823568.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'AI analyzing nutrition data with colorful charts and graphs'
+    component: <NutritionChart />,
+    alt: 'AI nutrition analysis visualization with charts and data'
   },
   {
-    id: 'healthy-food-scanner',
-    title: 'Smart Food Scanner',
-    description: 'Futuristic food scanning technology identifying healthy ingredients',
+    id: 'health-metrics',
+    title: 'Health Impact Assessment',
+    description: 'Comprehensive health metrics and risk analysis for food products',
     category: 'nutrition',
-    url: 'https://images.pexels.com/photos/7195706/pexels-photo-7195706.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'High-tech food scanner analyzing fresh produce'
+    component: <HealthMetrics />,
+    alt: 'Health impact metrics dashboard'
   },
   {
     id: 'taste-science',
     title: 'Taste Science Laboratory',
     description: 'Scientific analysis of flavor compounds and taste profiles',
     category: 'taste',
-    url: 'https://images.pexels.com/photos/2280549/pexels-photo-2280549.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Laboratory setting with colorful chemical analysis of food flavors'
+    component: <TasteProfile />,
+    alt: 'Taste science analysis with flavor profiling'
   },
   {
-    id: 'flavor-molecules',
-    title: 'Flavor Molecular Structure',
-    description: 'Molecular gastronomy and flavor compound visualization',
+    id: 'flavor-analysis',
+    title: 'Molecular Flavor Analysis',
+    description: 'Advanced molecular gastronomy and flavor compound visualization',
     category: 'taste',
-    url: 'https://images.pexels.com/photos/8844895/pexels-photo-8844895.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Artistic representation of flavor molecules and taste compounds'
+    component: <FlavorAnalysis />,
+    alt: 'Molecular flavor analysis laboratory'
   },
   {
     id: 'consumer-feedback',
     title: 'Consumer Satisfaction Data',
     description: 'Real-time consumer feedback and rating visualization',
     category: 'consumer',
-    url: 'https://images.pexels.com/photos/7947664/pexels-photo-7947664.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'People rating food products with digital feedback systems'
+    component: <ConsumerRating />,
+    alt: 'Consumer rating and feedback system'
   },
   {
-    id: 'food-rating-system',
-    title: 'Digital Food Rating',
-    description: 'Modern rating system showing consumer preferences and satisfaction',
+    id: 'vish-score-display',
+    title: 'Vish Score System',
+    description: 'Revolutionary scoring system combining nutrition, taste, and consumer data',
     category: 'consumer',
-    url: 'https://images.pexels.com/photos/7947665/pexels-photo-7947665.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Digital interface showing food ratings and consumer reviews'
+    component: <VishScoreDisplay />,
+    alt: 'Vish Score comprehensive rating display'
   },
   {
-    id: 'ai-food-analysis',
+    id: 'ai-brain',
     title: 'AI Food Intelligence',
-    description: 'Comprehensive AI system analyzing all aspects of food quality',
+    description: 'Neural network processing for comprehensive food analysis',
     category: 'general',
-    url: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Futuristic AI interface analyzing food with holographic displays'
+    component: <AIBrain />,
+    alt: 'AI brain processing food intelligence data'
   },
   {
-    id: 'nutrition-dashboard',
-    title: 'Nutrition Dashboard',
-    description: 'Interactive dashboard showing comprehensive food analysis results',
+    id: 'food-scanner',
+    title: 'Smart Food Scanner',
+    description: 'Instant food recognition and analysis technology',
     category: 'general',
-    url: 'https://images.pexels.com/photos/7947666/pexels-photo-7947666.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Modern dashboard interface with nutrition data and analytics'
+    component: <FoodScanner />,
+    alt: 'Smart food scanning technology interface'
   },
   {
-    id: 'healthy-lifestyle',
-    title: 'Healthy Food Choices',
-    description: 'People making informed food decisions with AI assistance',
+    id: 'data-visualization',
+    title: 'Analytics Dashboard',
+    description: 'Comprehensive data visualization and analytics platform',
     category: 'general',
-    url: 'https://images.pexels.com/photos/4099235/pexels-photo-4099235.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'People choosing healthy foods with digital guidance'
-  },
-  {
-    id: 'food-tech-innovation',
-    title: 'Food Tech Innovation',
-    description: 'Cutting-edge technology revolutionizing food analysis',
-    category: 'general',
-    url: 'https://images.pexels.com/photos/8386441/pexels-photo-8386441.jpeg?auto=compress&cs=tinysrgb&w=800',
-    alt: 'Innovative food technology with AI and digital interfaces'
+    component: <DataVisualization />,
+    alt: 'Food analytics dashboard with data visualization'
   }
 ];
 
@@ -105,7 +299,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ isOpen, onClose }) =
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const categories = [
-    { id: 'all', name: 'All Images', icon: <Camera className="h-4 w-4" /> },
+    { id: 'all', name: 'All Visuals', icon: <Camera className="h-4 w-4" /> },
     { id: 'nutrition', name: 'Nutrition Analysis', icon: <BarChart3 className="h-4 w-4" /> },
     { id: 'taste', name: 'Taste Science', icon: <Star className="h-4 w-4" /> },
     { id: 'consumer', name: 'Consumer Ratings', icon: <Users className="h-4 w-4" /> },
@@ -139,14 +333,37 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ isOpen, onClose }) =
     setSelectedImage(filteredImages[newIndex]);
   };
 
-  const downloadImage = (url: string, filename: string) => {
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    link.target = '_blank';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const downloadVisualization = (title: string) => {
+    // Create a canvas to capture the visualization
+    const canvas = document.createElement('canvas');
+    canvas.width = 400;
+    canvas.height = 300;
+    const ctx = canvas.getContext('2d');
+    
+    if (ctx) {
+      // Create a simple gradient background
+      const gradient = ctx.createLinearGradient(0, 0, 400, 300);
+      gradient.addColorStop(0, '#10b981');
+      gradient.addColorStop(1, '#3b82f6');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, 400, 300);
+      
+      // Add title text
+      ctx.fillStyle = 'white';
+      ctx.font = 'bold 24px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText(title, 200, 150);
+      
+      // Add FoodCheck branding
+      ctx.font = '16px Arial';
+      ctx.fillText('FoodCheck AI Visualization', 200, 180);
+      
+      // Download the canvas as image
+      const link = document.createElement('a');
+      link.download = `${title.replace(/\s+/g, '-').toLowerCase()}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+    }
   };
 
   if (!isOpen) return null;
@@ -162,8 +379,8 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ isOpen, onClose }) =
                 <Camera className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white">AI-Generated Food Analysis Gallery</h2>
-                <p className="text-green-100">Visualizing the future of food intelligence</p>
+                <h2 className="text-2xl font-bold text-white">AI Food Analysis Visualizations</h2>
+                <p className="text-green-100">Original AI-generated visual concepts</p>
               </div>
             </div>
             <button 
@@ -194,7 +411,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ isOpen, onClose }) =
             ))}
           </div>
 
-          {/* Image Grid */}
+          {/* Visualization Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredImages.map((image) => (
               <div
@@ -203,12 +420,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ isOpen, onClose }) =
                 onClick={() => openImageModal(image)}
               >
                 <div className="relative overflow-hidden">
-                  <img
-                    src={image.url}
-                    alt={image.alt}
-                    className="w-full h-48 object-cover transition-transform duration-300 hover:scale-110"
-                    loading="lazy"
-                  />
+                  {image.component}
                   <div className="absolute top-2 right-2">
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       image.category === 'nutrition' ? 'bg-green-500 text-white' :
@@ -237,17 +449,17 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ isOpen, onClose }) =
             <div className="text-center py-12">
               <Camera className="h-16 w-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                No images found
+                No visualizations found
               </h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Try selecting a different category to see more images.
+                Try selecting a different category to see more visualizations.
               </p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Image Modal */}
+      {/* Visualization Modal */}
       {selectedImage && (
         <div className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-60 p-4">
           <div className="relative max-w-4xl w-full">
@@ -274,16 +486,16 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ isOpen, onClose }) =
               <X className="h-6 w-6" />
             </button>
 
-            {/* Image */}
+            {/* Visualization */}
             <div className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
-              <img
-                src={selectedImage.url}
-                alt={selectedImage.alt}
-                className="w-full max-h-[60vh] object-contain"
-              />
-              
-              {/* Image Info */}
               <div className="p-6">
+                <div className="transform scale-150 origin-center mb-6">
+                  {selectedImage.component}
+                </div>
+              </div>
+              
+              {/* Visualization Info */}
+              <div className="p-6 border-t border-gray-200 dark:border-gray-600">
                 <div className="flex justify-between items-start mb-4">
                   <div>
                     <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
@@ -294,9 +506,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ isOpen, onClose }) =
                     </p>
                   </div>
                   <button
-                    onClick={() => downloadImage(selectedImage.url, selectedImage.title)}
+                    onClick={() => downloadVisualization(selectedImage.title)}
                     className="bg-gradient-to-r from-green-500 to-blue-500 text-white p-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                    title="Download Image"
+                    title="Download Visualization"
                   >
                     <Download className="h-5 w-5" />
                   </button>
@@ -315,6 +527,12 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({ isOpen, onClose }) =
                   <span className="text-sm text-gray-500 dark:text-gray-400">
                     {currentImageIndex + 1} of {filteredImages.length}
                   </span>
+                </div>
+                
+                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    💡 <strong>Original Content:</strong> These visualizations are created specifically for FoodCheck and represent our AI analysis concepts.
+                  </p>
                 </div>
               </div>
             </div>
