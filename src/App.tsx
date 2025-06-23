@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Phone } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
@@ -535,7 +535,7 @@ Want to analyze another food or have questions about these results?`;
   return (
     <div className={`min-h-screen transition-colors duration-300 ${darkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-green-50 via-blue-50 to-purple-50'}`}>
       {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-500/80 via-purple-500/80 to-pink-500/80 dark:from-indigo-600/80 dark:via-purple-600/80 dark:to-pink-600/80 backdrop-blur-md border-b border-white/20 dark:border-gray-700/50 sticky top-0 z-40 transition-all duration-300">
+      <header className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             {/* Logo and Controls */}
@@ -543,23 +543,23 @@ Want to analyze another food or have questions about these results?`;
               <div className="flex items-center space-x-3 foodcheck-logo">
                 <FoodCheckLogo className="h-10 w-10" />
                 <div>
-                  <h1 className="text-2xl font-bold text-white">
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent">
                     {t('title')}
                   </h1>
-                  <p className="text-xs text-white/80">{t('subtitle')}</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">{t('subtitle')}</p>
                 </div>
               </div>
               
               {/* Dark Mode Toggle */}
               <button
                 onClick={toggleDarkMode}
-                className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200 transform hover:scale-105 dark-mode-toggle"
+                className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 dark-mode-toggle"
                 title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
               >
                 {darkMode ? (
-                  <Sun className="h-5 w-5 text-yellow-300" />
+                  <Sun className="h-5 w-5 text-yellow-500" />
                 ) : (
-                  <Moon className="h-5 w-5 text-white" />
+                  <Moon className="h-5 w-5 text-gray-600" />
                 )}
               </button>
 
@@ -567,11 +567,11 @@ Want to analyze another food or have questions about these results?`;
               <div className="relative language-selector">
                 <button
                   onClick={() => setShowLanguageMenu(!showLanguageMenu)}
-                  className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition-all duration-200 transform hover:scale-105 flex items-center space-x-1"
+                  className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-all duration-200 transform hover:scale-105 flex items-center space-x-1"
                   title="Change Language"
                 >
-                  <Globe className="h-5 w-5 text-white" />
-                  <span className="text-sm font-medium text-white">
+                  <Globe className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                  <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
                     {languages.find(l => l.code === language)?.flag}
                   </span>
                 </button>
@@ -602,13 +602,13 @@ Want to analyze another food or have questions about these results?`;
             <nav className="hidden md:flex items-center space-x-6 main-navigation">
               <button 
                 onClick={() => setShowVisionAnalysis(true)}
-                className="text-white/90 hover:text-white transition-colors font-medium"
+                className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors font-medium"
               >
                 {t('aiAnalysis')}
               </button>
               <button 
                 onClick={openRegularChat}
-                className="text-white/90 hover:text-white transition-colors font-medium"
+                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
               >
                 {t('chatAssistant')}
               </button>
@@ -619,20 +619,20 @@ Want to analyze another food or have questions about these results?`;
               {isAuthenticated ? (
                 <div className="flex items-center space-x-3">
                   <div className="hidden sm:block text-right">
-                    <p className="text-sm font-medium text-white">{t('welcomeBack')}</p>
-                    <p className="text-xs text-white/80">{user?.name}</p>
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100">{t('welcomeBack')}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">{user?.name}</p>
                   </div>
                   <div className="flex items-center space-x-2">
                     <button
                       onClick={() => setShowAdminPanel(true)}
-                      className="p-2 text-white/80 hover:text-white transition-colors"
+                      className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                       title="Admin Panel"
                     >
                       <Settings className="h-5 w-5" />
                     </button>
                     <button
                       onClick={logout}
-                      className="p-2 text-white/80 hover:text-red-300 transition-colors"
+                      className="p-2 text-gray-600 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
                       title="Logout"
                     >
                       <LogOut className="h-5 w-5" />
@@ -646,7 +646,7 @@ Want to analyze another food or have questions about these results?`;
                       setAuthMode('login');
                       setShowAuthModal(true);
                     }}
-                    className="text-white/90 hover:text-white transition-colors font-medium"
+                    className="text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors font-medium"
                   >
                     {t('signIn')}
                   </button>
@@ -655,7 +655,7 @@ Want to analyze another food or have questions about these results?`;
                       setAuthMode('signup');
                       setShowAuthModal(true);
                     }}
-                    className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-full transition-all duration-200 transform hover:scale-105 font-medium backdrop-blur-sm"
+                    className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-4 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105 font-medium"
                   >
                     {t('signUp')}
                   </button>
@@ -668,49 +668,61 @@ Want to analyze another food or have questions about these results?`;
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Hero Section with Colorful Background */}
+        {/* Hero Section with Animated Background */}
         <div className="relative overflow-hidden rounded-3xl mb-16 hero-section">
           {/* Animated Background */}
           <div className="absolute inset-0 bg-gradient-to-br from-emerald-400 via-cyan-500 to-blue-600 dark:from-emerald-600 dark:via-cyan-700 dark:to-blue-800">
-            {/* Animated Food Icons */}
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute top-10 left-10 text-4xl animate-bounce" style={{ animationDelay: '0s' }}>🍎</div>
-              <div className="absolute top-20 right-20 text-3xl animate-bounce" style={{ animationDelay: '0.5s' }}>🥕</div>
-              <div className="absolute bottom-20 left-20 text-3xl animate-bounce" style={{ animationDelay: '1s' }}>🥦</div>
-              <div className="absolute bottom-10 right-10 text-4xl animate-bounce" style={{ animationDelay: '1.5s' }}>🥑</div>
-              <div className="absolute top-1/2 left-1/4 text-2xl animate-bounce" style={{ animationDelay: '2s' }}>🍅</div>
-              <div className="absolute top-1/3 right-1/3 text-2xl animate-bounce" style={{ animationDelay: '2.5s' }}>🫑</div>
-              
-              {/* Floating Particles */}
-              <div className="absolute inset-0">
-                {Array.from({ length: 20 }).map((_, i) => (
-                  <div
-                    key={i}
-                    className="absolute w-2 h-2 bg-white/20 rounded-full animate-pulse"
-                    style={{
-                      left: `${Math.random() * 100}%`,
-                      top: `${Math.random() * 100}%`,
-                      animationDelay: `${Math.random() * 3}s`,
-                      animationDuration: `${2 + Math.random() * 2}s`
-                    }}
-                  />
-                ))}
-              </div>
-            </div>
+            {/* Animated Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
             
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
+            {/* Floating Food Icons */}
+            <div className="absolute inset-0 overflow-hidden">
+              {['🍎', '🥕', '🥦', '🥑', '🍅', '🫑'].map((emoji, index) => (
+                <div
+                  key={index}
+                  className="absolute text-4xl opacity-20 animate-bounce"
+                  style={{
+                    left: `${15 + index * 15}%`,
+                    top: `${20 + (index % 2) * 40}%`,
+                    animationDelay: `${index * 0.5}s`,
+                    animationDuration: `${3 + index * 0.5}s`
+                  }}
+                >
+                  {emoji}
+                </div>
+              ))}
+            </div>
+
+            {/* Floating Particles */}
+            <div className="absolute inset-0">
+              {Array.from({ length: 20 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-2 h-2 bg-white rounded-full opacity-30 animate-ping"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 3}s`,
+                    animationDuration: `${2 + Math.random() * 2}s`
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Gradient Overlays for Text Readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-transparent to-black/30"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/10 via-transparent to-black/10"></div>
           </div>
 
-          {/* Content */}
+          {/* Hero Content */}
           <div className="relative z-10 text-center py-20 px-8">
             <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
               {t('heroTitle')}
-              <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-yellow-300 to-orange-400 bg-clip-text text-transparent block drop-shadow-sm">
                 {t('heroSubtitle')}
               </span>
             </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
+            <p className="text-xl text-white mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
               {t('heroDescription')}
             </p>
             
@@ -718,17 +730,17 @@ Want to analyze another food or have questions about these results?`;
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
               <button
                 onClick={() => setShowVisionAnalysis(true)}
-                className="bg-white/20 backdrop-blur-md border border-white/30 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/30 hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center cta-button"
+                className="bg-white/20 backdrop-blur-sm border border-white/30 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white/30 hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center cta-button"
               >
                 <Camera className="h-6 w-6 mr-3" />
                 {t('startAnalysis')}
               </button>
             </div>
 
-            {/* Contact Information Cards */}
+            {/* Contact Information with Glassmorphism */}
             <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
               {/* Email Card */}
-              <div className="bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-purple-500/20 backdrop-blur-md border border-white/20 p-6 rounded-2xl email-section">
+              <div className="bg-gradient-to-r from-blue-500/20 via-indigo-500/20 to-purple-500/20 backdrop-blur-sm border border-white/20 p-6 rounded-2xl">
                 <div className="flex items-center justify-center mb-4">
                   <Mail className="h-8 w-8 text-white mr-3" />
                   <h3 className="text-2xl font-bold text-white">{t('emailAnalysisText')}</h3>
@@ -736,28 +748,28 @@ Want to analyze another food or have questions about these results?`;
                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20">
                   <p className="text-2xl font-bold text-white font-mono">vrishankjo@gmail.com</p>
                 </div>
-                <p className="text-white/80 mt-4 max-w-2xl mx-auto">
+                <p className="text-white/90 mt-4 text-sm">
                   Send clear photos of nutrition labels and receive comprehensive Vish Score analysis within 1-20 minutes.
                 </p>
               </div>
 
               {/* Phone Card */}
-              <div className="bg-gradient-to-r from-green-500/20 via-emerald-500/20 to-teal-500/20 backdrop-blur-md border border-white/20 p-6 rounded-2xl">
+              <div className="bg-gradient-to-r from-green-500/20 via-emerald-500/20 to-teal-500/20 backdrop-blur-sm border border-white/20 p-6 rounded-2xl">
                 <div className="flex items-center justify-center mb-4">
-                  <Phone className="h-8 w-8 text-white mr-3" />
-                  <h3 className="text-2xl font-bold text-white">Call Us:</h3>
+                  <MessageCircle className="h-8 w-8 text-white mr-3" />
+                  <h3 className="text-2xl font-bold text-white">Contact Us</h3>
                 </div>
                 <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg border border-white/20">
                   <p className="text-2xl font-bold text-white font-mono">4702081150</p>
                 </div>
-                <p className="text-white/80 mt-4 max-w-2xl mx-auto">
-                  Have questions? Call us directly for personalized food analysis support and guidance.
+                <p className="text-white/90 mt-4 text-sm">
+                  Call us for support, questions, or personalized nutrition consultations.
                 </p>
               </div>
             </div>
 
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-white/80 mt-8">
+            {/* Trust Indicators with Backdrop Blur */}
+            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-white/90 mt-8">
               <div className="flex items-center bg-white/10 backdrop-blur-sm px-4 py-2 rounded-full border border-white/20">
                 <Star className="h-5 w-5 text-yellow-300 mr-2" />
                 <span>AI-Powered Analysis</span>
@@ -777,8 +789,8 @@ Want to analyze another food or have questions about these results?`;
         {/* Features Grid */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* AI Vision Analysis */}
-          <div className="bg-gradient-to-br from-cyan-50 via-blue-50 to-indigo-50 dark:from-cyan-900/20 dark:via-blue-900/20 dark:to-indigo-900/20 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-cyan-200/50 dark:border-cyan-700/50 ai-vision-card">
-            <div className="bg-gradient-to-r from-cyan-500 to-blue-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700 ai-vision-card">
+            <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
               <Camera className="h-8 w-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('aiVisionTitle')}</h3>
@@ -787,15 +799,15 @@ Want to analyze another food or have questions about these results?`;
             </p>
             <button
               onClick={() => setShowVisionAnalysis(true)}
-              className="bg-gradient-to-r from-cyan-500 to-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full"
+              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full"
             >
               {t('tryAiAnalysis')}
             </button>
           </div>
 
           {/* Chat Assistant */}
-          <div className="bg-gradient-to-br from-violet-50 via-purple-50 to-fuchsia-50 dark:from-violet-900/20 dark:via-purple-900/20 dark:to-fuchsia-900/20 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-violet-200/50 dark:border-violet-700/50 chat-assistant-card">
-            <div className="bg-gradient-to-r from-violet-500 to-fuchsia-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700 chat-assistant-card">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
               <MessageCircle className="h-8 w-8 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('chatAssistantTitle')}</h3>
@@ -807,7 +819,7 @@ Want to analyze another food or have questions about these results?`;
             <div className="space-y-3">
               <button
                 onClick={openRegularChat}
-                className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
+                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
               >
                 <MessageCircle className="h-5 w-5 mr-2" />
                 {t('startChatting')}
@@ -815,7 +827,7 @@ Want to analyze another food or have questions about these results?`;
               
               <button
                 onClick={openFullscreenChat}
-                className="bg-gradient-to-r from-fuchsia-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
               >
                 <Maximize className="h-5 w-5 mr-2" />
                 {t('startFullscreenChat')}
@@ -825,7 +837,7 @@ Want to analyze another food or have questions about these results?`;
         </div>
 
         {/* Vish Score Section */}
-        <div className="bg-gradient-to-r from-amber-400 via-orange-500 to-red-500 rounded-3xl p-8 md:p-12 text-white mb-16 shadow-2xl vish-score-section">
+        <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl p-8 md:p-12 text-white mb-16 shadow-2xl vish-score-section">
           <div className="max-w-4xl mx-auto text-center">
             <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
               <Award className="h-10 w-10 text-white" />
@@ -835,12 +847,12 @@ Want to analyze another food or have questions about these results?`;
               {t('vishScoreSubtitle')}
             </p>
             <div className="grid md:grid-cols-2 gap-8 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
                 <BarChart3 className="h-8 w-8 mb-4 mx-auto" />
                 <h4 className="text-xl font-bold mb-2">{t('nutritionAnalysisTitle')}</h4>
                 <p className="opacity-90">{t('nutritionAnalysisDesc')}</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
                 <Heart className="h-8 w-8 mb-4 mx-auto" />
                 <h4 className="text-xl font-bold mb-2">{t('tasteEvaluationTitle')}</h4>
                 <p className="opacity-90">{t('tasteEvaluationDesc')}</p>
@@ -849,17 +861,17 @@ Want to analyze another food or have questions about these results?`;
 
             {/* Vish Score Features */}
             <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <Zap className="h-6 w-6 mb-2 mx-auto" />
                 <h5 className="font-bold mb-1">Instant Analysis</h5>
                 <p className="text-sm opacity-90">Results in 1-20 minutes</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <Target className="h-6 w-6 mb-2 mx-auto" />
                 <h5 className="font-bold mb-1">Dual Scoring</h5>
                 <p className="text-sm opacity-90">Nutrition + Taste combined</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <Star className="h-6 w-6 mb-2 mx-auto" />
                 <h5 className="font-bold mb-1">Personalized</h5>
                 <p className="text-sm opacity-90">Based on your health needs</p>
@@ -877,12 +889,12 @@ Want to analyze another food or have questions about these results?`;
           <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-12">{t('howItWorks')}</h3>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
+              <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step1Title')}</h4>
               <p className="text-gray-600 dark:text-gray-300">{t('step1Desc')}</p>
             </div>
             <div className="text-center">
-              <div className="bg-gradient-to-r from-blue-500 to-indigo-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
+              <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
               <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step2Title')}</h4>
               <p className="text-gray-600 dark:text-gray-300">{t('step2Desc')}</p>
             </div>
@@ -894,75 +906,122 @@ Want to analyze another food or have questions about these results?`;
           </div>
         </div>
 
-        {/* What Makes Vish Score Special */}
-        <div className="bg-gradient-to-br from-white/70 via-gray-50/70 to-blue-50/70 dark:from-gray-800/70 dark:via-gray-700/70 dark:to-blue-900/20 backdrop-blur-sm rounded-3xl p-8 md:p-12 mb-16 border border-gray-200/50 dark:border-gray-700/50 features-section">
-          <div className="text-center mb-12">
-            <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">What Makes Vish Score Revolutionary?</h3>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view of your food.
-            </p>
+        {/* What Makes Vish Score Special with Colorful Background */}
+        <div className="relative overflow-hidden rounded-3xl mb-16 features-section">
+          {/* Animated Colorful Background */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 dark:from-purple-700 dark:via-pink-700 dark:to-red-700">
+            {/* Animated Gradient Overlay */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-pulse"></div>
+            
+            {/* Floating Science Icons */}
+            <div className="absolute inset-0 overflow-hidden">
+              {['🧬', '⚗️', '🔬', '📊', '🎯', '💡'].map((emoji, index) => (
+                <div
+                  key={index}
+                  className="absolute text-3xl opacity-20 animate-bounce"
+                  style={{
+                    left: `${10 + index * 16}%`,
+                    top: `${15 + (index % 2) * 50}%`,
+                    animationDelay: `${index * 0.7}s`,
+                    animationDuration: `${4 + index * 0.3}s`
+                  }}
+                >
+                  {emoji}
+                </div>
+              ))}
+            </div>
+
+            {/* Floating Geometric Shapes */}
+            <div className="absolute inset-0">
+              {Array.from({ length: 15 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-3 h-3 bg-white rounded-full opacity-25 animate-ping"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animationDelay: `${Math.random() * 4}s`,
+                    animationDuration: `${3 + Math.random() * 2}s`
+                  }}
+                />
+              ))}
+            </div>
+
+            {/* Gradient Overlays for Text Readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/40"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-transparent to-black/20"></div>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200/50 dark:border-green-700/50">
-              <div className="bg-green-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <BarChart3 className="h-6 w-6 text-white" />
-              </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Nutrition Deep Dive</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Complete macro and micronutrient analysis with health impact assessment</p>
+          {/* Content */}
+          <div className="relative z-10 p-8 md:p-12">
+            <div className="text-center mb-12">
+              <h3 className="text-4xl font-bold text-white mb-6 drop-shadow-lg">What Makes Vish Score Revolutionary?</h3>
+              <p className="text-xl text-white/95 max-w-3xl mx-auto drop-shadow-md">
+                Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view of your food.
+              </p>
             </div>
 
-            <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-violet-50 dark:from-purple-900/20 dark:to-violet-900/20 rounded-xl border border-purple-200/50 dark:border-purple-700/50">
-              <div className="bg-purple-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <Heart className="h-6 w-6 text-white" />
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                <div className="bg-green-500/80 backdrop-blur-sm p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                  <BarChart3 className="h-6 w-6 text-white" />
+                </div>
+                <h4 className="font-bold text-white mb-2 drop-shadow-sm">Nutrition Deep Dive</h4>
+                <p className="text-sm text-white/90">Complete macro and micronutrient analysis with health impact assessment</p>
               </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Taste Science</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Advanced flavor profiling using sensory analysis and consumer preference data</p>
+
+              <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                <div className="bg-purple-500/80 backdrop-blur-sm p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                  <Heart className="h-6 w-6 text-white" />
+                </div>
+                <h4 className="font-bold text-white mb-2 drop-shadow-sm">Taste Science</h4>
+                <p className="text-sm text-white/90">Advanced flavor profiling using sensory analysis and consumer preference data</p>
+              </div>
+
+              <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                <div className="bg-yellow-500/80 backdrop-blur-sm p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                  <Target className="h-6 w-6 text-white" />
+                </div>
+                <h4 className="font-bold text-white mb-2 drop-shadow-sm">Personalized Warnings</h4>
+                <p className="text-sm text-white/90">Custom health alerts based on your specific conditions and dietary needs</p>
+              </div>
+
+              <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
+                <div className="bg-blue-500/80 backdrop-blur-sm p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                  <Award className="h-6 w-6 text-white" />
+                </div>
+                <h4 className="font-bold text-white mb-2 drop-shadow-sm">Unified Score</h4>
+                <p className="text-sm text-white/90">Single comprehensive rating that balances health benefits with taste satisfaction</p>
+              </div>
             </div>
 
-            <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-amber-50 dark:from-yellow-900/20 dark:to-amber-900/20 rounded-xl border border-yellow-200/50 dark:border-yellow-700/50">
-              <div className="bg-yellow-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <Target className="h-6 w-6 text-white" />
+            <div className="text-center mt-8">
+              <p className="text-lg text-white/95 mb-4 drop-shadow-sm">
+                Ready to experience the future of food analysis? Send your nutrition label photos to:
+              </p>
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg inline-block border border-white/20">
+                <p className="text-xl font-bold text-white drop-shadow-sm">vrishankjo@gmail.com</p>
               </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Personalized Warnings</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Custom health alerts based on your specific conditions and dietary needs</p>
-            </div>
-
-            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-900/20 dark:to-cyan-900/20 rounded-xl border border-blue-200/50 dark:border-blue-700/50">
-              <div className="bg-blue-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                <Award className="h-6 w-6 text-white" />
-              </div>
-              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Unified Score</h4>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Single comprehensive rating that balances health benefits with taste satisfaction</p>
-            </div>
-          </div>
-
-          <div className="text-center mt-8">
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
-              Ready to experience the future of food analysis? Send your nutrition label photos to:
-            </p>
-            <div className="bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/20 dark:to-blue-900/20 p-4 rounded-lg inline-block border border-green-200/50 dark:border-green-700/50">
-              <p className="text-xl font-bold text-gray-900 dark:text-white">vrishankjo@gmail.com</p>
             </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className="bg-gradient-to-r from-slate-800 via-gray-800 to-zinc-800 dark:from-slate-900 dark:via-gray-900 dark:to-zinc-900 border-t border-gray-700/50 transition-colors duration-300">
+      <footer className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-t border-gray-200 dark:border-gray-700 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <div className="flex items-center justify-center space-x-3 mb-4">
               <FoodCheckLogo className="h-8 w-8" />
-              <span className="text-2xl font-bold bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent">
                 {t('title')}
               </span>
             </div>
-            <p className="text-gray-400 mb-4">
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
               {t('footerDesc')}
             </p>
-            <div className="flex justify-center space-x-6 text-sm text-gray-400">
-              <a href="mailto:vrishankjo@gmail.com" className="hover:text-emerald-400 transition-colors">
+            <div className="flex justify-center space-x-6 text-sm text-gray-600 dark:text-gray-400">
+              <a href="mailto:vrishankjo@gmail.com" className="hover:text-green-600 dark:hover:text-green-400 transition-colors">
                 {t('contactUs')}
               </a>
               <span>•</span>
