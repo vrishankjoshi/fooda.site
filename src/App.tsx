@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, Phone, Image } from 'lucide-react';
+import { Camera, Upload, MessageCircle, Star, BarChart3, Heart, Mail, User, LogOut, Settings, Moon, Sun, Globe, Award, Zap, Target, Maximize, Minimize, Home, TrendingUp } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
+import { AnalysisHistory } from './components/AnalysisHistory';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
-import { ImageGallery } from './components/ImageGallery';
 import { useAuth } from './hooks/useAuth';
 import { sendMessageToGroq, ChatMessage } from './services/groqService';
 import { NutritionAnalysis } from './services/visionService';
@@ -99,6 +99,15 @@ const translations: Translations = {
     zh: '聊天助手',
     ja: 'チャットアシスタント',
     hi: 'चैट सहायक'
+  },
+  analysisHistory: {
+    en: 'Analysis History',
+    es: 'Historial de Análisis',
+    fr: 'Historique d\'Analyse',
+    de: 'Analyse-Verlauf',
+    zh: '分析历史',
+    ja: '分析履歴',
+    hi: 'विश्लेषण इतिहास'
   },
   emailAnalysis: {
     en: 'Email Analysis',
@@ -236,13 +245,13 @@ const translations: Translations = {
     hi: 'Vish Score का परिचय'
   },
   vishScoreSubtitle: {
-    en: 'The world\'s first comprehensive scoring system that evaluates both nutrition AND taste quality in one revolutionary score.',
-    es: 'El primer sistema de puntuación integral del mundo que evalúa tanto la nutrición COMO la calidad del sabor en una puntuación revolucionaria.',
-    fr: 'Le premier système de notation complet au monde qui évalue à la fois la nutrition ET la qualité gustative en un score révolutionnaire.',
-    de: 'Das weltweit erste umfassende Bewertungssystem, das sowohl Ernährung ALS AUCH Geschmacksqualität in einem revolutionären Score bewertet.',
-    zh: '世界上第一个综合评分系统，在一个革命性的分数中同时评估营养和口味质量。',
-    ja: '栄養と味の品質の両方を一つの革新的なスコアで評価する世界初の包括的スコアリングシステム。',
-    hi: 'दुनिया की पहली व्यापक स्कोरिंग प्रणाली जो एक क्रांतिकारी स्कोर में पोषण और स्वाद की गुणवत्ता दोनों का मूल्यांकन करती है।'
+    en: 'The world\'s first comprehensive scoring system that evaluates nutrition, taste quality, AND consumer satisfaction in one revolutionary score.',
+    es: 'El primer sistema de puntuación integral del mundo que evalúa la nutrición, la calidad del sabor Y la satisfacción del consumidor en una puntuación revolucionaria.',
+    fr: 'Le premier système de notation complet au monde qui évalue la nutrition, la qualité gustative ET la satisfaction des consommateurs en un score révolutionnaire.',
+    de: 'Das weltweit erste umfassende Bewertungssystem, das Ernährung, Geschmacksqualität UND Verbraucherzufriedenheit in einem revolutionären Score bewertet.',
+    zh: '世界上第一个综合评分系统，在一个革命性的分数中评估营养、口味质量和消费者满意度。',
+    ja: '栄養、味の品質、消費者満足度を一つの革新的なスコアで評価する世界初の包括的スコアリングシステム。',
+    hi: 'दुनिया की पहली व्यापक स्कोरिंग प्रणाली जो एक क्रांतिकारी स्कोर में पोषण, स्वाद की गुणवत्ता और उपभोक्ता संतुष्टि का मूल्यांकन करती है।'
   },
   nutritionAnalysisTitle: {
     en: 'Nutrition Analysis',
@@ -279,6 +288,24 @@ const translations: Translations = {
     zh: '先进的风味分析和感官分析',
     ja: '高度な風味プロファイリングと感覚分析',
     hi: 'उन्नत स्वाद प्रोफाइलिंग और संवेदी विश्लेषण'
+  },
+  consumerRatingTitle: {
+    en: 'Consumer Ratings',
+    es: 'Calificaciones del Consumidor',
+    fr: 'Évaluations des Consommateurs',
+    de: 'Verbraucherbewertungen',
+    zh: '消费者评级',
+    ja: '消費者評価',
+    hi: 'उपभोक्ता रेटिंग'
+  },
+  consumerRatingDesc: {
+    en: 'Real user feedback and satisfaction data',
+    es: 'Comentarios reales de usuarios y datos de satisfacción',
+    fr: 'Commentaires d\'utilisateurs réels et données de satisfaction',
+    de: 'Echte Nutzerfeedbacks und Zufriedenheitsdaten',
+    zh: '真实用户反馈和满意度数据',
+    ja: '実際のユーザーフィードバックと満足度データ',
+    hi: 'वास्तविक उपयोगकर्ता प्रतिक्रिया और संतुष्टि डेटा'
   },
   howItWorks: {
     en: 'How FoodCheck Works',
@@ -317,13 +344,13 @@ const translations: Translations = {
     hi: 'AI विश्लेषण'
   },
   step2Desc: {
-    en: 'Our advanced AI analyzes nutrition, health impact, and taste',
-    es: 'Nuestra IA avanzada analiza nutrición, impacto en la salud y sabor',
-    fr: 'Notre IA avancée analyse la nutrition, l\'impact sur la santé et le goût',
-    de: 'Unsere fortschrittliche KI analysiert Ernährung, Gesundheitsauswirkungen und Geschmack',
-    zh: '我们的先进AI分析营养、健康影响和口味',
-    ja: '高度なAIが栄養、健康への影響、味を分析',
-    hi: 'हमारी उन्नत AI पोषण, स्वास्थ्य प्रभाव और स्वाद का विश्लेषण करती है'
+    en: 'Our advanced AI analyzes nutrition, health impact, taste, and consumer satisfaction',
+    es: 'Nuestra IA avanzada analiza nutrición, impacto en la salud, sabor y satisfacción del consumidor',
+    fr: 'Notre IA avancée analyse la nutrition, l\'impact sur la santé, le goût et la satisfaction des consommateurs',
+    de: 'Unsere fortschrittliche KI analysiert Ernährung, Gesundheitsauswirkungen, Geschmack und Verbraucherzufriedenheit',
+    zh: '我们的先进AI分析营养、健康影响、口味和消费者满意度',
+    ja: '高度なAIが栄養、健康への影響、味、消費者満足度を分析',
+    hi: 'हमारी उन्नत AI पोषण, स्वास्थ्य प्रभाव, स्वाद और उपभोक्ता संतुष्टि का विश्लेषण करती है'
   },
   step3Title: {
     en: 'Get Results',
@@ -335,13 +362,13 @@ const translations: Translations = {
     hi: 'परिणाम प्राप्त करें'
   },
   step3Desc: {
-    en: 'Receive comprehensive analysis with personalized recommendations',
-    es: 'Recibe análisis completo con recomendaciones personalizadas',
-    fr: 'Recevez une analyse complète avec des recommandations personnalisées',
-    de: 'Erhalten Sie umfassende Analysen mit personalisierten Empfehlungen',
-    zh: '获得包含个性化建议的综合分析',
-    ja: '個人的な推奨事項を含む包括的な分析を受け取る',
-    hi: 'व्यक्तिगत सिफारिशों के साथ व्यापक विश्लेषण प्राप्त करें'
+    en: 'Receive comprehensive Vish Score analysis with personalized recommendations',
+    es: 'Recibe análisis completo de Vish Score con recomendaciones personalizadas',
+    fr: 'Recevez une analyse complète du Vish Score avec des recommandations personnalisées',
+    de: 'Erhalten Sie umfassende Vish Score Analysen mit personalisierten Empfehlungen',
+    zh: '获得包含个性化建议的综合Vish Score分析',
+    ja: '個人的な推奨事項を含む包括的なVish Score分析を受け取る',
+    hi: 'व्यक्तिगत सिफारिशों के साथ व्यापक Vish Score विश्लेषण प्राप्त करें'
   },
   contactUs: {
     en: 'Contact Us',
@@ -385,7 +412,7 @@ function App() {
   const [showVisionAnalysis, setShowVisionAnalysis] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
-  const [showImageGallery, setShowImageGallery] = useState(false);
+  const [showAnalysisHistory, setShowAnalysisHistory] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showChatbot, setShowChatbot] = useState(false);
   const [isFullscreenChat, setIsFullscreenChat] = useState(false);
@@ -462,20 +489,38 @@ function App() {
   };
 
   const handleCameraAnalysis = (analysis: NutritionAnalysis) => {
+    // Save analysis to history
+    const analysisRecord = {
+      id: `analysis-${Date.now()}`,
+      timestamp: new Date().toISOString(),
+      foodName: 'Analyzed Food Item',
+      analysis: analysis,
+      userNotes: 'Camera analysis'
+    };
+
+    const existingHistory = JSON.parse(localStorage.getItem('foodcheck_analysis_history') || '[]');
+    const updatedHistory = [analysisRecord, ...existingHistory];
+    localStorage.setItem('foodcheck_analysis_history', JSON.stringify(updatedHistory));
+
     // Add analysis result to chat
     const analysisMessage = `🎉 **Analysis Complete!**
 
 **Overall Grade: ${analysis.overall.grade}**
+**Vish Score: ${analysis.overall.vishScore}/100**
 ${analysis.overall.summary}
 
-**Nutrition Score: ${analysis.health.score}/100**
-**Taste Score: ${analysis.taste.score}/100**
+**Score Breakdown:**
+• **Nutrition Score: ${analysis.health.score}/100**
+• **Taste Score: ${analysis.taste.score}/100**
+• **Consumer Score: ${analysis.consumer.score}/100**
 
 ${analysis.health.warnings.length > 0 ? `⚠️ **Health Warnings:**\n${analysis.health.warnings.map(w => `• ${w}`).join('\n')}\n\n` : ''}
 
 ${analysis.health.recommendations.length > 0 ? `💡 **Recommendations:**\n${analysis.health.recommendations.map(r => `• ${r}`).join('\n')}\n\n` : ''}
 
 **Taste Profile:** ${analysis.taste.description}
+
+**Consumer Feedback:** ${analysis.consumer.feedback}
 
 Want to analyze another food or have questions about these results?`;
 
@@ -614,13 +659,15 @@ Want to analyze another food or have questions about these results?`;
               >
                 {t('chatAssistant')}
               </button>
-              <button 
-                onClick={() => setShowImageGallery(true)}
-                className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium flex items-center space-x-1"
-              >
-                <Image className="h-4 w-4" />
-                <span>Gallery</span>
-              </button>
+              {isAuthenticated && (
+                <button 
+                  onClick={() => setShowAnalysisHistory(true)}
+                  className="text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium flex items-center space-x-1"
+                >
+                  <TrendingUp className="h-4 w-4" />
+                  <span>{t('analysisHistory')}</span>
+                </button>
+              )}
             </nav>
 
             {/* User Actions */}
@@ -632,6 +679,13 @@ Want to analyze another food or have questions about these results?`;
                     <p className="text-xs text-gray-600 dark:text-gray-400">{user?.name}</p>
                   </div>
                   <div className="flex items-center space-x-2">
+                    <button
+                      onClick={() => setShowAnalysisHistory(true)}
+                      className="p-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors md:hidden"
+                      title="Analysis History"
+                    >
+                      <TrendingUp className="h-5 w-5" />
+                    </button>
                     <button
                       onClick={() => setShowAdminPanel(true)}
                       className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
@@ -677,63 +731,31 @@ Want to analyze another food or have questions about these results?`;
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {/* Hero Section with Background Image */}
-        <div className="hero-section relative text-center mb-16 rounded-3xl overflow-hidden">
-          {/* Background Image */}
-          <div className="absolute inset-0 bg-gradient-to-br from-green-600/90 via-blue-600/90 to-purple-600/90">
-            <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-cover bg-center opacity-20"></div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent"></div>
-          </div>
+        {/* Hero Section */}
+        <div className="text-center mb-16 hero-section">
+          <h2 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
+            {t('heroTitle')}
+            <span className="bg-gradient-to-r from-green-600 to-blue-600 dark:from-green-400 dark:to-blue-400 bg-clip-text text-transparent block">
+              {t('heroSubtitle')}
+            </span>
+          </h2>
+          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto leading-relaxed">
+            {t('heroDescription')}
+          </p>
           
-          {/* Content */}
-          <div className="relative z-10 py-20 px-8">
-            <h2 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight drop-shadow-lg">
-              {t('heroTitle')}
-              <span className="block bg-gradient-to-r from-yellow-300 to-orange-300 bg-clip-text text-transparent">
-                {t('heroSubtitle')}
-              </span>
-            </h2>
-            <p className="text-xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed drop-shadow-md">
-              {t('heroDescription')}
-            </p>
-            
-            {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <button
-                onClick={() => setShowVisionAnalysis(true)}
-                className="cta-button bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center shadow-lg"
-              >
-                <Camera className="h-6 w-6 mr-3" />
-                {t('startAnalysis')}
-              </button>
-            </div>
-
-            {/* Trust Indicators */}
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-white/80">
-              <div className="flex items-center">
-                <Star className="h-5 w-5 text-yellow-400 mr-2" />
-                <span>AI-Powered Analysis</span>
-              </div>
-              <div className="flex items-center">
-                <Heart className="h-5 w-5 text-red-400 mr-2" />
-                <span>Health-Focused</span>
-              </div>
-              <div className="flex items-center">
-                <Award className="h-5 w-5 text-purple-400 mr-2" />
-                <span>Vish Score System</span>
-              </div>
-            </div>
+          {/* CTA Buttons */}
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+            <button
+              onClick={() => setShowVisionAnalysis(true)}
+              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-200 transform hover:scale-105 flex items-center cta-button"
+            >
+              <Camera className="h-6 w-6 mr-3" />
+              {t('startAnalysis')}
+            </button>
           </div>
-        </div>
 
-        {/* Email Information with Background */}
-        <div className="email-section relative bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-8 rounded-2xl mb-12 border border-blue-200 dark:border-blue-800 overflow-hidden">
-          {/* Background Pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-cover bg-center"></div>
-          </div>
-          
-          <div className="relative z-10">
+          {/* Email Information */}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-2xl mb-12 border border-blue-200 dark:border-blue-800 email-section">
             <div className="flex items-center justify-center mb-4">
               <Mail className="h-8 w-8 text-blue-600 dark:text-blue-400 mr-3" />
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white">{t('emailAnalysisText')}</h3>
@@ -741,294 +763,202 @@ Want to analyze another food or have questions about these results?`;
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg inline-block border-2 border-blue-300 dark:border-blue-600">
               <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 font-mono">vrishankjo@gmail.com</p>
             </div>
-            <div className="flex items-center justify-center mt-4 space-x-4">
-              <div className="bg-white dark:bg-gray-800 p-2 rounded-lg border border-blue-200 dark:border-blue-600">
-                <Phone className="h-5 w-5 text-blue-600 dark:text-blue-400" />
-              </div>
-              <p className="text-lg font-semibold text-blue-600 dark:text-blue-400">4702081150</p>
-            </div>
             <p className="text-gray-600 dark:text-gray-300 mt-4 max-w-2xl mx-auto">
               Send clear photos of nutrition labels and receive comprehensive Vish Score analysis within 1-20 minutes. Include any health conditions for personalized recommendations.
             </p>
           </div>
+
+          {/* Trust Indicators */}
+          <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-600 dark:text-gray-400">
+            <div className="flex items-center">
+              <Star className="h-5 w-5 text-yellow-500 mr-2" />
+              <span>AI-Powered Analysis</span>
+            </div>
+            <div className="flex items-center">
+              <Heart className="h-5 w-5 text-red-500 mr-2" />
+              <span>Health-Focused</span>
+            </div>
+            <div className="flex items-center">
+              <Award className="h-5 w-5 text-purple-500 mr-2" />
+              <span>Vish Score System</span>
+            </div>
+          </div>
         </div>
 
-        {/* Features Grid with Images */}
+        {/* Features Grid */}
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           {/* AI Vision Analysis */}
-          <div className="ai-vision-card relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700 overflow-hidden">
-            {/* Background Image */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-cover bg-center"></div>
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700 ai-vision-card">
+            <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
+              <Camera className="h-8 w-8 text-white" />
             </div>
-            
-            <div className="relative z-10">
-              <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
-                <Camera className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('aiVisionTitle')}</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                {t('aiVisionDesc')}
-              </p>
-              <button
-                onClick={() => setShowVisionAnalysis(true)}
-                className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full"
-              >
-                {t('tryAiAnalysis')}
-              </button>
-            </div>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('aiVisionTitle')}</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+              {t('aiVisionDesc')}
+            </p>
+            <button
+              onClick={() => setShowVisionAnalysis(true)}
+              className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full"
+            >
+              {t('tryAiAnalysis')}
+            </button>
           </div>
 
           {/* Chat Assistant */}
-          <div className="chat-assistant-card relative bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700 overflow-hidden">
-            {/* Background Image */}
-            <div className="absolute inset-0 opacity-10">
-              <div className="absolute inset-0 bg-[url('https://images.pexels.com/photos/8386434/pexels-photo-8386434.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-cover bg-center"></div>
+          <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 border border-gray-200 dark:border-gray-700 chat-assistant-card">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
+              <MessageCircle className="h-8 w-8 text-white" />
             </div>
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('chatAssistantTitle')}</h3>
+            <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+              {t('chatAssistantDesc')}
+            </p>
             
-            <div className="relative z-10">
-              <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4 rounded-full w-16 h-16 mb-6 flex items-center justify-center">
-                <MessageCircle className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{t('chatAssistantTitle')}</h3>
-              <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                {t('chatAssistantDesc')}
-              </p>
+            {/* Chat Buttons */}
+            <div className="space-y-3">
+              <button
+                onClick={openRegularChat}
+                className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
+              >
+                <MessageCircle className="h-5 w-5 mr-2" />
+                {t('startChatting')}
+              </button>
               
-              {/* Chat Buttons */}
-              <div className="space-y-3">
-                <button
-                  onClick={openRegularChat}
-                  className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
-                >
-                  <MessageCircle className="h-5 w-5 mr-2" />
-                  {t('startChatting')}
-                </button>
-                
-                <button
-                  onClick={openFullscreenChat}
-                  className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
-                >
-                  <Maximize className="h-5 w-5 mr-2" />
-                  {t('startFullscreenChat')}
-                </button>
-              </div>
+              <button
+                onClick={openFullscreenChat}
+                className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-200 transform hover:scale-105 w-full flex items-center justify-center"
+              >
+                <Maximize className="h-5 w-5 mr-2" />
+                {t('startFullscreenChat')}
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Vish Score Section with Enhanced Background */}
-        <div className="vish-score-section relative bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl p-8 md:p-12 text-white mb-16 shadow-2xl overflow-hidden">
-          {/* Animated Background Elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            {/* Floating Science Icons */}
-            {['🧬', '⚗️', '🔬', '📊', '🎯', '💡'].map((icon, index) => (
-              <div
-                key={index}
-                className="absolute text-4xl opacity-20 animate-bounce"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${index * 0.5}s`,
-                  animationDuration: `${3 + Math.random() * 2}s`
-                }}
-              >
-                {icon}
-              </div>
-            ))}
-            
-            {/* Geometric Particles */}
-            {Array.from({ length: 15 }).map((_, index) => (
-              <div
-                key={index}
-                className="absolute w-2 h-2 bg-white rounded-full opacity-30 animate-pulse"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${index * 0.3}s`
-                }}
-              />
-            ))}
-            
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20 animate-pulse"></div>
-          </div>
-          
-          <div className="relative z-10 max-w-4xl mx-auto text-center">
+        {/* Vish Score Section */}
+        <div className="bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-3xl p-8 md:p-12 text-white mb-16 shadow-2xl vish-score-section">
+          <div className="max-w-4xl mx-auto text-center">
             <div className="bg-white/20 backdrop-blur-sm p-4 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
               <Award className="h-10 w-10 text-white" />
             </div>
-            <h3 className="text-4xl md:text-5xl font-bold mb-6 drop-shadow-lg">{t('vishScoreTitle')}</h3>
-            <p className="text-xl md:text-2xl mb-8 leading-relaxed opacity-95 drop-shadow-md">
+            <h3 className="text-4xl md:text-5xl font-bold mb-6">{t('vishScoreTitle')}</h3>
+            <p className="text-xl md:text-2xl mb-8 leading-relaxed opacity-95">
               {t('vishScoreSubtitle')}
             </p>
-            <div className="grid md:grid-cols-2 gap-8 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+            <div className="grid md:grid-cols-3 gap-8 mb-8">
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
                 <BarChart3 className="h-8 w-8 mb-4 mx-auto" />
                 <h4 className="text-xl font-bold mb-2">{t('nutritionAnalysisTitle')}</h4>
                 <p className="opacity-90">{t('nutritionAnalysisDesc')}</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
                 <Heart className="h-8 w-8 mb-4 mx-auto" />
                 <h4 className="text-xl font-bold mb-2">{t('tasteEvaluationTitle')}</h4>
                 <p className="opacity-90">{t('tasteEvaluationDesc')}</p>
+              </div>
+              <div className="bg-white/10 backdrop-blur-sm p-6 rounded-2xl">
+                <Users className="h-8 w-8 mb-4 mx-auto" />
+                <h4 className="text-xl font-bold mb-2">{t('consumerRatingTitle')}</h4>
+                <p className="opacity-90">{t('consumerRatingDesc')}</p>
               </div>
             </div>
 
             {/* Vish Score Features */}
             <div className="grid md:grid-cols-3 gap-6 mb-8">
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <Zap className="h-6 w-6 mb-2 mx-auto" />
                 <h5 className="font-bold mb-1">Instant Analysis</h5>
                 <p className="text-sm opacity-90">Results in 1-20 minutes</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <Target className="h-6 w-6 mb-2 mx-auto" />
-                <h5 className="font-bold mb-1">Dual Scoring</h5>
-                <p className="text-sm opacity-90">Nutrition + Taste combined</p>
+                <h5 className="font-bold mb-1">Triple Scoring</h5>
+                <p className="text-sm opacity-90">Nutrition + Taste + Consumer</p>
               </div>
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20">
+              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl">
                 <Star className="h-6 w-6 mb-2 mx-auto" />
                 <h5 className="font-bold mb-1">Personalized</h5>
                 <p className="text-sm opacity-90">Based on your health needs</p>
               </div>
             </div>
 
-            <p className="text-lg opacity-90 mb-6 drop-shadow-md">
+            <p className="text-lg opacity-90 mb-6">
               Send your nutrition label photos to <strong>vrishankjo@gmail.com</strong> to experience the revolutionary Vish Score analysis!
             </p>
           </div>
         </div>
 
-        {/* How It Works with Images */}
-        <div className="how-it-works-section text-center mb-16">
+        {/* How It Works */}
+        <div className="text-center mb-16 how-it-works-section">
           <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-12">{t('howItWorks')}</h3>
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center relative">
-              {/* Background Image */}
-              <div className="absolute inset-0 rounded-lg opacity-10">
-                <div className="w-full h-full bg-[url('https://images.pexels.com/photos/4099354/pexels-photo-4099354.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-cover bg-center rounded-lg"></div>
-              </div>
-              
-              <div className="relative z-10 p-6">
-                <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
-                <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step1Title')}</h4>
-                <p className="text-gray-600 dark:text-gray-300">{t('step1Desc')}</p>
-              </div>
+            <div className="text-center">
+              <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step1Title')}</h4>
+              <p className="text-gray-600 dark:text-gray-300">{t('step1Desc')}</p>
             </div>
-            <div className="text-center relative">
-              {/* Background Image */}
-              <div className="absolute inset-0 rounded-lg opacity-10">
-                <div className="w-full h-full bg-[url('https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-cover bg-center rounded-lg"></div>
-              </div>
-              
-              <div className="relative z-10 p-6">
-                <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
-                <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step2Title')}</h4>
-                <p className="text-gray-600 dark:text-gray-300">{t('step2Desc')}</p>
-              </div>
+            <div className="text-center">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step2Title')}</h4>
+              <p className="text-gray-600 dark:text-gray-300">{t('step2Desc')}</p>
             </div>
-            <div className="text-center relative">
-              {/* Background Image */}
-              <div className="absolute inset-0 rounded-lg opacity-10">
-                <div className="w-full h-full bg-[url('https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1')] bg-cover bg-center rounded-lg"></div>
-              </div>
-              
-              <div className="relative z-10 p-6">
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
-                <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step3Title')}</h4>
-                <p className="text-gray-600 dark:text-gray-300">{t('step3Desc')}</p>
-              </div>
+            <div className="text-center">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
+              <h4 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">{t('step3Title')}</h4>
+              <p className="text-gray-600 dark:text-gray-300">{t('step3Desc')}</p>
             </div>
           </div>
         </div>
 
-        {/* What Makes Vish Score Special with Enhanced Colorful Background */}
-        <div className="features-section relative bg-gradient-to-br from-purple-500 via-pink-500 to-red-500 dark:from-purple-700 dark:via-pink-700 dark:to-red-700 rounded-3xl p-8 md:p-12 mb-16 border border-gray-200 dark:border-gray-700 overflow-hidden">
-          {/* Animated Background Elements */}
-          <div className="absolute inset-0 overflow-hidden">
-            {/* Floating Science Icons */}
-            {['🧬', '⚗️', '🔬', '📊', '🎯', '💡'].map((icon, index) => (
-              <div
-                key={index}
-                className="absolute text-4xl text-white opacity-20 animate-bounce"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${index * 0.5}s`,
-                  animationDuration: `${3 + Math.random() * 2}s`
-                }}
-              >
-                {icon}
-              </div>
-            ))}
-            
-            {/* Geometric Particles */}
-            {Array.from({ length: 15 }).map((_, index) => (
-              <div
-                key={index}
-                className="absolute w-2 h-2 bg-white rounded-full opacity-30 animate-pulse"
-                style={{
-                  left: `${Math.random() * 100}%`,
-                  top: `${Math.random() * 100}%`,
-                  animationDelay: `${index * 0.3}s`
-                }}
-              />
-            ))}
-            
-            {/* Gradient Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-black/20 animate-pulse"></div>
+        {/* What Makes Vish Score Special */}
+        <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-3xl p-8 md:p-12 mb-16 border border-gray-200 dark:border-gray-700 features-section">
+          <div className="text-center mb-12">
+            <h3 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">What Makes Vish Score Revolutionary?</h3>
+            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+              Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view of your food.
+            </p>
           </div>
-          
-          <div className="relative z-10">
-            <div className="text-center mb-12">
-              <h3 className="text-4xl font-bold text-white mb-6 drop-shadow-lg">What Makes Vish Score Revolutionary?</h3>
-              <p className="text-xl text-white/90 max-w-3xl mx-auto drop-shadow-md">
-                Unlike traditional nutrition apps that only focus on calories and macros, Vish Score provides a holistic view of your food.
-              </p>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="text-center p-6 bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl">
+              <div className="bg-green-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <BarChart3 className="h-6 w-6 text-white" />
+              </div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Nutrition Deep Dive</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Complete macro and micronutrient analysis with health impact assessment</p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="bg-green-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                  <BarChart3 className="h-6 w-6 text-white" />
-                </div>
-                <h4 className="font-bold text-white mb-2 drop-shadow-md">Nutrition Deep Dive</h4>
-                <p className="text-sm text-white/90">Complete macro and micronutrient analysis with health impact assessment</p>
+            <div className="text-center p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl">
+              <div className="bg-purple-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <Heart className="h-6 w-6 text-white" />
               </div>
-
-              <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="bg-purple-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                  <Heart className="h-6 w-6 text-white" />
-                </div>
-                <h4 className="font-bold text-white mb-2 drop-shadow-md">Taste Science</h4>
-                <p className="text-sm text-white/90">Advanced flavor profiling using sensory analysis and consumer preference data</p>
-              </div>
-
-              <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="bg-yellow-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                  <Target className="h-6 w-6 text-white" />
-                </div>
-                <h4 className="font-bold text-white mb-2 drop-shadow-md">Personalized Warnings</h4>
-                <p className="text-sm text-white/90">Custom health alerts based on your specific conditions and dietary needs</p>
-              </div>
-
-              <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl border border-white/20">
-                <div className="bg-blue-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
-                  <Award className="h-6 w-6 text-white" />
-                </div>
-                <h4 className="font-bold text-white mb-2 drop-shadow-md">Unified Score</h4>
-                <p className="text-sm text-white/90">Single comprehensive rating that balances health benefits with taste satisfaction</p>
-              </div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Taste Science</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Advanced flavor profiling using sensory analysis and consumer preference data</p>
             </div>
 
-            <div className="text-center mt-8">
-              <p className="text-lg text-white/90 mb-4 drop-shadow-md">
-                Ready to experience the future of food analysis? Send your nutrition label photos to:
-              </p>
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-lg inline-block border border-white/20">
-                <p className="text-xl font-bold text-white drop-shadow-md">vrishankjo@gmail.com</p>
+            <div className="text-center p-6 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-xl">
+              <div className="bg-yellow-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <Target className="h-6 w-6 text-white" />
               </div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Consumer Insights</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Real user feedback and satisfaction data from actual consumers</p>
+            </div>
+
+            <div className="text-center p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl">
+              <div className="bg-blue-500 p-3 rounded-full w-12 h-12 mx-auto mb-4 flex items-center justify-center">
+                <Award className="h-6 w-6 text-white" />
+              </div>
+              <h4 className="font-bold text-gray-900 dark:text-white mb-2">Unified Score</h4>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Single comprehensive rating that balances health, taste, and consumer satisfaction</p>
+            </div>
+          </div>
+
+          <div className="text-center mt-8">
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">
+              Ready to experience the future of food analysis? Send your nutrition label photos to:
+            </p>
+            <div className="bg-gradient-to-r from-green-100 to-blue-100 dark:from-green-900/20 dark:to-blue-900/20 p-4 rounded-lg inline-block">
+              <p className="text-xl font-bold text-gray-900 dark:text-white">vrishankjo@gmail.com</p>
             </div>
           </div>
         </div>
@@ -1050,10 +980,6 @@ Want to analyze another food or have questions about these results?`;
             <div className="flex justify-center space-x-6 text-sm text-gray-600 dark:text-gray-400">
               <a href="mailto:vrishankjo@gmail.com" className="hover:text-green-600 dark:hover:text-green-400 transition-colors">
                 {t('contactUs')}
-              </a>
-              <span>•</span>
-              <a href="tel:4702081150" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                📞 4702081150
               </a>
               <span>•</span>
               <span>{t('nonProfit')}</span>
@@ -1088,10 +1014,10 @@ Want to analyze another food or have questions about these results?`;
         />
       )}
 
-      {showImageGallery && (
-        <ImageGallery
-          isOpen={showImageGallery}
-          onClose={() => setShowImageGallery(false)}
+      {showAnalysisHistory && (
+        <AnalysisHistory
+          isOpen={showAnalysisHistory}
+          onClose={() => setShowAnalysisHistory(false)}
         />
       )}
 
