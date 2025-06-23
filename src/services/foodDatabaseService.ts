@@ -1,0 +1,787 @@
+// Enhanced Food Database Service with API Integration
+export interface FoodItem {
+  id: string;
+  name: string;
+  brand?: string;
+  category: string;
+  barcode?: string;
+  nutrition: {
+    calories: number;
+    protein: number;
+    carbohydrates: number;
+    fat: number;
+    fiber: number;
+    sugar: number;
+    sodium: number;
+    saturatedFat: number;
+    transFat: number;
+    cholesterol: number;
+    vitamins: { [key: string]: number };
+    minerals: { [key: string]: number };
+  };
+  ingredients: string[];
+  allergens: string[];
+  servingSize: string;
+  servingsPerContainer: number;
+  healthScore: number;
+  tasteScore: number;
+  consumerScore: number;
+  vishScore: number;
+  imageUrl?: string;
+  lastUpdated: string;
+  source: 'api' | 'user' | 'database';
+}
+
+export interface FoodSearchResult {
+  items: FoodItem[];
+  total: number;
+  page: number;
+  hasMore: boolean;
+}
+
+export interface NutritionixFood {
+  food_name: string;
+  brand_name?: string;
+  serving_qty: number;
+  serving_unit: string;
+  nf_calories: number;
+  nf_total_fat: number;
+  nf_saturated_fat: number;
+  nf_cholesterol: number;
+  nf_sodium: number;
+  nf_total_carbohydrate: number;
+  nf_dietary_fiber: number;
+  nf_sugars: number;
+  nf_protein: number;
+  nf_potassium: number;
+  nf_p: number;
+  photo: {
+    thumb: string;
+    highres: string;
+  };
+}
+
+export interface OpenFoodFactsProduct {
+  product_name: string;
+  brands: string;
+  categories: string;
+  ingredients_text: string;
+  allergens: string;
+  nutriments: {
+    'energy-kcal_100g': number;
+    'fat_100g': number;
+    'saturated-fat_100g': number;
+    'carbohydrates_100g': number;
+    'sugars_100g': number;
+    'fiber_100g': number;
+    'proteins_100g': number;
+    'salt_100g': number;
+    'sodium_100g': number;
+  };
+  image_url: string;
+  code: string;
+  nutrition_grades: string;
+}
+
+class FoodDatabaseService {
+  private static instance: FoodDatabaseService;
+  private cache: Map<string, FoodItem> = new Map();
+  private searchCache: Map<string, FoodSearchResult> = new Map();
+  private readonly CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+  private readonly NUTRITIONIX_APP_ID = import.meta.env.VITE_NUTRITIONIX_APP_ID;
+  private readonly NUTRITIONIX_API_KEY = import.meta.env.VITE_NUTRITIONIX_API_KEY;
+
+  static getInstance(): FoodDatabaseService {
+    if (!FoodDatabaseService.instance) {
+      FoodDatabaseService.instance = new FoodDatabaseService();
+    }
+    return FoodDatabaseService.instance;
+  }
+
+  constructor() {
+    this.loadCacheFromStorage();
+    this.initializeDefaultDatabase();
+  }
+
+  // Search foods from multiple sources
+  async searchFoods(query: string, page: number = 1, limit: number = 20): Promise<FoodSearchResult> {
+    const cacheKey = `search_${query}_${page}_${limit}`;
+    
+    // Check cache first
+    if (this.searchCache.has(cacheKey)) {
+      const cached = this.searchCache.get(cacheKey)!;
+      if (this.isCacheValid(cached as any)) {
+        return cached;
+      }
+    }
+
+    try {
+      // Search from multiple sources in parallel
+      const [nutritionixResults, openFoodFactsResults, localResults] = await Promise.allSettled([
+        this.searchNutritionix(query, limit),
+        this.searchOpenFoodFacts(query, limit),
+        this.searchLocalDatabase(query, page, limit)
+      ]);
+
+      // Combine results
+      const allItems: FoodItem[] = [];
+      
+      // Add Nutritionix results
+      if (nutritionixResults.status === 'fulfilled') {
+        allItems.push(...nutritionixResults.value);
+      }
+      
+      // Add OpenFoodFacts results
+      if (openFoodFactsResults.status === 'fulfilled') {
+        allItems.push(...openFoodFactsResults.value);
+      }
+      
+      // Add local results
+      if (localResults.status === 'fulfilled') {
+        allItems.push(...localResults.value.items);
+      }
+
+      // Remove duplicates and sort by relevance
+      const uniqueItems = this.removeDuplicates(allItems);
+      const sortedItems = this.sortByRelevance(uniqueItems, query);
+      
+      // Paginate results
+      const startIndex = (page - 1) * limit;
+      const paginatedItems = sortedItems.slice(startIndex, startIndex + limit);
+
+      const result: FoodSearchResult = {
+        items: paginatedItems,
+        total: sortedItems.length,
+        page,
+        hasMore: startIndex + limit < sortedItems.length
+      };
+
+      // Cache the result
+      this.searchCache.set(cacheKey, result);
+      
+      return result;
+    } catch (error) {
+      console.error('Error searching foods:', error);
+      
+      // Fallback to local database only
+      return this.searchLocalDatabase(query, page, limit);
+    }
+  }
+
+  // Search Nutritionix API
+  private async searchNutritionix(query: string, limit: number): Promise<FoodItem[]> {
+    if (!this.NUTRITIONIX_APP_ID || !this.NUTRITIONIX_API_KEY) {
+      return [];
+    }
+
+    try {
+      const response = await fetch('https://trackapi.nutritionix.com/v2/search/instant', {
+        method: 'GET',
+        headers: {
+          'x-app-id': this.NUTRITIONIX_APP_ID,
+          'x-app-key': this.NUTRITIONIX_API_KEY,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          query,
+          limit
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Nutritionix API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const foods: FoodItem[] = [];
+
+      // Process branded foods
+      if (data.branded) {
+        for (const item of data.branded.slice(0, limit)) {
+          const foodItem = this.convertNutritionixToFoodItem(item);
+          foods.push(foodItem);
+          this.cache.set(foodItem.id, foodItem);
+        }
+      }
+
+      return foods;
+    } catch (error) {
+      console.error('Nutritionix search error:', error);
+      return [];
+    }
+  }
+
+  // Search OpenFoodFacts API
+  private async searchOpenFoodFacts(query: string, limit: number): Promise<FoodItem[]> {
+    try {
+      const response = await fetch(
+        `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=${limit}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`OpenFoodFacts API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const foods: FoodItem[] = [];
+
+      if (data.products) {
+        for (const product of data.products.slice(0, limit)) {
+          if (product.product_name && product.nutriments) {
+            const foodItem = this.convertOpenFoodFactsToFoodItem(product);
+            foods.push(foodItem);
+            this.cache.set(foodItem.id, foodItem);
+          }
+        }
+      }
+
+      return foods;
+    } catch (error) {
+      console.error('OpenFoodFacts search error:', error);
+      return [];
+    }
+  }
+
+  // Search local database
+  private async searchLocalDatabase(query: string, page: number, limit: number): Promise<FoodSearchResult> {
+    const localFoods = this.getLocalFoods();
+    const lowercaseQuery = query.toLowerCase();
+    
+    const filteredFoods = localFoods.filter(food =>
+      food.name.toLowerCase().includes(lowercaseQuery) ||
+      food.brand?.toLowerCase().includes(lowercaseQuery) ||
+      food.category.toLowerCase().includes(lowercaseQuery) ||
+      food.ingredients.some(ingredient => ingredient.toLowerCase().includes(lowercaseQuery))
+    );
+
+    const startIndex = (page - 1) * limit;
+    const paginatedFoods = filteredFoods.slice(startIndex, startIndex + limit);
+
+    return {
+      items: paginatedFoods,
+      total: filteredFoods.length,
+      page,
+      hasMore: startIndex + limit < filteredFoods.length
+    };
+  }
+
+  // Get food by barcode
+  async getFoodByBarcode(barcode: string): Promise<FoodItem | null> {
+    // Check cache first
+    const cached = Array.from(this.cache.values()).find(food => food.barcode === barcode);
+    if (cached && this.isCacheValid(cached as any)) {
+      return cached;
+    }
+
+    try {
+      // Try OpenFoodFacts first (better barcode support)
+      const openFoodFactsResult = await this.getFromOpenFoodFactsByBarcode(barcode);
+      if (openFoodFactsResult) {
+        this.cache.set(openFoodFactsResult.id, openFoodFactsResult);
+        return openFoodFactsResult;
+      }
+
+      // Try Nutritionix
+      const nutritionixResult = await this.getFromNutritionixByBarcode(barcode);
+      if (nutritionixResult) {
+        this.cache.set(nutritionixResult.id, nutritionixResult);
+        return nutritionixResult;
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Error getting food by barcode:', error);
+      return null;
+    }
+  }
+
+  // Get food by barcode from OpenFoodFacts
+  private async getFromOpenFoodFactsByBarcode(barcode: string): Promise<FoodItem | null> {
+    try {
+      const response = await fetch(`https://world.openfoodfacts.org/api/v0/product/${barcode}.json`);
+      
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      
+      if (data.status === 1 && data.product) {
+        return this.convertOpenFoodFactsToFoodItem(data.product);
+      }
+
+      return null;
+    } catch (error) {
+      console.error('OpenFoodFacts barcode lookup error:', error);
+      return null;
+    }
+  }
+
+  // Get food by barcode from Nutritionix
+  private async getFromNutritionixByBarcode(barcode: string): Promise<FoodItem | null> {
+    if (!this.NUTRITIONIX_APP_ID || !this.NUTRITIONIX_API_KEY) {
+      return null;
+    }
+
+    try {
+      const response = await fetch('https://trackapi.nutritionix.com/v2/search/item', {
+        method: 'GET',
+        headers: {
+          'x-app-id': this.NUTRITIONIX_APP_ID,
+          'x-app-key': this.NUTRITIONIX_API_KEY,
+        },
+        body: JSON.stringify({
+          upc: barcode
+        })
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      
+      if (data.foods && data.foods.length > 0) {
+        return this.convertNutritionixToFoodItem(data.foods[0]);
+      }
+
+      return null;
+    } catch (error) {
+      console.error('Nutritionix barcode lookup error:', error);
+      return null;
+    }
+  }
+
+  // Convert Nutritionix data to FoodItem
+  private convertNutritionixToFoodItem(nutritionixFood: NutritionixFood): FoodItem {
+    const healthScore = this.calculateHealthScore({
+      calories: nutritionixFood.nf_calories,
+      protein: nutritionixFood.nf_protein,
+      fiber: nutritionixFood.nf_dietary_fiber,
+      sugar: nutritionixFood.nf_sugars,
+      sodium: nutritionixFood.nf_sodium,
+      saturatedFat: nutritionixFood.nf_saturated_fat
+    });
+
+    const tasteScore = this.calculateTasteScore({
+      sugar: nutritionixFood.nf_sugars,
+      fat: nutritionixFood.nf_total_fat,
+      sodium: nutritionixFood.nf_sodium
+    });
+
+    const consumerScore = this.calculateConsumerScore(nutritionixFood.brand_name || '');
+    const vishScore = Math.round((healthScore + tasteScore + consumerScore) / 3);
+
+    return {
+      id: `nutritionix_${nutritionixFood.food_name.replace(/\s+/g, '_').toLowerCase()}`,
+      name: nutritionixFood.food_name,
+      brand: nutritionixFood.brand_name,
+      category: 'Packaged Food',
+      nutrition: {
+        calories: nutritionixFood.nf_calories,
+        protein: nutritionixFood.nf_protein,
+        carbohydrates: nutritionixFood.nf_total_carbohydrate,
+        fat: nutritionixFood.nf_total_fat,
+        fiber: nutritionixFood.nf_dietary_fiber,
+        sugar: nutritionixFood.nf_sugars,
+        sodium: nutritionixFood.nf_sodium,
+        saturatedFat: nutritionixFood.nf_saturated_fat,
+        transFat: 0,
+        cholesterol: nutritionixFood.nf_cholesterol,
+        vitamins: {},
+        minerals: {
+          potassium: nutritionixFood.nf_potassium,
+          phosphorus: nutritionixFood.nf_p
+        }
+      },
+      ingredients: [],
+      allergens: [],
+      servingSize: `${nutritionixFood.serving_qty} ${nutritionixFood.serving_unit}`,
+      servingsPerContainer: 1,
+      healthScore,
+      tasteScore,
+      consumerScore,
+      vishScore,
+      imageUrl: nutritionixFood.photo?.thumb,
+      lastUpdated: new Date().toISOString(),
+      source: 'api'
+    };
+  }
+
+  // Convert OpenFoodFacts data to FoodItem
+  private convertOpenFoodFactsToFoodItem(product: OpenFoodFactsProduct): FoodItem {
+    const nutrition = product.nutriments || {};
+    
+    const healthScore = this.calculateHealthScore({
+      calories: nutrition['energy-kcal_100g'] || 0,
+      protein: nutrition['proteins_100g'] || 0,
+      fiber: nutrition['fiber_100g'] || 0,
+      sugar: nutrition['sugars_100g'] || 0,
+      sodium: nutrition['sodium_100g'] || 0,
+      saturatedFat: nutrition['saturated-fat_100g'] || 0
+    });
+
+    const tasteScore = this.calculateTasteScore({
+      sugar: nutrition['sugars_100g'] || 0,
+      fat: nutrition['fat_100g'] || 0,
+      sodium: nutrition['sodium_100g'] || 0
+    });
+
+    const consumerScore = this.calculateConsumerScore(product.brands || '');
+    const vishScore = Math.round((healthScore + tasteScore + consumerScore) / 3);
+
+    return {
+      id: `openfoodfacts_${product.code || Date.now()}`,
+      name: product.product_name,
+      brand: product.brands,
+      category: product.categories?.split(',')[0] || 'Food',
+      barcode: product.code,
+      nutrition: {
+        calories: nutrition['energy-kcal_100g'] || 0,
+        protein: nutrition['proteins_100g'] || 0,
+        carbohydrates: nutrition['carbohydrates_100g'] || 0,
+        fat: nutrition['fat_100g'] || 0,
+        fiber: nutrition['fiber_100g'] || 0,
+        sugar: nutrition['sugars_100g'] || 0,
+        sodium: nutrition['sodium_100g'] || 0,
+        saturatedFat: nutrition['saturated-fat_100g'] || 0,
+        transFat: 0,
+        cholesterol: 0,
+        vitamins: {},
+        minerals: {}
+      },
+      ingredients: product.ingredients_text ? product.ingredients_text.split(',').map(i => i.trim()) : [],
+      allergens: product.allergens ? product.allergens.split(',').map(a => a.trim()) : [],
+      servingSize: '100g',
+      servingsPerContainer: 1,
+      healthScore,
+      tasteScore,
+      consumerScore,
+      vishScore,
+      imageUrl: product.image_url,
+      lastUpdated: new Date().toISOString(),
+      source: 'api'
+    };
+  }
+
+  // Calculate health score based on nutrition
+  private calculateHealthScore(nutrition: {
+    calories: number;
+    protein: number;
+    fiber: number;
+    sugar: number;
+    sodium: number;
+    saturatedFat: number;
+  }): number {
+    let score = 50; // Base score
+
+    // Positive factors
+    if (nutrition.protein > 10) score += 15;
+    else if (nutrition.protein > 5) score += 10;
+    
+    if (nutrition.fiber > 5) score += 15;
+    else if (nutrition.fiber > 3) score += 10;
+
+    // Negative factors
+    if (nutrition.sugar > 20) score -= 20;
+    else if (nutrition.sugar > 10) score -= 10;
+    
+    if (nutrition.sodium > 600) score -= 20;
+    else if (nutrition.sodium > 300) score -= 10;
+    
+    if (nutrition.saturatedFat > 10) score -= 15;
+    else if (nutrition.saturatedFat > 5) score -= 10;
+
+    if (nutrition.calories > 400) score -= 10;
+    else if (nutrition.calories < 100) score += 5;
+
+    return Math.max(0, Math.min(100, score));
+  }
+
+  // Calculate taste score based on components
+  private calculateTasteScore(nutrition: {
+    sugar: number;
+    fat: number;
+    sodium: number;
+  }): number {
+    let score = 50; // Base score
+
+    // Sweet taste (moderate sugar is good for taste)
+    if (nutrition.sugar > 5 && nutrition.sugar < 15) score += 15;
+    else if (nutrition.sugar > 15) score += 10; // Too sweet
+    
+    // Fat content (adds richness)
+    if (nutrition.fat > 5 && nutrition.fat < 20) score += 15;
+    else if (nutrition.fat > 20) score += 5; // Too fatty
+    
+    // Sodium (enhances flavor in moderation)
+    if (nutrition.sodium > 100 && nutrition.sodium < 400) score += 10;
+    else if (nutrition.sodium > 400) score -= 5; // Too salty
+
+    return Math.max(0, Math.min(100, score));
+  }
+
+  // Calculate consumer score based on brand recognition
+  private calculateConsumerScore(brand: string): number {
+    const popularBrands = [
+      'coca-cola', 'pepsi', 'nestle', 'unilever', 'kraft', 'general mills',
+      'kellogg', 'mars', 'ferrero', 'mondelez', 'danone', 'campbell',
+      'heinz', 'oreo', 'lay\'s', 'doritos', 'cheetos', 'pringles'
+    ];
+
+    const brandLower = brand.toLowerCase();
+    const isPopular = popularBrands.some(popular => brandLower.includes(popular));
+    
+    // Popular brands get higher consumer scores (people know and buy them)
+    return isPopular ? Math.floor(Math.random() * 20) + 70 : Math.floor(Math.random() * 30) + 40;
+  }
+
+  // Remove duplicate foods
+  private removeDuplicates(foods: FoodItem[]): FoodItem[] {
+    const seen = new Set<string>();
+    return foods.filter(food => {
+      const key = `${food.name.toLowerCase()}_${food.brand?.toLowerCase() || ''}`;
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
+  }
+
+  // Sort foods by relevance to query
+  private sortByRelevance(foods: FoodItem[], query: string): FoodItem[] {
+    const queryLower = query.toLowerCase();
+    
+    return foods.sort((a, b) => {
+      const aNameMatch = a.name.toLowerCase().includes(queryLower);
+      const bNameMatch = b.name.toLowerCase().includes(queryLower);
+      
+      const aBrandMatch = a.brand?.toLowerCase().includes(queryLower) || false;
+      const bBrandMatch = b.brand?.toLowerCase().includes(queryLower) || false;
+      
+      // Prioritize exact name matches, then brand matches, then Vish score
+      if (aNameMatch && !bNameMatch) return -1;
+      if (!aNameMatch && bNameMatch) return 1;
+      if (aBrandMatch && !bBrandMatch) return -1;
+      if (!aBrandMatch && bBrandMatch) return 1;
+      
+      return b.vishScore - a.vishScore;
+    });
+  }
+
+  // Check if cache is valid
+  private isCacheValid(item: { lastUpdated: string }): boolean {
+    const lastUpdated = new Date(item.lastUpdated);
+    const now = new Date();
+    return (now.getTime() - lastUpdated.getTime()) < this.CACHE_DURATION;
+  }
+
+  // Load cache from localStorage
+  private loadCacheFromStorage(): void {
+    try {
+      const stored = localStorage.getItem('foodcheck_food_cache');
+      if (stored) {
+        const data = JSON.parse(stored);
+        this.cache = new Map(data.cache || []);
+        this.searchCache = new Map(data.searchCache || []);
+      }
+    } catch (error) {
+      console.error('Error loading food cache:', error);
+    }
+  }
+
+  // Save cache to localStorage
+  private saveCacheToStorage(): void {
+    try {
+      const data = {
+        cache: Array.from(this.cache.entries()),
+        searchCache: Array.from(this.searchCache.entries()),
+        lastSaved: new Date().toISOString()
+      };
+      localStorage.setItem('foodcheck_food_cache', JSON.stringify(data));
+    } catch (error) {
+      console.error('Error saving food cache:', error);
+    }
+  }
+
+  // Get local foods (fallback database)
+  private getLocalFoods(): FoodItem[] {
+    return [
+      {
+        id: 'local_organic_granola_bar',
+        name: 'Organic Granola Bar',
+        brand: 'Nature Valley',
+        category: 'Snack Bars',
+        nutrition: {
+          calories: 190,
+          protein: 4,
+          carbohydrates: 29,
+          fat: 7,
+          fiber: 3,
+          sugar: 11,
+          sodium: 160,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: { 'Vitamin E': 2.5 },
+          minerals: { iron: 1.8 }
+        },
+        ingredients: ['Whole grain oats', 'Sugar', 'Canola oil', 'Rice flour', 'Honey'],
+        allergens: ['May contain nuts', 'Contains gluten'],
+        servingSize: '1 bar (42g)',
+        servingsPerContainer: 6,
+        healthScore: 75,
+        tasteScore: 80,
+        consumerScore: 85,
+        vishScore: 80,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'local_greek_yogurt',
+        name: 'Greek Yogurt Plain',
+        brand: 'Chobani',
+        category: 'Dairy',
+        nutrition: {
+          calories: 100,
+          protein: 18,
+          carbohydrates: 6,
+          fat: 0,
+          fiber: 0,
+          sugar: 4,
+          sodium: 65,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 10,
+          vitamins: { 'Vitamin B12': 1.1 },
+          minerals: { calcium: 200 }
+        },
+        ingredients: ['Cultured pasteurized nonfat milk', 'Live and active cultures'],
+        allergens: ['Contains milk'],
+        servingSize: '1 container (170g)',
+        servingsPerContainer: 1,
+        healthScore: 95,
+        tasteScore: 70,
+        consumerScore: 90,
+        vishScore: 85,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'local_potato_chips',
+        name: 'Classic Potato Chips',
+        brand: 'Lay\'s',
+        category: 'Snacks',
+        nutrition: {
+          calories: 160,
+          protein: 2,
+          carbohydrates: 15,
+          fat: 10,
+          fiber: 1,
+          sugar: 0,
+          sodium: 170,
+          saturatedFat: 1.5,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: { 'Vitamin C': 9.6 },
+          minerals: { potassium: 350 }
+        },
+        ingredients: ['Potatoes', 'Vegetable oil', 'Salt'],
+        allergens: [],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 5,
+        healthScore: 25,
+        tasteScore: 85,
+        consumerScore: 80,
+        vishScore: 63,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      }
+    ];
+  }
+
+  // Initialize default database
+  private initializeDefaultDatabase(): void {
+    const localFoods = this.getLocalFoods();
+    localFoods.forEach(food => {
+      if (!this.cache.has(food.id)) {
+        this.cache.set(food.id, food);
+      }
+    });
+    this.saveCacheToStorage();
+  }
+
+  // Add custom food item
+  addCustomFood(food: Omit<FoodItem, 'id' | 'lastUpdated' | 'source'>): FoodItem {
+    const customFood: FoodItem = {
+      ...food,
+      id: `custom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      lastUpdated: new Date().toISOString(),
+      source: 'user'
+    };
+
+    this.cache.set(customFood.id, customFood);
+    this.saveCacheToStorage();
+    
+    return customFood;
+  }
+
+  // Get food by ID
+  getFoodById(id: string): FoodItem | null {
+    return this.cache.get(id) || null;
+  }
+
+  // Get popular foods
+  getPopularFoods(limit: number = 10): FoodItem[] {
+    const foods = Array.from(this.cache.values());
+    return foods
+      .sort((a, b) => b.consumerScore - a.consumerScore)
+      .slice(0, limit);
+  }
+
+  // Get healthy foods
+  getHealthyFoods(limit: number = 10): FoodItem[] {
+    const foods = Array.from(this.cache.values());
+    return foods
+      .filter(food => food.healthScore >= 70)
+      .sort((a, b) => b.healthScore - a.healthScore)
+      .slice(0, limit);
+  }
+
+  // Clear cache
+  clearCache(): void {
+    this.cache.clear();
+    this.searchCache.clear();
+    localStorage.removeItem('foodcheck_food_cache');
+    this.initializeDefaultDatabase();
+  }
+
+  // Get cache statistics
+  getCacheStats(): {
+    totalFoods: number;
+    apiSources: number;
+    userSources: number;
+    databaseSources: number;
+    cacheSize: string;
+  } {
+    const foods = Array.from(this.cache.values());
+    const apiSources = foods.filter(f => f.source === 'api').length;
+    const userSources = foods.filter(f => f.source === 'user').length;
+    const databaseSources = foods.filter(f => f.source === 'database').length;
+    
+    const cacheData = localStorage.getItem('foodcheck_food_cache');
+    const cacheSize = cacheData ? `${(cacheData.length / 1024).toFixed(2)} KB` : '0 KB';
+
+    return {
+      totalFoods: foods.length,
+      apiSources,
+      userSources,
+      databaseSources,
+      cacheSize
+    };
+  }
+}
+
+// Export singleton instance
+export const foodDatabaseService = FoodDatabaseService.getInstance();
