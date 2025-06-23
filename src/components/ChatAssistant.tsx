@@ -471,36 +471,48 @@ What would you like to know?`;
 
         {/* Input */}
         <div className="p-6 border-t border-gray-200 dark:border-gray-600">
-          {/* Voice input button - SEPARATE AND PROMINENT */}
-          <div className="flex justify-center mb-4">
-            <button
-              onClick={isListening ? stopListening : startListening}
-              disabled={isLoading || !voiceEnabled || !speechSupported}
-              className={`px-6 py-3 rounded-full transition-all duration-200 flex items-center space-x-2 font-medium ${
-                isListening 
-                  ? 'bg-red-500 text-white animate-pulse shadow-lg scale-110' 
-                  : speechSupported && voiceEnabled
-                    ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md hover:scale-105'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-              title={
-                !speechSupported ? 'Voice input not supported in this browser' :
-                !voiceEnabled ? 'Voice features disabled' :
-                isListening ? 'Stop listening (click to stop)' : 'Start voice input (click to speak)'
-              }
-            >
-              {isListening ? (
-                <>
-                  <MicOff className="h-5 w-5" />
-                  <span>Stop Listening</span>
-                </>
-              ) : (
-                <>
-                  <Mic className="h-5 w-5" />
-                  <span>🎤 Click to Speak</span>
-                </>
-              )}
-            </button>
+          {/* SUPER OBVIOUS VOICE BUTTON - ALWAYS VISIBLE */}
+          <div className="mb-4">
+            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-4 text-center">
+              <h3 className="text-white font-bold text-lg mb-2">🎤 Voice Input</h3>
+              <button
+                onClick={isListening ? stopListening : startListening}
+                disabled={isLoading || !voiceEnabled || !speechSupported}
+                className={`w-full py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-3 font-bold text-lg ${
+                  isListening 
+                    ? 'bg-red-500 text-white animate-pulse shadow-lg scale-105 border-4 border-red-300' 
+                    : speechSupported && voiceEnabled
+                      ? 'bg-white text-blue-600 hover:bg-gray-100 shadow-md hover:scale-105 border-2 border-white'
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50'
+                }`}
+                style={{ minHeight: '60px' }}
+              >
+                {isListening ? (
+                  <>
+                    <MicOff className="h-8 w-8" />
+                    <span>🔴 LISTENING - Click to Stop</span>
+                  </>
+                ) : (
+                  <>
+                    <Mic className="h-8 w-8" />
+                    <span>🎤 CLICK HERE TO SPEAK</span>
+                  </>
+                )}
+              </button>
+              
+              {/* Status text */}
+              <div className="mt-2 text-white text-sm">
+                {isListening ? (
+                  <span className="animate-pulse">🎤 Listening for your voice... Speak now!</span>
+                ) : speechSupported && voiceEnabled ? (
+                  <span>Click the button above to use voice input</span>
+                ) : speechSupported ? (
+                  <span>Voice features are disabled. Enable them in the header.</span>
+                ) : (
+                  <span>Voice input requires Chrome, Edge, or Safari browser</span>
+                )}
+              </div>
+            </div>
           </div>
 
           <div className="flex space-x-3">
@@ -530,33 +542,10 @@ What would you like to know?`;
               )}
             </button>
           </div>
-          
-          {/* Voice instructions - More prominent */}
-          <div className="mt-3 text-sm text-center">
-            {isListening ? (
-              <div className="text-red-600 dark:text-red-400 font-medium animate-pulse flex items-center justify-center space-x-2">
-                <Mic className="h-4 w-4" />
-                <span>🎤 Listening... Speak your question now!</span>
-              </div>
-            ) : speechSupported && voiceEnabled ? (
-              <div className="text-blue-600 dark:text-blue-400 flex items-center justify-center space-x-2">
-                <Mic className="h-4 w-4" />
-                <span>💡 Click the big blue "🎤 Click to Speak" button above to use voice input</span>
-              </div>
-            ) : speechSupported ? (
-              <div className="text-gray-500 dark:text-gray-400">
-                🔇 Voice features are disabled. Click the volume button in the header to enable.
-              </div>
-            ) : (
-              <div className="text-yellow-600 dark:text-yellow-400">
-                ⚠️ Voice input requires Chrome, Edge, or Safari browser
-              </div>
-            )}
-          </div>
 
           {/* Browser compatibility note */}
           {!speechSupported && (
-            <div className="mt-2 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
+            <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
               <strong>🎤 Voice Input:</strong> For the best experience with voice features, please use Chrome, Edge, or Safari browser.
             </div>
           )}
