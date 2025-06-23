@@ -469,52 +469,61 @@ What would you like to know?`;
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
+        {/* Input Section */}
         <div className="p-6 border-t border-gray-200 dark:border-gray-600">
-          {/* SUPER OBVIOUS VOICE BUTTON - ALWAYS VISIBLE */}
-          <div className="mb-4">
-            <div className="bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl p-4 text-center">
-              <h3 className="text-white font-bold text-lg mb-2">🎤 Voice Input</h3>
-              <button
-                onClick={isListening ? stopListening : startListening}
-                disabled={isLoading || !voiceEnabled || !speechSupported}
-                className={`w-full py-4 px-6 rounded-lg transition-all duration-200 flex items-center justify-center space-x-3 font-bold text-lg ${
-                  isListening 
-                    ? 'bg-red-500 text-white animate-pulse shadow-lg scale-105 border-4 border-red-300' 
-                    : speechSupported && voiceEnabled
-                      ? 'bg-white text-blue-600 hover:bg-gray-100 shadow-md hover:scale-105 border-2 border-white'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed opacity-50'
-                }`}
-                style={{ minHeight: '60px' }}
-              >
+          {/* MASSIVE VOICE BUTTON SECTION - ALWAYS VISIBLE */}
+          <div className="mb-6 p-6 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl shadow-lg">
+            <div className="text-center mb-4">
+              <h2 className="text-white text-2xl font-bold mb-2">🎤 VOICE INPUT</h2>
+              <p className="text-pink-100 text-lg">Click the giant button below to speak!</p>
+            </div>
+            
+            <button
+              onClick={isListening ? stopListening : startListening}
+              disabled={isLoading || !voiceEnabled || !speechSupported}
+              className={`w-full py-8 px-8 rounded-2xl transition-all duration-300 flex items-center justify-center space-x-4 font-black text-2xl shadow-2xl ${
+                isListening 
+                  ? 'bg-red-600 text-white animate-bounce scale-110 border-8 border-red-300' 
+                  : speechSupported && voiceEnabled
+                    ? 'bg-white text-red-600 hover:bg-gray-100 hover:scale-105 border-4 border-white'
+                    : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50'
+              }`}
+              style={{ 
+                minHeight: '120px',
+                fontSize: '28px',
+                fontWeight: '900'
+              }}
+            >
+              {isListening ? (
+                <>
+                  <MicOff className="h-16 w-16" />
+                  <span>🔴 LISTENING NOW!</span>
+                </>
+              ) : (
+                <>
+                  <Mic className="h-16 w-16" />
+                  <span>🎤 CLICK TO SPEAK</span>
+                </>
+              )}
+            </button>
+            
+            {/* Giant status text */}
+            <div className="mt-4 text-center">
+              <div className="text-white text-xl font-bold">
                 {isListening ? (
-                  <>
-                    <MicOff className="h-8 w-8" />
-                    <span>🔴 LISTENING - Click to Stop</span>
-                  </>
-                ) : (
-                  <>
-                    <Mic className="h-8 w-8" />
-                    <span>🎤 CLICK HERE TO SPEAK</span>
-                  </>
-                )}
-              </button>
-              
-              {/* Status text */}
-              <div className="mt-2 text-white text-sm">
-                {isListening ? (
-                  <span className="animate-pulse">🎤 Listening for your voice... Speak now!</span>
+                  <span className="animate-pulse text-yellow-300">🎤 I'M LISTENING! SPEAK NOW!</span>
                 ) : speechSupported && voiceEnabled ? (
-                  <span>Click the button above to use voice input</span>
+                  <span>👆 Click the button above to use your voice</span>
                 ) : speechSupported ? (
-                  <span>Voice features are disabled. Enable them in the header.</span>
+                  <span>Voice is disabled. Enable it in the header.</span>
                 ) : (
-                  <span>Voice input requires Chrome, Edge, or Safari browser</span>
+                  <span>Voice requires Chrome, Edge, or Safari browser</span>
                 )}
               </div>
             </div>
           </div>
 
+          {/* Text Input */}
           <div className="flex space-x-3">
             <div className="flex-1">
               <textarea
