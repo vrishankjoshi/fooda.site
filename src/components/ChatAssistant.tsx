@@ -471,116 +471,62 @@ What would you like to know?`;
 
         {/* Input Section */}
         <div className="p-6 border-t border-gray-200 dark:border-gray-600">
-          {/* 🚨 ABSOLUTELY MASSIVE VOICE BUTTON SECTION 🚨 */}
-          <div className="mb-6">
-            {/* GIANT RED WARNING BOX */}
+          {/* 🚨 ULTRA SIMPLE MEGA VOICE BUTTON 🚨 */}
+          <div className="mb-6 text-center">
             <div 
-              className="p-8 rounded-3xl shadow-2xl border-8 mb-6"
+              className="inline-block p-8 rounded-3xl shadow-2xl border-8 mb-4"
               style={{
-                background: 'linear-gradient(45deg, #dc2626, #ef4444, #f87171)',
-                borderColor: '#dc2626',
-                minHeight: '250px'
+                background: isListening 
+                  ? 'linear-gradient(45deg, #dc2626, #ef4444)' 
+                  : speechSupported && voiceEnabled
+                    ? 'linear-gradient(45deg, #059669, #10b981)'
+                    : 'linear-gradient(45deg, #6b7280, #9ca3af)',
+                borderColor: isListening ? '#dc2626' : speechSupported && voiceEnabled ? '#059669' : '#6b7280'
               }}
             >
-              {/* MASSIVE TITLE */}
-              <div className="text-center mb-8">
-                <h1 
-                  className="text-white font-black mb-4 animate-pulse"
-                  style={{ 
-                    fontSize: '4rem',
-                    textShadow: '6px 6px 12px rgba(0,0,0,0.9)',
-                    letterSpacing: '3px'
-                  }}
-                >
-                  🎤 VOICE BUTTON 🎤
-                </h1>
-                <p 
-                  className="text-yellow-200 font-black"
-                  style={{ fontSize: '2rem' }}
-                >
-                  CLICK THIS GIANT BUTTON!
-                </p>
-              </div>
-              
-              {/* ENORMOUS VOICE BUTTON */}
-              <div className="flex justify-center mb-8">
-                <button
-                  onClick={isListening ? stopListening : startListening}
-                  disabled={isLoading || !voiceEnabled || !speechSupported}
-                  className={`rounded-full transition-all duration-300 flex items-center justify-center space-x-8 font-black shadow-2xl border-8 ${
-                    isListening 
-                      ? 'bg-red-800 text-white animate-bounce scale-110 border-yellow-400' 
-                      : speechSupported && voiceEnabled
-                        ? 'bg-white text-red-600 hover:bg-yellow-100 hover:scale-105 border-white'
-                        : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50 border-gray-300'
-                  }`}
-                  style={{ 
-                    width: '400px',
-                    height: '200px',
-                    fontSize: '2.5rem',
-                    fontWeight: '900'
-                  }}
-                >
-                  {isListening ? (
-                    <>
-                      <MicOff style={{ width: '100px', height: '100px' }} />
-                      <span>STOP</span>
-                    </>
-                  ) : (
-                    <>
-                      <Mic style={{ width: '100px', height: '100px' }} />
-                      <span>SPEAK</span>
-                    </>
-                  )}
-                </button>
-              </div>
-              
-              {/* GIANT STATUS */}
-              <div className="text-center">
-                <div 
-                  className="text-white font-black"
-                  style={{ fontSize: '2rem' }}
-                >
-                  {isListening ? (
-                    <span className="animate-pulse text-yellow-300">
-                      🔴 LISTENING NOW! TALK!
-                    </span>
-                  ) : speechSupported && voiceEnabled ? (
-                    <span className="text-green-300">
-                      ✅ READY - CLICK THE BUTTON!
-                    </span>
-                  ) : speechSupported ? (
-                    <span className="text-orange-300">
-                      ⚠️ VOICE DISABLED - ENABLE ABOVE
-                    </span>
-                  ) : (
-                    <span className="text-red-300">
-                      ❌ USE CHROME/EDGE/SAFARI
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* SECOND GIANT BUTTON FOR EXTRA VISIBILITY */}
-            <div className="text-center mb-6">
               <button
                 onClick={isListening ? stopListening : startListening}
                 disabled={isLoading || !voiceEnabled || !speechSupported}
-                className={`px-12 py-6 rounded-full text-3xl font-black shadow-2xl border-4 transition-all duration-300 ${
-                  isListening 
-                    ? 'bg-red-600 text-white animate-pulse border-yellow-400' 
-                    : speechSupported && voiceEnabled
-                      ? 'bg-blue-600 text-white hover:bg-blue-700 border-blue-600'
-                      : 'bg-gray-400 text-gray-600 cursor-not-allowed opacity-50 border-gray-300'
-                }`}
+                className="bg-white rounded-full p-8 shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ width: '200px', height: '200px' }}
               >
-                {isListening ? (
-                  <>🛑 STOP LISTENING</>
-                ) : (
-                  <>🎤 START VOICE INPUT</>
-                )}
+                <div className="flex flex-col items-center justify-center h-full">
+                  {isListening ? (
+                    <>
+                      <MicOff className="w-16 h-16 text-red-600 mb-2 animate-pulse" />
+                      <span className="text-red-600 font-bold text-lg">STOP</span>
+                    </>
+                  ) : (
+                    <>
+                      <Mic className="w-16 h-16 text-green-600 mb-2" />
+                      <span className="text-green-600 font-bold text-lg">TALK</span>
+                    </>
+                  )}
+                </div>
               </button>
+            </div>
+            
+            <div className="text-center">
+              <div className="text-2xl font-bold mb-2">
+                {isListening ? (
+                  <span className="text-red-600 animate-pulse">🔴 LISTENING - SPEAK NOW!</span>
+                ) : speechSupported && voiceEnabled ? (
+                  <span className="text-green-600">🎤 CLICK TO TALK</span>
+                ) : speechSupported ? (
+                  <span className="text-orange-600">⚠️ VOICE DISABLED</span>
+                ) : (
+                  <span className="text-red-600">❌ USE CHROME/EDGE/SAFARI</span>
+                )}
+              </div>
+              
+              {speechSupported && !voiceEnabled && (
+                <button
+                  onClick={toggleVoice}
+                  className="bg-green-500 text-white px-6 py-3 rounded-full font-bold hover:bg-green-600 transition-colors"
+                >
+                  ENABLE VOICE
+                </button>
+              )}
             </div>
           </div>
 
