@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Send, Loader2, MessageCircle, Mic, MicOff, Volume2, VolumeX, Pause, Play } from 'lucide-react';
+import { X, Send, Loader2, MessageCircle, Mic, MicOff, Volume2, VolumeX, Pause, Play, Settings } from 'lucide-react';
 import { sendMessageToGroq, ChatMessage } from '../services/groqService';
 
 interface ChatAssistantProps {
@@ -16,6 +16,16 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onClose, i
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [speechSupported, setSpeechSupported] = useState(false);
+  const [synthSupported, setSynthSupported] = useState(false);
+  const [showVoiceSettings, setShowVoiceSettings] = useState(false);
+  const [voiceSettings, setVoiceSettings] = useState({
+    rate: 0.9,
+    pitch: 1,
+    volume: 0.8,
+    voice: ''
+  });
+  const [availableVoices, setAvailableVoices] = useState<SpeechSynthesisVoice[]>([]);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
@@ -34,7 +44,7 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onClose, i
 
       recognitionRef.current.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
-        setInputMessage(transcript);
+        setInputMessage(prev => prev + transcript);
         setIsListening(false);
       };
 
@@ -50,7 +60,33 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onClose, i
 
     // Check for speech synthesis support
     if ('speechSynthesis' in window) {
+      setSynthSupported(true);
       synthRef.current = window.speechSynthesis;
+      
+      const loadVoices = () => {
+        const voices = synthRef.current?.getVoices() || [];
+        const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
+        setAvailableVoices(englishVoices);
+        
+        if (englishVoices.length > 0 && !voiceSettings.voice) {
+          const preferredVoice = englishVoices.find(voice => 
+            voice.name.includes('Google') || 
+            voice.name.includes('Microsoft') ||
+            voice.name.includes('Alex') ||
+            voice.name.includes('Samantha') ||
+            voice.name.includes('Natural')
+          ) || englishVoices[0];
+          
+          if (preferredVoice) {
+            setVoiceSettings(prev => ({ ...prev, voice: preferredVoice.name }));
+          }
+        }
+      };
+
+      loadVoices();
+      if (synthRef.current.onvoiceschanged !== undefined) {
+        synthRef.current.onvoiceschanged = loadVoices;
+      }
     }
 
     return () => {
@@ -86,11 +122,11 @@ What would you like to know?`;
       setMessages([botMessage]);
       
       // Speak welcome message if voice is enabled
-      if (voiceEnabled && synthRef.current) {
-        speakMessage(welcomeMessage);
+      if (voiceEnabled && synthSupported) {
+        setTimeout(() => speakMessage(welcomeMessage), 500);
       }
     }
-  }, [isOpen, initialAnalysis, voiceEnabled]);
+  }, [isOpen, initialAnalysis, voiceEnabled, synthSupported]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -99,9 +135,14 @@ What would you like to know?`;
 
   // Speech-to-text functions
   const startListening = () => {
-    if (recognitionRef.current && speechSupported) {
+    if (recognitionRef.current && speechSupported && voiceEnabled) {
       setIsListening(true);
-      recognitionRef.current.start();
+      try {
+        recognitionRef.current.start();
+      } catch (error) {
+        console.error('Error starting speech recognition:', error);
+        setIsListening(false);
+      }
     }
   };
 
@@ -114,7 +155,7 @@ What would you like to know?`;
 
   // Text-to-speech functions
   const speakMessage = (text: string) => {
-    if (!synthRef.current || !voiceEnabled) return;
+    if (!synthRef.current || !voiceEnabled || !synthSupported) return;
 
     // Cancel any ongoing speech
     synthRef.current.cancel();
@@ -128,24 +169,20 @@ What would you like to know?`;
       .replace(/`([^`]+)`/g, '$1') // Remove code formatting
       .replace(/\n+/g, '. ') // Convert line breaks to pauses
       .replace(/•/g, '') // Remove bullet points
+      .replace(/🎯|📊|🍽️|👥|✨|🚀|💡|⭐|📧|🤖|💬|🌟|🍎|🏥|🥗/g, '') // Remove emojis
       .trim();
 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    utterance.rate = 0.9;
-    utterance.pitch = 1;
-    utterance.volume = 0.8;
+    if (!cleanText) return;
 
-    // Try to use a more natural voice
-    const voices = synthRef.current.getVoices();
-    const preferredVoice = voices.find(voice => 
-      voice.name.includes('Google') || 
-      voice.name.includes('Microsoft') ||
-      voice.name.includes('Alex') ||
-      voice.name.includes('Samantha')
-    ) || voices.find(voice => voice.lang.startsWith('en')) || voices[0];
-    
-    if (preferredVoice) {
-      utterance.voice = preferredVoice;
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    utterance.rate = voiceSettings.rate;
+    utterance.pitch = voiceSettings.pitch;
+    utterance.volume = voiceSettings.volume;
+
+    // Set voice
+    const selectedVoice = availableVoices.find(voice => voice.name === voiceSettings.voice);
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
     }
 
     utterance.onstart = () => setIsSpeaking(true);
@@ -167,6 +204,9 @@ What would you like to know?`;
     setVoiceEnabled(!voiceEnabled);
     if (isSpeaking) {
       stopSpeaking();
+    }
+    if (isListening) {
+      stopListening();
     }
   };
 
@@ -192,8 +232,8 @@ What would you like to know?`;
       setMessages(prev => [...prev, botMessage]);
       
       // Speak the response if voice is enabled
-      if (voiceEnabled && synthRef.current) {
-        speakMessage(response);
+      if (voiceEnabled && synthSupported) {
+        setTimeout(() => speakMessage(response), 300);
       }
     } catch (error) {
       const errorMessage: ChatMessage = {
@@ -232,19 +272,17 @@ What would you like to know?`;
             </div>
             <div className="flex items-center space-x-2">
               {/* Voice toggle */}
-              {synthRef.current && (
-                <button
-                  onClick={toggleVoice}
-                  className={`p-2 rounded-full transition-colors ${
-                    voiceEnabled 
-                      ? 'bg-white bg-opacity-20 text-white hover:bg-opacity-30' 
-                      : 'bg-gray-500 text-gray-300 hover:bg-gray-400'
-                  }`}
-                  title={voiceEnabled ? 'Disable voice responses' : 'Enable voice responses'}
-                >
-                  {voiceEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
-                </button>
-              )}
+              <button
+                onClick={toggleVoice}
+                className={`p-2 rounded-full transition-colors ${
+                  voiceEnabled 
+                    ? 'bg-white bg-opacity-20 text-white hover:bg-opacity-30' 
+                    : 'bg-gray-500 text-gray-300 hover:bg-gray-400'
+                }`}
+                title={voiceEnabled ? 'Disable voice features' : 'Enable voice features'}
+              >
+                {voiceEnabled ? <Volume2 className="h-5 w-5" /> : <VolumeX className="h-5 w-5" />}
+              </button>
               
               {/* Speaking indicator / stop button */}
               {isSpeaking && (
@@ -255,6 +293,99 @@ What would you like to know?`;
                 >
                   <Pause className="h-5 w-5" />
                 </button>
+              )}
+
+              {/* Voice settings */}
+              {synthSupported && (
+                <div className="relative">
+                  <button
+                    onClick={() => setShowVoiceSettings(!showVoiceSettings)}
+                    className="p-2 rounded-full bg-white bg-opacity-20 text-white hover:bg-opacity-30 transition-colors"
+                    title="Voice settings"
+                  >
+                    <Settings className="h-5 w-5" />
+                  </button>
+
+                  {/* Voice Settings Dropdown */}
+                  {showVoiceSettings && (
+                    <div className="absolute top-full right-0 mt-2 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4 shadow-lg z-50 min-w-64">
+                      <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Voice Settings</h3>
+                      
+                      {/* Voice selection */}
+                      <div className="mb-3">
+                        <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">Voice</label>
+                        <select
+                          value={voiceSettings.voice}
+                          onChange={(e) => setVoiceSettings(prev => ({ ...prev, voice: e.target.value }))}
+                          className="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-2 py-1 dark:bg-gray-600 dark:text-white"
+                        >
+                          {availableVoices.map((voice) => (
+                            <option key={voice.name} value={voice.name}>
+                              {voice.name} ({voice.lang})
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* Rate control */}
+                      <div className="mb-3">
+                        <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                          Speed: {voiceSettings.rate.toFixed(1)}x
+                        </label>
+                        <input
+                          type="range"
+                          min="0.5"
+                          max="2"
+                          step="0.1"
+                          value={voiceSettings.rate}
+                          onChange={(e) => setVoiceSettings(prev => ({ ...prev, rate: parseFloat(e.target.value) }))}
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Pitch control */}
+                      <div className="mb-3">
+                        <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                          Pitch: {voiceSettings.pitch.toFixed(1)}
+                        </label>
+                        <input
+                          type="range"
+                          min="0.5"
+                          max="2"
+                          step="0.1"
+                          value={voiceSettings.pitch}
+                          onChange={(e) => setVoiceSettings(prev => ({ ...prev, pitch: parseFloat(e.target.value) }))}
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Volume control */}
+                      <div className="mb-3">
+                        <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                          Volume: {Math.round(voiceSettings.volume * 100)}%
+                        </label>
+                        <input
+                          type="range"
+                          min="0"
+                          max="1"
+                          step="0.1"
+                          value={voiceSettings.volume}
+                          onChange={(e) => setVoiceSettings(prev => ({ ...prev, volume: parseFloat(e.target.value) }))}
+                          className="w-full"
+                        />
+                      </div>
+
+                      {/* Test button */}
+                      <button
+                        onClick={() => speakMessage("Hello! This is a test of the voice settings. How do I sound?")}
+                        disabled={isSpeaking}
+                        className="w-full bg-blue-500 text-white text-xs py-2 rounded hover:bg-blue-600 transition-colors disabled:opacity-50"
+                      >
+                        {isSpeaking ? 'Speaking...' : 'Test Voice'}
+                      </button>
+                    </div>
+                  )}
+                </div>
               )}
               
               <button 
@@ -267,19 +398,32 @@ What would you like to know?`;
           </div>
           
           {/* Voice status indicator */}
-          {speechSupported && (
-            <div className="mt-3 flex items-center space-x-2 text-sm text-green-100">
-              <Mic className="h-4 w-4" />
-              <span>Voice input available</span>
-              {voiceEnabled && synthRef.current && (
-                <>
-                  <span>•</span>
-                  <Volume2 className="h-4 w-4" />
-                  <span>Voice responses enabled</span>
-                </>
-              )}
-            </div>
-          )}
+          <div className="mt-3 flex items-center space-x-4 text-sm text-green-100">
+            {speechSupported && (
+              <div className="flex items-center space-x-1">
+                <Mic className="h-4 w-4" />
+                <span>Voice input available</span>
+              </div>
+            )}
+            {synthSupported && voiceEnabled && (
+              <div className="flex items-center space-x-1">
+                <Volume2 className="h-4 w-4" />
+                <span>Voice responses enabled</span>
+              </div>
+            )}
+            {isListening && (
+              <div className="flex items-center space-x-1 text-red-200 animate-pulse">
+                <MicOff className="h-4 w-4" />
+                <span>Listening...</span>
+              </div>
+            )}
+            {isSpeaking && (
+              <div className="flex items-center space-x-1 text-blue-200 animate-pulse">
+                <Volume2 className="h-4 w-4" />
+                <span>Speaking...</span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Messages */}
@@ -299,14 +443,14 @@ What would you like to know?`;
                 <div className="whitespace-pre-wrap">{message.message}</div>
                 
                 {/* Speak button for bot messages */}
-                {message.type === 'bot' && synthRef.current && voiceEnabled && (
+                {message.type === 'bot' && synthSupported && voiceEnabled && (
                   <button
                     onClick={() => speakMessage(message.message)}
-                    className="mt-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 flex items-center space-x-1"
+                    className="mt-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 flex items-center space-x-1 transition-colors"
                     disabled={isSpeaking}
                   >
                     <Play className="h-3 w-3" />
-                    <span>Speak</span>
+                    <span>Speak this message</span>
                   </button>
                 )}
               </div>
@@ -333,27 +477,35 @@ What would you like to know?`;
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
-                placeholder={isListening ? "Listening..." : "Ask me about nutrition, health, or food analysis..."}
-                className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 pr-12 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300 resize-none"
+                placeholder={isListening ? "🎤 Listening... Speak now" : "Ask me about nutrition, health, or food analysis..."}
+                className={`w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 pr-16 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300 resize-none ${
+                  isListening ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-600' : ''
+                }`}
                 rows={2}
-                disabled={isLoading || isListening}
+                disabled={isLoading}
               />
               
-              {/* Voice input button */}
-              {speechSupported && (
+              {/* Voice input button - Always visible */}
+              <div className="absolute right-3 top-3 flex items-center space-x-1">
                 <button
                   onClick={isListening ? stopListening : startListening}
-                  className={`absolute right-3 top-3 p-1 rounded-full transition-colors ${
+                  disabled={isLoading || !voiceEnabled}
+                  className={`p-1.5 rounded-full transition-all duration-200 ${
                     isListening 
-                      ? 'bg-red-500 text-white animate-pulse' 
-                      : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300'
+                      ? 'bg-red-500 text-white animate-pulse shadow-lg' 
+                      : speechSupported && voiceEnabled
+                        ? 'text-gray-400 hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20'
+                        : 'text-gray-300 cursor-not-allowed'
                   }`}
-                  disabled={isLoading}
-                  title={isListening ? 'Stop listening' : 'Start voice input'}
+                  title={
+                    !speechSupported ? 'Voice input not supported in this browser' :
+                    !voiceEnabled ? 'Voice features disabled' :
+                    isListening ? 'Stop listening' : 'Start voice input'
+                  }
                 >
                   {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
                 </button>
-              )}
+              </div>
             </div>
             
             <button
@@ -370,17 +522,32 @@ What would you like to know?`;
           </div>
           
           {/* Voice instructions */}
-          {speechSupported && (
-            <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
-              {isListening ? (
-                <span className="text-red-500 font-medium">🎤 Listening... Speak now</span>
-              ) : (
-                <span>💡 Tip: Click the microphone to use voice input, or press Enter to send</span>
-              )}
+          <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+            {isListening ? (
+              <span className="text-red-500 font-medium animate-pulse">🎤 Listening... Speak your question now</span>
+            ) : speechSupported ? (
+              <span>💡 Tip: Click the microphone 🎤 to use voice input, or press Enter to send</span>
+            ) : (
+              <span>💡 Tip: Voice input requires Chrome, Edge, or Safari browser</span>
+            )}
+          </div>
+
+          {/* Browser compatibility note */}
+          {!speechSupported && (
+            <div className="mt-2 p-2 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded text-xs text-yellow-700 dark:text-yellow-300">
+              <strong>Voice Input:</strong> For the best experience with voice features, please use Chrome, Edge, or Safari browser.
             </div>
           )}
         </div>
       </div>
+
+      {/* Click outside to close voice settings */}
+      {showVoiceSettings && (
+        <div 
+          className="fixed inset-0 z-40" 
+          onClick={() => setShowVoiceSettings(false)}
+        />
+      )}
     </div>
   );
 };
