@@ -267,7 +267,7 @@ What would you like to know?`;
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white">AI Nutrition Assistant</h2>
-                <p className="text-green-100">Ask me anything about nutrition and health</p>
+                <p className="text-green-100">Ask me anything about food, nutrition, and Vish Score!</p>
               </div>
             </div>
             <div className="flex items-center space-x-2">
@@ -471,43 +471,51 @@ What would you like to know?`;
 
         {/* Input */}
         <div className="p-6 border-t border-gray-200 dark:border-gray-600">
+          {/* Voice input button - SEPARATE AND PROMINENT */}
+          <div className="flex justify-center mb-4">
+            <button
+              onClick={isListening ? stopListening : startListening}
+              disabled={isLoading || !voiceEnabled || !speechSupported}
+              className={`px-6 py-3 rounded-full transition-all duration-200 flex items-center space-x-2 font-medium ${
+                isListening 
+                  ? 'bg-red-500 text-white animate-pulse shadow-lg scale-110' 
+                  : speechSupported && voiceEnabled
+                    ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md hover:scale-105'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+              title={
+                !speechSupported ? 'Voice input not supported in this browser' :
+                !voiceEnabled ? 'Voice features disabled' :
+                isListening ? 'Stop listening (click to stop)' : 'Start voice input (click to speak)'
+              }
+            >
+              {isListening ? (
+                <>
+                  <MicOff className="h-5 w-5" />
+                  <span>Stop Listening</span>
+                </>
+              ) : (
+                <>
+                  <Mic className="h-5 w-5" />
+                  <span>🎤 Click to Speak</span>
+                </>
+              )}
+            </button>
+          </div>
+
           <div className="flex space-x-3">
-            <div className="flex-1 relative">
+            <div className="flex-1">
               <textarea
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder={isListening ? "🎤 Listening... Speak now" : "Ask about nutrition, health, or food analysis..."}
-                className={`w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 pr-20 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300 resize-none ${
+                className={`w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300 resize-none ${
                   isListening ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-600' : ''
                 }`}
                 rows={2}
                 disabled={isLoading}
               />
-              
-              {/* Voice input button - ALWAYS VISIBLE with better positioning */}
-              <button
-                onClick={isListening ? stopListening : startListening}
-                disabled={isLoading || !voiceEnabled}
-                className={`absolute right-3 top-3 p-2 rounded-full transition-all duration-200 z-10 ${
-                  isListening 
-                    ? 'bg-red-500 text-white animate-pulse shadow-lg scale-110' 
-                    : speechSupported && voiceEnabled
-                      ? 'bg-blue-500 text-white hover:bg-blue-600 shadow-md hover:scale-105'
-                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                }`}
-                title={
-                  !speechSupported ? 'Voice input not supported in this browser' :
-                  !voiceEnabled ? 'Voice features disabled' :
-                  isListening ? 'Stop listening (click to stop)' : 'Start voice input (click to speak)'
-                }
-              >
-                {isListening ? (
-                  <MicOff className="h-5 w-5" />
-                ) : (
-                  <Mic className="h-5 w-5" />
-                )}
-              </button>
             </div>
             
             <button
@@ -533,7 +541,7 @@ What would you like to know?`;
             ) : speechSupported && voiceEnabled ? (
               <div className="text-blue-600 dark:text-blue-400 flex items-center justify-center space-x-2">
                 <Mic className="h-4 w-4" />
-                <span>💡 Click the blue microphone button 🎤 to use voice input</span>
+                <span>💡 Click the big blue "🎤 Click to Speak" button above to use voice input</span>
               </div>
             ) : speechSupported ? (
               <div className="text-gray-500 dark:text-gray-400">
