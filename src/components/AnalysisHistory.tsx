@@ -49,8 +49,8 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
           setFilteredAnalyses(history);
           calculateStats(history);
         } else {
-          // Generate sample data for demonstration
-          const sampleData = generateSampleData();
+          // Generate comprehensive sample data with popular brands
+          const sampleData = generateComprehensiveSampleData();
           setAnalyses(sampleData);
           setFilteredAnalyses(sampleData);
           calculateStats(sampleData);
@@ -58,7 +58,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
         }
       } catch (error) {
         console.error('Error loading analysis history:', error);
-        const sampleData = generateSampleData();
+        const sampleData = generateComprehensiveSampleData();
         setAnalyses(sampleData);
         setFilteredAnalyses(sampleData);
         calculateStats(sampleData);
@@ -114,23 +114,66 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
     setFilteredAnalyses(filtered);
   }, [analyses, searchTerm, filterBy, sortBy]);
 
-  const generateSampleData = (): AnalysisRecord[] => {
-    const sampleFoods = [
-      { name: 'Organic Granola Bar', score: 85, nutrition: 88, taste: 82, consumer: 85 },
-      { name: 'Instant Ramen Noodles', score: 35, nutrition: 25, taste: 55, consumer: 25 },
-      { name: 'Greek Yogurt', score: 92, nutrition: 95, taste: 88, consumer: 93 },
-      { name: 'Potato Chips', score: 28, nutrition: 15, taste: 45, consumer: 25 },
-      { name: 'Whole Grain Cereal', score: 78, nutrition: 85, taste: 70, consumer: 80 },
-      { name: 'Energy Drink', score: 22, nutrition: 10, taste: 35, consumer: 20 },
-      { name: 'Protein Bar', score: 75, nutrition: 80, taste: 68, consumer: 77 },
-      { name: 'Frozen Pizza', score: 45, nutrition: 35, taste: 65, consumer: 35 },
-      { name: 'Almond Milk', score: 88, nutrition: 90, taste: 85, consumer: 90 },
-      { name: 'Candy Bar', score: 18, nutrition: 8, taste: 30, consumer: 15 }
+  const generateComprehensiveSampleData = (): AnalysisRecord[] => {
+    const popularBrandFoods = [
+      // Coca-Cola Products
+      { name: 'Coca-Cola Classic', brand: 'Coca-Cola', score: 65, nutrition: 15, taste: 85, consumer: 95, category: 'Beverages' },
+      { name: 'Diet Coke', brand: 'Coca-Cola', score: 66, nutrition: 35, taste: 75, consumer: 88, category: 'Beverages' },
+      { name: 'Sprite', brand: 'Coca-Cola', score: 62, nutrition: 18, taste: 82, consumer: 85, category: 'Beverages' },
+      
+      // Fairlife Products
+      { name: 'Core Power Chocolate Protein Shake', brand: 'Fairlife', score: 85, nutrition: 85, taste: 88, consumer: 82, category: 'Dairy' },
+      { name: 'Fairlife Whole Milk', brand: 'Fairlife', score: 81, nutrition: 78, taste: 85, consumer: 80, category: 'Dairy' },
+      
+      // PepsiCo Products
+      { name: 'Pepsi Cola', brand: 'PepsiCo', score: 61, nutrition: 12, taste: 83, consumer: 88, category: 'Beverages' },
+      { name: 'Mountain Dew', brand: 'PepsiCo', score: 60, nutrition: 8, taste: 88, consumer: 85, category: 'Beverages' },
+      { name: 'Lay\'s Classic Potato Chips', brand: 'Lay\'s', score: 67, nutrition: 25, taste: 85, consumer: 90, category: 'Snacks' },
+      { name: 'Doritos Nacho Cheese', brand: 'Doritos', score: 70, nutrition: 22, taste: 92, consumer: 95, category: 'Snacks' },
+      
+      // Sports & Energy Drinks
+      { name: 'Gatorade Thirst Quencher Fruit Punch', brand: 'Gatorade', score: 69, nutrition: 45, taste: 78, consumer: 85, category: 'Sports Drinks' },
+      { name: 'Red Bull Energy Drink', brand: 'Red Bull', score: 66, nutrition: 35, taste: 75, consumer: 88, category: 'Energy Drinks' },
+      
+      // Coffee & Beverages
+      { name: 'Starbucks Frappuccino Vanilla', brand: 'Starbucks', score: 70, nutrition: 42, taste: 85, consumer: 82, category: 'Coffee Drinks' },
+      
+      // Cereals
+      { name: 'Frosted Flakes', brand: 'Kellogg\'s', score: 71, nutrition: 35, taste: 88, consumer: 90, category: 'Cereals' },
+      { name: 'Cheerios Original', brand: 'General Mills', score: 78, nutrition: 75, taste: 70, consumer: 88, category: 'Cereals' },
+      
+      // Cookies & Snacks
+      { name: 'Oreo Original Sandwich Cookies', brand: 'Oreo', score: 72, nutrition: 25, taste: 95, consumer: 95, category: 'Cookies' },
+      
+      // Packaged Meals
+      { name: 'Kraft Macaroni & Cheese Dinner', brand: 'Kraft', score: 69, nutrition: 35, taste: 85, consumer: 88, category: 'Packaged Meals' },
+      { name: 'Campbell\'s Chicken Noodle Soup', brand: 'Campbell\'s', score: 68, nutrition: 45, taste: 75, consumer: 85, category: 'Soups' },
+      
+      // Healthy Options
+      { name: 'Organic Granola Bar', brand: 'Nature Valley', score: 80, nutrition: 75, taste: 80, consumer: 85, category: 'Snack Bars' },
+      { name: 'Greek Yogurt Plain', brand: 'Chobani', score: 85, nutrition: 95, taste: 70, consumer: 90, category: 'Dairy' },
+      
+      // Additional Popular Items
+      { name: 'Pringles Original', brand: 'Pringles', score: 63, nutrition: 20, taste: 88, consumer: 82, category: 'Snacks' },
+      { name: 'Kit Kat Bar', brand: 'Nestlé', score: 58, nutrition: 18, taste: 85, consumer: 92, category: 'Candy' },
+      { name: 'Snickers Bar', brand: 'Mars', score: 55, nutrition: 15, taste: 90, consumer: 88, category: 'Candy' },
+      { name: 'Goldfish Crackers', brand: 'Pepperidge Farm', score: 52, nutrition: 28, taste: 75, consumer: 85, category: 'Snacks' },
+      { name: 'Pop-Tarts Strawberry', brand: 'Kellogg\'s', score: 48, nutrition: 20, taste: 82, consumer: 78, category: 'Breakfast' },
+      { name: 'Nutella Hazelnut Spread', brand: 'Ferrero', score: 45, nutrition: 12, taste: 95, consumer: 88, category: 'Spreads' },
+      
+      // More Beverages
+      { name: 'Arizona Iced Tea', brand: 'Arizona', score: 42, nutrition: 15, taste: 75, consumer: 72, category: 'Beverages' },
+      { name: 'Monster Energy', brand: 'Monster', score: 58, nutrition: 25, taste: 78, consumer: 85, category: 'Energy Drinks' },
+      { name: 'Vitamin Water', brand: 'Glacéau', score: 65, nutrition: 45, taste: 70, consumer: 80, category: 'Enhanced Water' },
+      
+      // Ice Cream & Frozen
+      { name: 'Ben & Jerry\'s Chocolate Chip Cookie Dough', brand: 'Ben & Jerry\'s', score: 52, nutrition: 8, taste: 98, consumer: 92, category: 'Ice Cream' },
+      { name: 'Häagen-Dazs Vanilla', brand: 'Häagen-Dazs', score: 48, nutrition: 12, taste: 95, consumer: 88, category: 'Ice Cream' }
     ];
 
-    return sampleFoods.map((food, index) => ({
+    return popularBrandFoods.map((food, index) => ({
       id: `analysis-${index + 1}`,
-      timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
+      timestamp: new Date(Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000).toISOString(), // Random time within last 60 days
       foodName: food.name,
       analysis: {
         nutrition: {
@@ -145,33 +188,52 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
           totalSugars: `${Math.floor(Math.random() * 20) + 2}g`,
           addedSugars: `${Math.floor(Math.random() * 15)}g`,
           protein: `${Math.floor(Math.random() * 20) + 3}g`,
-          vitamins: ['Vitamin C', 'Iron', 'Calcium']
+          vitamins: food.category === 'Cereals' ? ['Vitamin A', 'Vitamin C', 'Iron', 'Thiamin', 'Riboflavin'] : 
+                   food.category === 'Dairy' ? ['Vitamin D', 'Calcium', 'Vitamin B12'] : 
+                   ['Vitamin C', 'Iron']
         },
         health: {
           score: food.nutrition,
-          warnings: food.nutrition < 50 ? ['High sodium content', 'Low nutritional value'] : [],
-          recommendations: ['Consider portion size', 'Pair with fruits or vegetables'],
-          allergens: ['May contain nuts', 'Contains gluten']
+          warnings: food.nutrition < 50 ? [
+            food.category === 'Beverages' ? 'High sugar content' : 'High sodium content',
+            food.nutrition < 30 ? 'Low nutritional value' : 'Moderate nutritional concerns'
+          ] : [],
+          recommendations: [
+            'Consider portion size',
+            food.category === 'Snacks' ? 'Pair with fruits or vegetables' : 'Enjoy as part of balanced diet'
+          ],
+          allergens: food.category === 'Dairy' ? ['Contains milk'] : 
+                    food.category === 'Cookies' || food.category === 'Cereals' ? ['May contain nuts', 'Contains gluten'] :
+                    food.category === 'Snacks' && food.name.includes('Cheese') ? ['Contains milk'] : []
         },
         taste: {
           score: food.taste,
-          profile: ['Sweet', 'Crunchy', 'Satisfying'],
-          description: 'Pleasant taste with good texture and flavor balance.'
+          profile: food.category === 'Beverages' ? ['Sweet', 'Refreshing', 'Carbonated'] :
+                  food.category === 'Snacks' ? ['Salty', 'Crunchy', 'Savory'] :
+                  food.category === 'Dairy' ? ['Creamy', 'Rich', 'Smooth'] :
+                  food.category === 'Candy' ? ['Sweet', 'Indulgent', 'Rich'] :
+                  ['Sweet', 'Satisfying', 'Flavorful'],
+          description: `${food.brand} delivers a ${food.taste >= 85 ? 'exceptional' : food.taste >= 70 ? 'great' : 'good'} taste experience with ${food.category === 'Beverages' ? 'refreshing flavor' : food.category === 'Snacks' ? 'satisfying crunch and taste' : 'appealing texture and flavor'}.`
         },
         consumer: {
           score: food.consumer,
-          feedback: 'Generally well-received by consumers',
-          satisfaction: food.consumer >= 70 ? 'High' : food.consumer >= 50 ? 'Medium' : 'Low',
-          commonComplaints: food.consumer < 50 ? ['Too processed', 'Artificial taste'] : [],
-          positiveAspects: ['Convenient', 'Good value', 'Tasty']
+          feedback: `${food.brand} is a ${food.consumer >= 85 ? 'highly popular' : food.consumer >= 70 ? 'well-liked' : 'moderately popular'} brand with ${food.consumer >= 85 ? 'excellent' : 'good'} consumer satisfaction.`,
+          satisfaction: food.consumer >= 85 ? 'High' : food.consumer >= 70 ? 'Medium' : 'Moderate',
+          commonComplaints: food.consumer < 80 ? ['Price concerns', 'Availability issues'] : [],
+          positiveAspects: [
+            'Trusted brand',
+            food.taste >= 80 ? 'Great taste' : 'Good flavor',
+            'Wide availability',
+            food.consumer >= 85 ? 'High consumer loyalty' : 'Brand recognition'
+          ]
         },
         overall: {
-          grade: food.score >= 80 ? 'A' : food.score >= 60 ? 'B' : food.score >= 40 ? 'C' : 'D',
-          summary: `Overall ${food.score >= 70 ? 'good' : food.score >= 50 ? 'average' : 'poor'} choice for health and taste.`,
+          grade: food.score >= 80 ? 'A' : food.score >= 70 ? 'B' : food.score >= 60 ? 'C' : food.score >= 50 ? 'D' : 'F',
+          summary: `${food.name} by ${food.brand} offers ${food.score >= 70 ? 'a good balance of' : food.score >= 50 ? 'moderate' : 'limited'} nutrition, taste, and consumer appeal. ${food.score >= 70 ? 'Recommended for occasional enjoyment.' : food.score >= 50 ? 'Consider moderation.' : 'Best enjoyed sparingly.'}`,
           vishScore: food.score
         }
       },
-      userNotes: index % 3 === 0 ? 'Tried this for breakfast' : undefined
+      userNotes: index % 4 === 0 ? `Tried this ${food.category.toLowerCase()} - ${food.score >= 70 ? 'really enjoyed it!' : food.score >= 50 ? 'it was okay' : 'not my favorite'}` : undefined
     }));
   };
 
@@ -256,15 +318,34 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
 
   const exportData = () => {
     const csvContent = [
-      ['Date', 'Food Name', 'Vish Score', 'Nutrition Score', 'Taste Score', 'Consumer Score', 'Grade', 'Notes'],
+      ['Date', 'Food Name', 'Brand/Category', 'Vish Score', 'Nutrition Score', 'Taste Score', 'Consumer Score', 'Grade', 'Health Warnings', 'Recommendations', 'Notes'],
       ...analyses.map(analysis => [
         new Date(analysis.timestamp).toLocaleDateString(),
         analysis.foodName,
+        // Extract brand from food name or use category
+        analysis.foodName.includes('Coca-Cola') ? 'Coca-Cola' :
+        analysis.foodName.includes('Fairlife') ? 'Fairlife' :
+        analysis.foodName.includes('Pepsi') ? 'PepsiCo' :
+        analysis.foodName.includes('Lay\'s') ? 'Lay\'s' :
+        analysis.foodName.includes('Doritos') ? 'Doritos' :
+        analysis.foodName.includes('Gatorade') ? 'Gatorade' :
+        analysis.foodName.includes('Red Bull') ? 'Red Bull' :
+        analysis.foodName.includes('Starbucks') ? 'Starbucks' :
+        analysis.foodName.includes('Frosted Flakes') ? 'Kellogg\'s' :
+        analysis.foodName.includes('Cheerios') ? 'General Mills' :
+        analysis.foodName.includes('Oreo') ? 'Oreo' :
+        analysis.foodName.includes('Kraft') ? 'Kraft' :
+        analysis.foodName.includes('Campbell\'s') ? 'Campbell\'s' :
+        analysis.foodName.includes('Nature Valley') ? 'Nature Valley' :
+        analysis.foodName.includes('Chobani') ? 'Chobani' :
+        'Various Brands',
         analysis.analysis.overall.vishScore,
         analysis.analysis.health.score,
         analysis.analysis.taste.score,
         analysis.analysis.consumer.score,
         analysis.analysis.overall.grade,
+        analysis.analysis.health.warnings.join('; '),
+        analysis.analysis.health.recommendations.join('; '),
         analysis.userNotes || ''
       ])
     ].map(row => row.join(',')).join('\n');
@@ -310,7 +391,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white">Food Analysis History</h2>
-                <p className="text-green-100">Track your food choices and health journey</p>
+                <p className="text-green-100">Track your food choices and health journey with popular brands</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -347,6 +428,9 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                     <span className="text-sm text-gray-600 dark:text-gray-300">Total Analyses</span>
                     <span className="text-2xl font-bold text-gray-900 dark:text-white">{stats.totalAnalyses}</span>
                   </div>
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                    Including popular brands like Coca-Cola, Fairlife, Doritos & more!
+                  </div>
                 </div>
 
                 <div className="bg-white dark:bg-gray-600 p-4 rounded-lg">
@@ -372,7 +456,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                     </span>
                   </div>
                   <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                    {Math.round((stats.healthyChoices / stats.totalAnalyses) * 100)}% healthy
+                    {Math.round((stats.healthyChoices / stats.totalAnalyses) * 100)}% healthy (70+ Vish Score)
                   </div>
                 </div>
 
@@ -450,8 +534,12 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                 className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-2 rounded-lg hover:shadow-lg transition-all duration-200 flex items-center justify-center space-x-2"
               >
                 <Download className="h-4 w-4" />
-                <span>Export Data</span>
+                <span>Export All Data</span>
               </button>
+              
+              <div className="mt-2 text-xs text-gray-500 dark:text-gray-400 text-center">
+                Includes all {analyses.length} food analyses with brands, scores & details
+              </div>
             </div>
           )}
 
@@ -465,7 +553,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 dark:text-gray-500" />
                   <input
                     type="text"
-                    placeholder="Search food items or notes..."
+                    placeholder="Search food items, brands, or notes..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300"
@@ -481,7 +569,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                   >
                     <option value="all">All Foods</option>
                     <option value="healthy">Healthy (70+)</option>
-                    <option value="unhealthy">Unhealthy (&lt;50)</option>
+                    <option value="unhealthy">Unhealthy (<50)</option>
                     <option value="recent">Recent (7 days)</option>
                   </select>
 
