@@ -415,6 +415,8 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
         <div className="flex h-[calc(95vh-120px)]">
           {/* Statistics Sidebar */}
           {showStats && stats && (
+              )
+              }
             <div className="w-80 bg-gray-50 dark:bg-gray-700 p-6 overflow-y-auto border-r border-gray-200 dark:border-gray-600">
               <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-6 flex items-center">
                 <TrendingUp className="h-5 w-5 mr-2" />
@@ -489,7 +491,9 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
                       <Star className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-                      <span className="text-sm text-gray-600 dark:text-gray-300">Taste</span>
+                      <span className="text-sm text-gray-
+  )
+}600 dark:text-gray-300">Taste</span>
                     </div>
                     <span className={`font-semibold ${getScoreColor(stats.averageTasteScore)}`}>
                       {stats.averageTasteScore}
