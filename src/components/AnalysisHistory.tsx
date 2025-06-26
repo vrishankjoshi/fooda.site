@@ -33,7 +33,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
   const [filteredAnalyses, setFilteredAnalyses] = useState<AnalysisRecord[]>([]);
   const [selectedAnalysis, setSelectedAnalysis] = useState<AnalysisRecord | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterBy, setFilterBy] = useState<'all' | 'healthy' | 'unhealthy' | 'recent'>('all');
+  const [filterBy, setFilterBy] = useState<'all' | 'healthy' | 'unhealthy' | 'recent' | 'indian'>('all');
   const [sortBy, setSortBy] = useState<'date' | 'score' | 'name'>('date');
   const [stats, setStats] = useState<AnalysisStats | null>(null);
   const [showStats, setShowStats] = useState(true);
@@ -42,20 +42,20 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
   useEffect(() => {
     const loadAnalysisHistory = () => {
       try {
-        // FORCE RELOAD: Clear existing data and load fresh comprehensive data
-        console.log('🔄 Loading comprehensive food analysis history...');
-        
-        // Always generate fresh comprehensive data for demo
-        const sampleData = generateComprehensiveSampleData();
-        console.log(`✅ Generated ${sampleData.length} comprehensive food analyses`);
-        
-        setAnalyses(sampleData);
-        setFilteredAnalyses(sampleData);
-        calculateStats(sampleData);
-        
-        // Save to localStorage for future sessions
-        localStorage.setItem('foodcheck_analysis_history', JSON.stringify(sampleData));
-        console.log('💾 Saved comprehensive data to localStorage');
+        const stored = localStorage.getItem('foodcheck_analysis_history');
+        if (stored) {
+          const history = JSON.parse(stored);
+          setAnalyses(history);
+          setFilteredAnalyses(history);
+          calculateStats(history);
+        } else {
+          // Generate comprehensive sample data including popular Indian foods
+          const sampleData = generateComprehensiveSampleData();
+          setAnalyses(sampleData);
+          setFilteredAnalyses(sampleData);
+          calculateStats(sampleData);
+          localStorage.setItem('foodcheck_analysis_history', JSON.stringify(sampleData));
+        }
       } catch (error) {
         console.error('Error loading analysis history:', error);
         const sampleData = generateComprehensiveSampleData();
@@ -78,7 +78,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
     if (searchTerm) {
       filtered = filtered.filter(analysis =>
         analysis.foodName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        analysis.userNotes?.toLowerCase().includes(searchTerm.toLowerCase())
+        (analysis.userNotes && analysis.userNotes.toLowerCase().includes(searchTerm.toLowerCase()))
       );
     }
 
@@ -94,6 +94,30 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
         const oneWeekAgo = new Date();
         oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
         filtered = filtered.filter(analysis => new Date(analysis.timestamp) >= oneWeekAgo);
+        break;
+      case 'indian':
+        filtered = filtered.filter(analysis => 
+          analysis.foodName.toLowerCase().includes('atta') ||
+          analysis.foodName.toLowerCase().includes('frooti') ||
+          analysis.foodName.toLowerCase().includes('besan') ||
+          analysis.foodName.toLowerCase().includes('lassi') ||
+          analysis.foodName.toLowerCase().includes('rajma') ||
+          analysis.foodName.toLowerCase().includes('chole') ||
+          analysis.foodName.toLowerCase().includes('parle') ||
+          analysis.foodName.toLowerCase().includes('haldiram') ||
+          analysis.foodName.toLowerCase().includes('bikaji') ||
+          analysis.foodName.toLowerCase().includes('amul') ||
+          analysis.foodName.toLowerCase().includes('ragi') ||
+          analysis.foodName.toLowerCase().includes('jowar') ||
+          analysis.foodName.toLowerCase().includes('khakhra') ||
+          analysis.foodName.toLowerCase().includes('bhujia') ||
+          analysis.foodName.toLowerCase().includes('gulab jamun') ||
+          analysis.foodName.toLowerCase().includes('rasgulla') ||
+          analysis.foodName.toLowerCase().includes('nimbu paani') ||
+          analysis.foodName.toLowerCase().includes('pickle') ||
+          analysis.foodName.toLowerCase().includes('chutney') ||
+          analysis.foodName.toLowerCase().includes('indian')
+        );
         break;
     }
 
@@ -115,125 +139,276 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
   }, [analyses, searchTerm, filterBy, sortBy]);
 
   const generateComprehensiveSampleData = (): AnalysisRecord[] => {
-    console.log('🏭 Generating comprehensive food database...');
-    
-    const comprehensiveFoods = [
-      // Coca-Cola Products
-      { name: 'Coca-Cola Classic', brand: 'Coca-Cola', score: 25, nutrition: 15, taste: 85, consumer: 95, category: 'Beverages' },
-      { name: 'Diet Coke', brand: 'Coca-Cola', score: 35, nutrition: 35, taste: 75, consumer: 88, category: 'Beverages' },
-      { name: 'Sprite', brand: 'Coca-Cola', score: 30, nutrition: 18, taste: 82, consumer: 85, category: 'Beverages' },
-      { name: 'Fanta Orange', brand: 'Coca-Cola', score: 28, nutrition: 16, taste: 80, consumer: 82, category: 'Beverages' },
+    const sampleFoods = [
+      // 🇮🇳 POPULAR INDIAN FOODS 🇮🇳
+      { 
+        name: 'Aashirvaad Whole Wheat Atta', 
+        score: 88, 
+        nutrition: 92, 
+        taste: 78, 
+        consumer: 95,
+        category: 'Indian Flour',
+        notes: 'Perfect for making rotis and parathas'
+      },
+      { 
+        name: 'Parle Frooti Mango Drink', 
+        score: 65, 
+        nutrition: 35, 
+        taste: 92, 
+        consumer: 88,
+        category: 'Indian Beverage',
+        notes: 'Childhood favorite mango drink'
+      },
+      { 
+        name: 'Everest Besan (Chickpea Flour)', 
+        score: 85, 
+        nutrition: 90, 
+        taste: 75, 
+        consumer: 90,
+        category: 'Indian Flour',
+        notes: 'Great for making pakoras and dhokla'
+      },
+      { 
+        name: 'Amul Sweet Lassi', 
+        score: 78, 
+        nutrition: 68, 
+        taste: 88, 
+        consumer: 78,
+        category: 'Indian Beverage',
+        notes: 'Refreshing traditional yogurt drink'
+      },
+      { 
+        name: 'MTR Ready to Eat Rajma', 
+        score: 82, 
+        nutrition: 85, 
+        taste: 80, 
+        consumer: 82,
+        category: 'Indian Ready-to-Eat',
+        notes: 'Convenient and tasty kidney bean curry'
+      },
+      { 
+        name: 'Haldiram\'s Namkeen Mixture', 
+        score: 58, 
+        nutrition: 45, 
+        taste: 85, 
+        consumer: 75,
+        category: 'Indian Snacks',
+        notes: 'Spicy and crunchy snack mix'
+      },
+      { 
+        name: 'Parle-G Glucose Biscuits', 
+        score: 62, 
+        nutrition: 48, 
+        taste: 75, 
+        consumer: 92,
+        category: 'Indian Biscuits',
+        notes: 'Classic tea-time biscuits'
+      },
+      { 
+        name: 'Organic India Ragi Flour', 
+        score: 92, 
+        nutrition: 95, 
+        taste: 72, 
+        consumer: 78,
+        category: 'Indian Flour',
+        notes: 'Highly nutritious finger millet flour'
+      },
+      { 
+        name: 'Bikaji Aloo Bhujia', 
+        score: 55, 
+        nutrition: 38, 
+        taste: 88, 
+        consumer: 82,
+        category: 'Indian Snacks',
+        notes: 'Crispy potato-based snack'
+      },
+      { 
+        name: 'Lijjat Methi Khakhra', 
+        score: 78, 
+        nutrition: 82, 
+        taste: 75, 
+        consumer: 78,
+        category: 'Indian Snacks',
+        notes: 'Healthy fenugreek crackers'
+      },
+      { 
+        name: 'ITC Aashirvaad Ready Chole', 
+        score: 85, 
+        nutrition: 88, 
+        taste: 82, 
+        consumer: 85,
+        category: 'Indian Ready-to-Eat',
+        notes: 'Delicious chickpea curry'
+      },
+      { 
+        name: 'Haldiram\'s Gulab Jamun', 
+        score: 45, 
+        nutrition: 25, 
+        taste: 95, 
+        consumer: 88,
+        category: 'Indian Sweets',
+        notes: 'Traditional milk-based sweet'
+      },
+      { 
+        name: 'Real Nimbu Paani', 
+        score: 68, 
+        nutrition: 55, 
+        taste: 78, 
+        consumer: 72,
+        category: 'Indian Beverage',
+        notes: 'Refreshing lemon water drink'
+      },
+      { 
+        name: 'Patanjali Jowar Flour', 
+        score: 88, 
+        nutrition: 92, 
+        taste: 75, 
+        consumer: 78,
+        category: 'Indian Flour',
+        notes: 'Gluten-free sorghum flour'
+      },
+      { 
+        name: 'Britannia Marie Gold', 
+        score: 58, 
+        nutrition: 48, 
+        taste: 72, 
+        consumer: 85,
+        category: 'Indian Biscuits',
+        notes: 'Light and crispy tea biscuits'
+      },
+      { 
+        name: 'Priya Mango Pickle', 
+        score: 65, 
+        nutrition: 55, 
+        taste: 88, 
+        consumer: 82,
+        category: 'Indian Condiments',
+        notes: 'Tangy and spicy mango pickle'
+      },
+      { 
+        name: 'Bengali Sweet House Rasgulla', 
+        score: 52, 
+        nutrition: 35, 
+        taste: 85, 
+        consumer: 78,
+        category: 'Indian Sweets',
+        notes: 'Soft and spongy milk sweet'
+      },
+      { 
+        name: 'Kissan Mint Chutney', 
+        score: 72, 
+        nutrition: 62, 
+        taste: 85, 
+        consumer: 75,
+        category: 'Indian Condiments',
+        notes: 'Fresh mint flavor condiment'
+      },
+      { 
+        name: '24 Mantra Organic Rice Flour', 
+        score: 82, 
+        nutrition: 78, 
+        taste: 75, 
+        consumer: 82,
+        category: 'Indian Flour',
+        notes: 'Organic and gluten-free'
+      },
 
-      // Fairlife Products
-      { name: 'Core Power Chocolate Protein Shake', brand: 'Fairlife', score: 85, nutrition: 88, taste: 85, consumer: 82, category: 'Dairy' },
-      { name: 'Fairlife Whole Milk', brand: 'Fairlife', score: 81, nutrition: 78, taste: 85, consumer: 80, category: 'Dairy' },
-      { name: 'Fairlife 2% Reduced Fat Milk', brand: 'Fairlife', score: 83, nutrition: 82, taste: 83, consumer: 85, category: 'Dairy' },
-      { name: 'Core Power Vanilla Protein Shake', brand: 'Fairlife', score: 84, nutrition: 87, taste: 82, consumer: 83, category: 'Dairy' },
-
-      // PepsiCo Products
-      { name: 'Pepsi Cola', brand: 'PepsiCo', score: 27, nutrition: 12, taste: 83, consumer: 88, category: 'Beverages' },
-      { name: 'Mountain Dew', brand: 'PepsiCo', score: 22, nutrition: 8, taste: 88, consumer: 85, category: 'Beverages' },
-      { name: 'Lay\'s Classic Potato Chips', brand: 'Lay\'s', score: 45, nutrition: 25, taste: 85, consumer: 90, category: 'Snacks' },
-      { name: 'Doritos Nacho Cheese', brand: 'Doritos', score: 48, nutrition: 22, taste: 92, consumer: 95, category: 'Snacks' },
-      { name: 'Cheetos Crunchy', brand: 'Cheetos', score: 42, nutrition: 20, taste: 88, consumer: 92, category: 'Snacks' },
-      { name: 'Fritos Original Corn Chips', brand: 'Fritos', score: 40, nutrition: 28, taste: 75, consumer: 85, category: 'Snacks' },
-
-      // Sports & Energy Drinks
-      { name: 'Gatorade Thirst Quencher Fruit Punch', brand: 'Gatorade', score: 55, nutrition: 45, taste: 78, consumer: 85, category: 'Sports Drinks' },
-      { name: 'Powerade Mountain Berry Blast', brand: 'Powerade', score: 52, nutrition: 42, taste: 75, consumer: 80, category: 'Sports Drinks' },
-      { name: 'Red Bull Energy Drink', brand: 'Red Bull', score: 45, nutrition: 35, taste: 75, consumer: 88, category: 'Energy Drinks' },
-      { name: 'Monster Energy', brand: 'Monster', score: 38, nutrition: 28, taste: 72, consumer: 85, category: 'Energy Drinks' },
-      { name: 'Rockstar Energy Drink', brand: 'Rockstar', score: 40, nutrition: 30, taste: 70, consumer: 82, category: 'Energy Drinks' },
-
-      // Coffee Brands
-      { name: 'Starbucks Frappuccino Vanilla', brand: 'Starbucks', score: 58, nutrition: 42, taste: 85, consumer: 82, category: 'Coffee Drinks' },
-      { name: 'Starbucks Doubleshot Espresso', brand: 'Starbucks', score: 62, nutrition: 48, taste: 80, consumer: 78, category: 'Coffee Drinks' },
-      { name: 'Dunkin\' Iced Coffee Original', brand: 'Dunkin\'', score: 55, nutrition: 40, taste: 78, consumer: 80, category: 'Coffee Drinks' },
-
-      // Cereals - Kellogg's
-      { name: 'Frosted Flakes', brand: 'Kellogg\'s', score: 48, nutrition: 35, taste: 88, consumer: 90, category: 'Cereals' },
-      { name: 'Froot Loops', brand: 'Kellogg\'s', score: 42, nutrition: 28, taste: 85, consumer: 88, category: 'Cereals' },
-      { name: 'Pop-Tarts Strawberry', brand: 'Kellogg\'s', score: 38, nutrition: 25, taste: 82, consumer: 85, category: 'Breakfast' },
-      { name: 'Special K Original', brand: 'Kellogg\'s', score: 68, nutrition: 72, taste: 65, consumer: 75, category: 'Cereals' },
-
-      // Cereals - General Mills
-      { name: 'Cheerios Original', brand: 'General Mills', score: 78, nutrition: 75, taste: 70, consumer: 88, category: 'Cereals' },
-      { name: 'Lucky Charms', brand: 'General Mills', score: 45, nutrition: 30, taste: 88, consumer: 92, category: 'Cereals' },
-      { name: 'Honey Nut Cheerios', brand: 'General Mills', score: 65, nutrition: 58, taste: 82, consumer: 90, category: 'Cereals' },
-      { name: 'Cinnamon Toast Crunch', brand: 'General Mills', score: 52, nutrition: 35, taste: 90, consumer: 95, category: 'Cereals' },
-
-      // Cookies & Snacks
-      { name: 'Oreo Original Sandwich Cookies', brand: 'Oreo', score: 48, nutrition: 25, taste: 95, consumer: 95, category: 'Cookies' },
-      { name: 'Chips Ahoy! Original', brand: 'Chips Ahoy!', score: 45, nutrition: 22, taste: 88, consumer: 90, category: 'Cookies' },
-      { name: 'Nutter Butter Peanut Butter Cookies', brand: 'Nutter Butter', score: 50, nutrition: 28, taste: 85, consumer: 88, category: 'Cookies' },
-      { name: 'Ritz Original Crackers', brand: 'Ritz', score: 52, nutrition: 35, taste: 78, consumer: 85, category: 'Crackers' },
-      { name: 'Goldfish Cheddar Crackers', brand: 'Goldfish', score: 55, nutrition: 40, taste: 82, consumer: 88, category: 'Crackers' },
-      { name: 'Pringles Original', brand: 'Pringles', score: 42, nutrition: 25, taste: 80, consumer: 85, category: 'Snacks' },
-
-      // Packaged Meals
-      { name: 'Kraft Macaroni & Cheese Dinner', brand: 'Kraft', score: 52, nutrition: 35, taste: 85, consumer: 88, category: 'Packaged Meals' },
-      { name: 'Campbell\'s Chicken Noodle Soup', brand: 'Campbell\'s', score: 58, nutrition: 45, taste: 75, consumer: 85, category: 'Soups' },
-      { name: 'Chef Boyardee Beefaroni', brand: 'Chef Boyardee', score: 48, nutrition: 32, taste: 78, consumer: 82, category: 'Packaged Meals' },
-      { name: 'Progresso Traditional Chicken Noodle', brand: 'Progresso', score: 62, nutrition: 52, taste: 78, consumer: 85, category: 'Soups' },
-
-      // Candy & Chocolate
-      { name: 'Kit Kat Wafer Bar', brand: 'Kit Kat', score: 35, nutrition: 18, taste: 88, consumer: 90, category: 'Candy' },
-      { name: 'Snickers Bar', brand: 'Snickers', score: 42, nutrition: 25, taste: 85, consumer: 92, category: 'Candy' },
-      { name: 'M&M\'s Milk Chocolate', brand: 'M&M\'s', score: 38, nutrition: 20, taste: 82, consumer: 88, category: 'Candy' },
-      { name: 'Reese\'s Peanut Butter Cups', brand: 'Reese\'s', score: 45, nutrition: 28, taste: 90, consumer: 95, category: 'Candy' },
-      { name: 'Twix Caramel Cookie Bars', brand: 'Twix', score: 40, nutrition: 22, taste: 85, consumer: 88, category: 'Candy' },
-      { name: 'Hershey\'s Milk Chocolate Bar', brand: 'Hershey\'s', score: 38, nutrition: 20, taste: 80, consumer: 85, category: 'Candy' },
-
-      // Ice Cream & Frozen
-      { name: 'Ben & Jerry\'s Chocolate Chip Cookie Dough', brand: 'Ben & Jerry\'s', score: 55, nutrition: 35, taste: 95, consumer: 92, category: 'Ice Cream' },
-      { name: 'Häagen-Dazs Vanilla', brand: 'Häagen-Dazs', score: 58, nutrition: 40, taste: 90, consumer: 88, category: 'Ice Cream' },
-      { name: 'Breyers Natural Vanilla', brand: 'Breyers', score: 62, nutrition: 45, taste: 85, consumer: 85, category: 'Ice Cream' },
-      { name: 'Hot Pockets Ham & Cheese', brand: 'Hot Pockets', score: 45, nutrition: 32, taste: 75, consumer: 80, category: 'Frozen Meals' },
-
-      // Healthy Options
-      { name: 'Nature Valley Crunchy Granola Bar', brand: 'Nature Valley', score: 72, nutrition: 75, taste: 78, consumer: 85, category: 'Snack Bars' },
-      { name: 'Chobani Greek Yogurt Plain', brand: 'Chobani', score: 85, nutrition: 95, taste: 70, consumer: 90, category: 'Dairy' },
-      { name: 'Kind Dark Chocolate Nuts & Sea Salt', brand: 'Kind', score: 78, nutrition: 82, taste: 85, consumer: 88, category: 'Snack Bars' },
-      { name: 'Clif Bar Chocolate Chip', brand: 'Clif Bar', score: 75, nutrition: 78, taste: 80, consumer: 85, category: 'Energy Bars' },
-
-      // Additional Popular Items
-      { name: 'Nutella Hazelnut Spread', brand: 'Nutella', score: 48, nutrition: 28, taste: 92, consumer: 90, category: 'Spreads' },
-      { name: 'Quaker Instant Oatmeal Original', brand: 'Quaker', score: 72, nutrition: 78, taste: 68, consumer: 80, category: 'Breakfast' },
-      { name: 'Arizona Green Tea with Honey', brand: 'Arizona', score: 35, nutrition: 25, taste: 75, consumer: 82, category: 'Beverages' },
-      { name: 'Vitamin Water Power-C Dragonfruit', brand: 'Vitamin Water', score: 45, nutrition: 38, taste: 70, consumer: 78, category: 'Enhanced Water' },
-      { name: 'Smartwater', brand: 'Smartwater', score: 88, nutrition: 95, taste: 85, consumer: 85, category: 'Water' },
-      { name: 'Planters Dry Roasted Peanuts', brand: 'Planters', score: 68, nutrition: 72, taste: 75, consumer: 82, category: 'Nuts' },
-      { name: 'Sun-Maid Raisins', brand: 'Sun-Maid', score: 75, nutrition: 82, taste: 70, consumer: 78, category: 'Dried Fruit' },
-
-      // Additional Beverages
-      { name: 'Dr Pepper', brand: 'Dr Pepper', score: 26, nutrition: 14, taste: 84, consumer: 87, category: 'Beverages' },
-      { name: '7UP', brand: '7UP', score: 29, nutrition: 17, taste: 79, consumer: 83, category: 'Beverages' },
-      { name: 'Canada Dry Ginger Ale', brand: 'Canada Dry', score: 32, nutrition: 20, taste: 76, consumer: 80, category: 'Beverages' },
-      { name: 'Tropicana Orange Juice', brand: 'Tropicana', score: 65, nutrition: 70, taste: 85, consumer: 88, category: 'Juices' },
-      { name: 'Simply Orange Juice', brand: 'Simply', score: 68, nutrition: 72, taste: 88, consumer: 85, category: 'Juices' },
-
-      // More Snacks
-      { name: 'Triscuit Original', brand: 'Triscuit', score: 65, nutrition: 68, taste: 70, consumer: 78, category: 'Crackers' },
-      { name: 'Wheat Thins Original', brand: 'Wheat Thins', score: 58, nutrition: 55, taste: 72, consumer: 80, category: 'Crackers' },
-      { name: 'Cheez-Its Original', brand: 'Cheez-Its', score: 48, nutrition: 32, taste: 85, consumer: 88, category: 'Crackers' },
-      { name: 'Teddy Grahams Honey', brand: 'Teddy Grahams', score: 45, nutrition: 30, taste: 82, consumer: 85, category: 'Cookies' },
-
-      // Yogurt & Dairy
-      { name: 'Yoplait Original Strawberry', brand: 'Yoplait', score: 58, nutrition: 52, taste: 78, consumer: 82, category: 'Dairy' },
-      { name: 'Dannon Light & Fit Vanilla', brand: 'Dannon', score: 72, nutrition: 78, taste: 70, consumer: 75, category: 'Dairy' },
-      { name: 'Activia Probiotic Yogurt', brand: 'Activia', score: 68, nutrition: 72, taste: 75, consumer: 80, category: 'Dairy' },
-
-      // More Breakfast Items
-      { name: 'Eggo Homestyle Waffles', brand: 'Eggo', score: 52, nutrition: 42, taste: 78, consumer: 85, category: 'Breakfast' },
-      { name: 'Aunt Jemima Pancake Mix', brand: 'Aunt Jemima', score: 48, nutrition: 38, taste: 75, consumer: 82, category: 'Breakfast' },
-      { name: 'Bisquick Original Mix', brand: 'Bisquick', score: 50, nutrition: 40, taste: 72, consumer: 80, category: 'Breakfast' }
+      // INTERNATIONAL FOODS
+      { 
+        name: 'Organic Granola Bar', 
+        score: 85, 
+        nutrition: 88, 
+        taste: 82, 
+        consumer: 85,
+        category: 'Snack Bars',
+        notes: 'Healthy breakfast option'
+      },
+      { 
+        name: 'Instant Ramen Noodles', 
+        score: 35, 
+        nutrition: 25, 
+        taste: 55, 
+        consumer: 25,
+        category: 'Instant Food',
+        notes: 'Quick but not very healthy'
+      },
+      { 
+        name: 'Greek Yogurt', 
+        score: 92, 
+        nutrition: 95, 
+        taste: 88, 
+        consumer: 93,
+        category: 'Dairy',
+        notes: 'High protein and probiotics'
+      },
+      { 
+        name: 'Potato Chips', 
+        score: 28, 
+        nutrition: 15, 
+        taste: 45, 
+        consumer: 25,
+        category: 'Snacks',
+        notes: 'Tasty but unhealthy'
+      },
+      { 
+        name: 'Whole Grain Cereal', 
+        score: 78, 
+        nutrition: 85, 
+        taste: 70, 
+        consumer: 80,
+        category: 'Breakfast',
+        notes: 'Good fiber content'
+      },
+      { 
+        name: 'Energy Drink', 
+        score: 22, 
+        nutrition: 10, 
+        taste: 35, 
+        consumer: 20,
+        category: 'Beverages',
+        notes: 'High caffeine and sugar'
+      },
+      { 
+        name: 'Protein Bar', 
+        score: 75, 
+        nutrition: 80, 
+        taste: 68, 
+        consumer: 77,
+        category: 'Fitness',
+        notes: 'Post-workout snack'
+      },
+      { 
+        name: 'Frozen Pizza', 
+        score: 45, 
+        nutrition: 35, 
+        taste: 65, 
+        consumer: 35,
+        category: 'Frozen Food',
+        notes: 'Convenient but processed'
+      },
+      { 
+        name: 'Almond Milk', 
+        score: 88, 
+        nutrition: 90, 
+        taste: 85, 
+        consumer: 90,
+        category: 'Plant-based',
+        notes: 'Great dairy alternative'
+      },
+      { 
+        name: 'Dark Chocolate Bar', 
+        score: 68, 
+        nutrition: 65, 
+        taste: 85, 
+        consumer: 78,
+        category: 'Confectionery',
+        notes: 'Antioxidant-rich treat'
+      }
     ];
 
-    console.log(`📊 Created ${comprehensiveFoods.length} food items`);
-
-    return comprehensiveFoods.map((food, index) => ({
+    return sampleFoods.map((food, index) => ({
       id: `analysis-${index + 1}`,
-      timestamp: new Date(Date.now() - Math.random() * 90 * 24 * 60 * 60 * 1000).toISOString(), // Random date within last 90 days
+      timestamp: new Date(Date.now() - Math.random() * 60 * 24 * 60 * 60 * 1000).toISOString(), // Random time within last 60 days
       foodName: food.name,
       analysis: {
         nutrition: {
@@ -248,33 +423,55 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
           totalSugars: `${Math.floor(Math.random() * 20) + 2}g`,
           addedSugars: `${Math.floor(Math.random() * 15)}g`,
           protein: `${Math.floor(Math.random() * 20) + 3}g`,
-          vitamins: ['Vitamin C', 'Iron', 'Calcium']
+          vitamins: food.category.includes('Indian') ? 
+            ['Vitamin B1', 'Iron', 'Folate', 'Magnesium'] : 
+            ['Vitamin C', 'Iron', 'Calcium']
         },
         health: {
           score: food.nutrition,
-          warnings: food.nutrition < 50 ? ['High sodium content', 'Low nutritional value'] : [],
-          recommendations: ['Consider portion size', 'Pair with fruits or vegetables'],
-          allergens: ['May contain nuts', 'Contains gluten']
+          warnings: food.nutrition < 50 ? 
+            (food.category.includes('Indian') ? 
+              ['High sodium content', 'Contains preservatives'] : 
+              ['High sodium content', 'Low nutritional value']) : [],
+          recommendations: food.category.includes('Indian') ? 
+            ['Enjoy in moderation', 'Pair with fresh vegetables', 'Great source of traditional nutrients'] :
+            ['Consider portion size', 'Pair with fruits or vegetables'],
+          allergens: food.category.includes('Indian') ? 
+            ['May contain gluten', 'Contains spices'] : 
+            ['May contain nuts', 'Contains gluten']
         },
         taste: {
           score: food.taste,
-          profile: ['Sweet', 'Crunchy', 'Satisfying'],
-          description: 'Pleasant taste with good texture and flavor balance.'
+          profile: food.category.includes('Indian') ? 
+            ['Authentic', 'Spicy', 'Traditional', 'Aromatic'] :
+            ['Sweet', 'Crunchy', 'Satisfying'],
+          description: food.category.includes('Indian') ? 
+            'Rich traditional flavors with authentic Indian spices and ingredients.' :
+            'Pleasant taste with good texture and flavor balance.'
         },
         consumer: {
           score: food.consumer,
-          feedback: 'Generally well-received by consumers',
+          feedback: food.category.includes('Indian') ? 
+            'Highly appreciated for authentic taste and cultural connection' :
+            'Generally well-received by consumers',
           satisfaction: food.consumer >= 70 ? 'High' : food.consumer >= 50 ? 'Medium' : 'Low',
-          commonComplaints: food.consumer < 50 ? ['Too processed', 'Artificial taste'] : [],
-          positiveAspects: ['Convenient', 'Good value', 'Tasty']
+          commonComplaints: food.consumer < 50 ? 
+            (food.category.includes('Indian') ? 
+              ['Too spicy for some', 'Strong flavors'] : 
+              ['Too processed', 'Artificial taste']) : [],
+          positiveAspects: food.category.includes('Indian') ? 
+            ['Authentic taste', 'Cultural value', 'Traditional recipe', 'Good quality'] :
+            ['Convenient', 'Good value', 'Tasty']
         },
         overall: {
           grade: food.score >= 80 ? 'A' : food.score >= 60 ? 'B' : food.score >= 40 ? 'C' : 'D',
-          summary: `Overall ${food.score >= 70 ? 'good' : food.score >= 50 ? 'average' : 'poor'} choice for health and taste.`,
+          summary: food.category.includes('Indian') ? 
+            `${food.score >= 70 ? 'Excellent' : food.score >= 50 ? 'Good' : 'Average'} traditional Indian food with authentic flavors.` :
+            `Overall ${food.score >= 70 ? 'good' : food.score >= 50 ? 'average' : 'poor'} choice for health and taste.`,
           vishScore: food.score
         }
       },
-      userNotes: index % 5 === 0 ? `Tried this ${food.brand} product for ${food.category.toLowerCase()}` : undefined
+      userNotes: food.notes
     }));
   };
 
@@ -306,10 +503,20 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
     const olderAvg = olderAnalyses.reduce((sum, a) => sum + a.analysis.overall.vishScore, 0) / olderAnalyses.length;
     const improvementTrend = Math.round(recentAvg - olderAvg);
 
-    // Top categories (simplified)
+    // Top categories including Indian foods
     const categories = analysisData.reduce((acc, analysis) => {
-      const category = analysis.analysis.overall.vishScore >= 70 ? 'Healthy' : 
-                     analysis.analysis.overall.vishScore >= 50 ? 'Moderate' : 'Unhealthy';
+      const score = analysis.analysis.overall.vishScore;
+      const isIndian = analysis.foodName.toLowerCase().includes('atta') ||
+                      analysis.foodName.toLowerCase().includes('frooti') ||
+                      analysis.foodName.toLowerCase().includes('besan') ||
+                      analysis.foodName.toLowerCase().includes('indian') ||
+                      analysis.foodName.toLowerCase().includes('parle') ||
+                      analysis.foodName.toLowerCase().includes('haldiram') ||
+                      analysis.foodName.toLowerCase().includes('amul');
+      
+      const category = isIndian ? 'Indian Foods' : 
+                     score >= 70 ? 'Healthy' : 
+                     score >= 50 ? 'Moderate' : 'Unhealthy';
       acc[category] = (acc[category] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
@@ -413,7 +620,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-white">Food Analysis History</h2>
-                <p className="text-green-100">Track your food choices and health journey</p>
+                <p className="text-green-100">Track your food choices and health journey including popular Indian foods</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -526,6 +733,31 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                 </div>
               </div>
 
+              {/* Top Categories */}
+              <div className="mb-6">
+                <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-3">Food Categories</h4>
+                <div className="space-y-2">
+                  {stats.topCategories.map((category, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-300">{category.name}</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-16 bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                          <div 
+                            className={`h-2 rounded-full ${
+                              category.name === 'Indian Foods' ? 'bg-orange-500' :
+                              category.name === 'Healthy' ? 'bg-green-500' :
+                              category.name === 'Moderate' ? 'bg-yellow-500' : 'bg-red-500'
+                            }`}
+                            style={{ width: `${(category.count / Math.max(...stats.topCategories.map(c => c.count))) * 100}%` }}
+                          />
+                        </div>
+                        <span className="text-sm font-medium text-gray-900 dark:text-white w-6">{category.count}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
               {/* Monthly Trend */}
               <div className="mb-6">
                 <h4 className="text-md font-semibold text-gray-900 dark:text-white mb-3">Monthly Activity</h4>
@@ -583,8 +815,9 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                     className="border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300"
                   >
                     <option value="all">All Foods</option>
+                    <option value="indian">🇮🇳 Indian Foods</option>
                     <option value="healthy">Healthy (70+)</option>
-                    <option value="unhealthy">Unhealthy (&lt;50)</option>
+                    <option value="unhealthy">Unhealthy (<50)</option>
                     <option value="recent">Recent (7 days)</option>
                   </select>
 
@@ -626,106 +859,140 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                 </div>
               ) : (
                 <div className="grid gap-4">
-                  {filteredAnalyses.map((analysis) => (
-                    <div
-                      key={analysis.id}
-                      className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer"
-                      onClick={() => setSelectedAnalysis(analysis)}
-                    >
-                      <div className="flex justify-between items-start mb-4">
-                        <div className="flex-1">
-                          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                            {analysis.foodName}
-                          </h3>
-                          <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
-                            <div className="flex items-center space-x-1">
-                              <Clock className="h-4 w-4" />
-                              <span>{new Date(analysis.timestamp).toLocaleDateString()}</span>
+                  {filteredAnalyses.map((analysis) => {
+                    const isIndianFood = analysis.foodName.toLowerCase().includes('atta') ||
+                                       analysis.foodName.toLowerCase().includes('frooti') ||
+                                       analysis.foodName.toLowerCase().includes('besan') ||
+                                       analysis.foodName.toLowerCase().includes('lassi') ||
+                                       analysis.foodName.toLowerCase().includes('rajma') ||
+                                       analysis.foodName.toLowerCase().includes('chole') ||
+                                       analysis.foodName.toLowerCase().includes('parle') ||
+                                       analysis.foodName.toLowerCase().includes('haldiram') ||
+                                       analysis.foodName.toLowerCase().includes('bikaji') ||
+                                       analysis.foodName.toLowerCase().includes('amul') ||
+                                       analysis.foodName.toLowerCase().includes('ragi') ||
+                                       analysis.foodName.toLowerCase().includes('jowar') ||
+                                       analysis.foodName.toLowerCase().includes('khakhra') ||
+                                       analysis.foodName.toLowerCase().includes('bhujia') ||
+                                       analysis.foodName.toLowerCase().includes('gulab jamun') ||
+                                       analysis.foodName.toLowerCase().includes('rasgulla') ||
+                                       analysis.foodName.toLowerCase().includes('nimbu paani') ||
+                                       analysis.foodName.toLowerCase().includes('pickle') ||
+                                       analysis.foodName.toLowerCase().includes('chutney') ||
+                                       analysis.foodName.toLowerCase().includes('indian');
+
+                    return (
+                      <div
+                        key={analysis.id}
+                        onClick={() => setSelectedAnalysis(analysis)}
+                        className={`bg-white dark:bg-gray-700 border rounded-lg p-6 hover:shadow-lg transition-all duration-200 cursor-pointer ${
+                          isIndianFood 
+                            ? 'border-orange-200 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/10 dark:to-yellow-900/10' 
+                            : 'border-gray-200 dark:border-gray-600'
+                        }`}
+                      >
+                        <div className="flex justify-between items-start mb-4">
+                          <div className="flex-1">
+                            <div className="flex items-center space-x-2 mb-2">
+                              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                                {analysis.foodName}
+                              </h3>
+                              {isIndianFood && (
+                                <span className="bg-orange-100 dark:bg-orange-900/20 text-orange-800 dark:text-orange-300 px-2 py-1 rounded-full text-xs font-medium">
+                                  🇮🇳 Indian
+                                </span>
+                              )}
                             </div>
-                            {analysis.userNotes && (
+                            <div className="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-300">
                               <div className="flex items-center space-x-1">
-                                <span>📝</span>
-                                <span className="truncate max-w-32">{analysis.userNotes}</span>
+                                <Clock className="h-4 w-4" />
+                                <span>{new Date(analysis.timestamp).toLocaleDateString()}</span>
                               </div>
+                              {analysis.userNotes && (
+                                <div className="flex items-center space-x-1">
+                                  <span>📝</span>
+                                  <span className="truncate max-w-32">{analysis.userNotes}</span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="flex items-center space-x-3">
+                            <div className="text-center">
+                              <div className={`text-2xl font-bold ${getScoreColor(analysis.analysis.overall.vishScore)}`}>
+                                {analysis.analysis.overall.vishScore}
+                              </div>
+                              <div className="text-xs text-gray-500 dark:text-gray-400">Vish Score</div>
+                            </div>
+                            <span className={`px-3 py-1 rounded-full text-sm font-medium ${getGradeColor(analysis.analysis.overall.grade)}`}>
+                              Grade {analysis.analysis.overall.grade}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-4 mb-4">
+                          <div className="text-center">
+                            <div className={`text-lg font-semibold ${getScoreColor(analysis.analysis.health.score)}`}>
+                              {analysis.analysis.health.score}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">Nutrition</div>
+                          </div>
+                          <div className="text-center">
+                            <div className={`text-lg font-semibold ${getScoreColor(analysis.analysis.taste.score)}`}>
+                              {analysis.analysis.taste.score}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">Taste</div>
+                          </div>
+                          <div className="text-center">
+                            <div className={`text-lg font-semibold ${getScoreColor(analysis.analysis.consumer.score)}`}>
+                              {analysis.analysis.consumer.score}
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">Consumer</div>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center">
+                          <div className="flex items-center space-x-2">
+                            {analysis.analysis.health.warnings.length > 0 && (
+                              <span className="flex items-center space-x-1 text-red-600 dark:text-red-400 text-xs">
+                                <AlertTriangle className="h-3 w-3" />
+                                <span>{analysis.analysis.health.warnings.length} warning{analysis.analysis.health.warnings.length > 1 ? 's' : ''}</span>
+                              </span>
+                            )}
+                            {analysis.analysis.health.warnings.length === 0 && (
+                              <span className="flex items-center space-x-1 text-green-600 dark:text-green-400 text-xs">
+                                <CheckCircle className="h-3 w-3" />
+                                <span>No warnings</span>
+                              </span>
                             )}
                           </div>
-                        </div>
 
-                        <div className="flex items-center space-x-3">
-                          <div className="text-center">
-                            <div className={`text-2xl font-bold ${getScoreColor(analysis.analysis.overall.vishScore)}`}>
-                              {analysis.analysis.overall.vishScore}
-                            </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400">Vish Score</div>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setSelectedAnalysis(analysis);
+                              }}
+                              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
+                              title="View Details"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                deleteAnalysis(analysis.id);
+                              }}
+                              className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
+                              title="Delete Analysis"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
                           </div>
-                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${getGradeColor(analysis.analysis.overall.grade)}`}>
-                            Grade {analysis.analysis.overall.grade}
-                          </span>
                         </div>
                       </div>
-
-                      <div className="grid grid-cols-3 gap-4 mb-4">
-                        <div className="text-center">
-                          <div className={`text-lg font-semibold ${getScoreColor(analysis.analysis.health.score)}`}>
-                            {analysis.analysis.health.score}
-                          </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">Nutrition</div>
-                        </div>
-                        <div className="text-center">
-                          <div className={`text-lg font-semibold ${getScoreColor(analysis.analysis.taste.score)}`}>
-                            {analysis.analysis.taste.score}
-                          </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">Taste</div>
-                        </div>
-                        <div className="text-center">
-                          <div className={`text-lg font-semibold ${getScoreColor(analysis.analysis.consumer.score)}`}>
-                            {analysis.analysis.consumer.score}
-                          </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">Consumer</div>
-                        </div>
-                      </div>
-
-                      <div className="flex justify-between items-center">
-                        <div className="flex items-center space-x-2">
-                          {analysis.analysis.health.warnings.length > 0 && (
-                            <span className="flex items-center space-x-1 text-red-600 dark:text-red-400 text-xs">
-                              <AlertTriangle className="h-3 w-3" />
-                              <span>{analysis.analysis.health.warnings.length} warning{analysis.analysis.health.warnings.length > 1 ? 's' : ''}</span>
-                            </span>
-                          )}
-                          {analysis.analysis.health.warnings.length === 0 && (
-                            <span className="flex items-center space-x-1 text-green-600 dark:text-green-400 text-xs">
-                              <CheckCircle className="h-3 w-3" />
-                              <span>No warnings</span>
-                            </span>
-                          )}
-                        </div>
-
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setSelectedAnalysis(analysis);
-                            }}
-                            className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                            title="View Details"
-                          >
-                            <Eye className="h-4 w-4" />
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              deleteAnalysis(analysis.id);
-                            }}
-                            className="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors"
-                            title="Delete Analysis"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               )}
             </div>
