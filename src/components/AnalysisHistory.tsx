@@ -87,6 +87,42 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
       consumerScore: 82,
       isAmerican: true
     },
+    {
+      name: "Chicken McNuggets",
+      brand: "McDonald's",
+      vishScore: 69,
+      nutritionScore: 40,
+      tasteScore: 85,
+      consumerScore: 82,
+      isAmerican: true
+    },
+    {
+      name: "Baconator",
+      brand: "Wendy's",
+      vishScore: 65,
+      nutritionScore: 28,
+      tasteScore: 88,
+      consumerScore: 79,
+      isAmerican: true
+    },
+    {
+      name: "Double Cheeseburger",
+      brand: "In-N-Out",
+      vishScore: 75,
+      nutritionScore: 45,
+      tasteScore: 92,
+      consumerScore: 88,
+      isAmerican: true
+    },
+    {
+      name: "Chicken Sandwich",
+      brand: "Chick-fil-A",
+      vishScore: 78,
+      nutritionScore: 58,
+      tasteScore: 90,
+      consumerScore: 86,
+      isAmerican: true
+    },
 
     // Beverages
     {
@@ -132,6 +168,51 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
       nutritionScore: 25,
       tasteScore: 78,
       consumerScore: 83,
+      isAmerican: true
+    },
+    {
+      name: "Sprite",
+      brand: "Coca-Cola",
+      vishScore: 63,
+      nutritionScore: 18,
+      tasteScore: 82,
+      consumerScore: 89,
+      isAmerican: true
+    },
+    {
+      name: "Dr Pepper",
+      brand: "Dr Pepper",
+      vishScore: 64,
+      nutritionScore: 16,
+      tasteScore: 85,
+      consumerScore: 91,
+      isAmerican: true
+    },
+    {
+      name: "Monster Energy",
+      brand: "Monster",
+      vishScore: 59,
+      nutritionScore: 22,
+      tasteScore: 80,
+      consumerScore: 75,
+      isAmerican: true
+    },
+    {
+      name: "Gatorade",
+      brand: "PepsiCo",
+      vishScore: 71,
+      nutritionScore: 45,
+      tasteScore: 85,
+      consumerScore: 83,
+      isAmerican: true
+    },
+    {
+      name: "Arizona Iced Tea",
+      brand: "Arizona",
+      vishScore: 66,
+      nutritionScore: 25,
+      tasteScore: 88,
+      consumerScore: 85,
       isAmerican: true
     },
 
@@ -190,6 +271,60 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
       consumerScore: 90,
       isAmerican: true
     },
+    {
+      name: "Fritos Corn Chips",
+      brand: "Frito-Lay",
+      vishScore: 67,
+      nutritionScore: 28,
+      tasteScore: 83,
+      consumerScore: 90,
+      isAmerican: true
+    },
+    {
+      name: "Cheez-Its",
+      brand: "Kellogg's",
+      vishScore: 71,
+      nutritionScore: 35,
+      tasteScore: 88,
+      consumerScore: 90,
+      isAmerican: true
+    },
+    {
+      name: "Triscuits",
+      brand: "Nabisco",
+      vishScore: 76,
+      nutritionScore: 55,
+      tasteScore: 80,
+      consumerScore: 83,
+      isAmerican: true
+    },
+    {
+      name: "Wheat Thins",
+      brand: "Nabisco",
+      vishScore: 74,
+      nutritionScore: 50,
+      tasteScore: 82,
+      consumerScore: 90,
+      isAmerican: true
+    },
+    {
+      name: "Popcorn",
+      brand: "Orville Redenbacher's",
+      vishScore: 78,
+      nutritionScore: 65,
+      tasteScore: 85,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Pretzels",
+      brand: "Snyder's",
+      vishScore: 75,
+      nutritionScore: 55,
+      tasteScore: 80,
+      consumerScore: 90,
+      isAmerican: true
+    },
 
     // Breakfast Cereals
     {
@@ -235,6 +370,42 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
       nutritionScore: 55,
       tasteScore: 75,
       consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Froot Loops",
+      brand: "Kellogg's",
+      vishScore: 66,
+      nutritionScore: 28,
+      tasteScore: 90,
+      consumerScore: 80,
+      isAmerican: true
+    },
+    {
+      name: "Cap'n Crunch",
+      brand: "Quaker",
+      vishScore: 64,
+      nutritionScore: 25,
+      tasteScore: 88,
+      consumerScore: 79,
+      isAmerican: true
+    },
+    {
+      name: "Rice Krispies",
+      brand: "Kellogg's",
+      vishScore: 73,
+      nutritionScore: 45,
+      tasteScore: 85,
+      consumerScore: 89,
+      isAmerican: true
+    },
+    {
+      name: "Special K",
+      brand: "Kellogg's",
+      vishScore: 82,
+      nutritionScore: 75,
+      tasteScore: 78,
+      consumerScore: 93,
       isAmerican: true
     },
 
@@ -293,6 +464,60 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
       consumerScore: 90,
       isAmerican: true
     },
+    {
+      name: "M&M's",
+      brand: "Mars",
+      vishScore: 68,
+      nutritionScore: 28,
+      tasteScore: 88,
+      consumerScore: 88,
+      isAmerican: true
+    },
+    {
+      name: "Twix",
+      brand: "Mars",
+      vishScore: 70,
+      nutritionScore: 32,
+      tasteScore: 90,
+      consumerScore: 88,
+      isAmerican: true
+    },
+    {
+      name: "Skittles",
+      brand: "Mars",
+      vishScore: 65,
+      nutritionScore: 20,
+      tasteScore: 88,
+      consumerScore: 87,
+      isAmerican: true
+    },
+    {
+      name: "Starburst",
+      brand: "Mars",
+      vishScore: 66,
+      nutritionScore: 22,
+      tasteScore: 90,
+      consumerScore: 86,
+      isAmerican: true
+    },
+    {
+      name: "Hershey's Chocolate Bar",
+      brand: "Hershey's",
+      vishScore: 67,
+      nutritionScore: 25,
+      tasteScore: 85,
+      consumerScore: 91,
+      isAmerican: true
+    },
+    {
+      name: "Pop-Tarts",
+      brand: "Kellogg's",
+      vishScore: 64,
+      nutritionScore: 25,
+      tasteScore: 85,
+      consumerScore: 82,
+      isAmerican: true
+    },
 
     // Healthier Options
     {
@@ -331,6 +556,24 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
       consumerScore: 85,
       isAmerican: true
     },
+    {
+      name: "Protein Shake",
+      brand: "Premier Protein",
+      vishScore: 84,
+      nutritionScore: 88,
+      tasteScore: 78,
+      consumerScore: 86,
+      isAmerican: true
+    },
+    {
+      name: "Organic Oatmeal",
+      brand: "Quaker",
+      vishScore: 87,
+      nutritionScore: 90,
+      tasteScore: 80,
+      consumerScore: 91,
+      isAmerican: true
+    },
 
     // Condiments & Sauces
     {
@@ -360,6 +603,24 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
       consumerScore: 92,
       isAmerican: true
     },
+    {
+      name: "Tabasco Sauce",
+      brand: "Tabasco",
+      vishScore: 81,
+      nutritionScore: 85,
+      tasteScore: 78,
+      consumerScore: 80,
+      isAmerican: true
+    },
+    {
+      name: "A.1. Steak Sauce",
+      brand: "Kraft",
+      vishScore: 68,
+      nutritionScore: 40,
+      tasteScore: 82,
+      consumerScore: 82,
+      isAmerican: true
+    },
 
     // Frozen Foods
     {
@@ -387,6 +648,100 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
       nutritionScore: 45,
       tasteScore: 88,
       consumerScore: 80,
+      isAmerican: true
+    },
+    {
+      name: "DiGiorno Pizza",
+      brand: "Nestlé",
+      vishScore: 73,
+      nutritionScore: 48,
+      tasteScore: 88,
+      consumerScore: 83,
+      isAmerican: true
+    },
+    {
+      name: "Eggo Waffles",
+      brand: "Kellogg's",
+      vishScore: 69,
+      nutritionScore: 38,
+      tasteScore: 85,
+      consumerScore: 84,
+      isAmerican: true
+    },
+    {
+      name: "Bagel Bites",
+      brand: "Kraft Heinz",
+      vishScore: 66,
+      nutritionScore: 32,
+      tasteScore: 82,
+      consumerScore: 84,
+      isAmerican: true
+    },
+
+    // Bread & Bakery
+    {
+      name: "Wonder Bread",
+      brand: "Wonder",
+      vishScore: 68,
+      nutritionScore: 40,
+      tasteScore: 80,
+      consumerScore: 84,
+      isAmerican: true
+    },
+    {
+      name: "Pepperidge Farm Bread",
+      brand: "Pepperidge Farm",
+      vishScore: 74,
+      nutritionScore: 55,
+      tasteScore: 82,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Hostess Twinkies",
+      brand: "Hostess",
+      vishScore: 63,
+      nutritionScore: 20,
+      tasteScore: 85,
+      consumerScore: 84,
+      isAmerican: true
+    },
+    {
+      name: "Little Debbie Snacks",
+      brand: "Little Debbie",
+      vishScore: 65,
+      nutritionScore: 25,
+      tasteScore: 88,
+      consumerScore: 82,
+      isAmerican: true
+    },
+
+    // Pasta & Sauces
+    {
+      name: "Kraft Mac & Cheese",
+      brand: "Kraft",
+      vishScore: 69,
+      nutritionScore: 35,
+      tasteScore: 88,
+      consumerScore: 84,
+      isAmerican: true
+    },
+    {
+      name: "Ragu Pasta Sauce",
+      brand: "Ragu",
+      vishScore: 72,
+      nutritionScore: 50,
+      tasteScore: 82,
+      consumerScore: 84,
+      isAmerican: true
+    },
+    {
+      name: "Barilla Pasta",
+      brand: "Barilla",
+      vishScore: 76,
+      nutritionScore: 60,
+      tasteScore: 85,
+      consumerScore: 83,
       isAmerican: true
     },
 
@@ -643,7 +998,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
             <BarChart3 className="w-8 h-8 text-blue-600" />
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Analysis History</h2>
-              <p className="text-gray-600">Track your food analysis journey with popular American foods</p>
+              <p className="text-gray-600">Track your food analysis journey with 70+ popular American foods</p>
             </div>
           </div>
           <button
