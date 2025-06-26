@@ -31,95 +31,396 @@ interface AnalysisStats {
 }
 
 const generateComprehensiveSampleData = (): AnalysisRecord[] => {
-  const indianFoods = [
+  const popularAmericanFoods = [
+    // Fast Food Classics
+    {
+      name: "Big Mac",
+      brand: "McDonald's",
+      vishScore: 72,
+      nutritionScore: 35,
+      tasteScore: 88,
+      consumerScore: 92,
+      isAmerican: true
+    },
+    {
+      name: "Whopper",
+      brand: "Burger King",
+      vishScore: 68,
+      nutritionScore: 32,
+      tasteScore: 85,
+      consumerScore: 88,
+      isAmerican: true
+    },
+    {
+      name: "Original Recipe Chicken",
+      brand: "KFC",
+      vishScore: 77,
+      nutritionScore: 55,
+      tasteScore: 90,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Pepperoni Pizza",
+      brand: "Domino's",
+      vishScore: 76,
+      nutritionScore: 45,
+      tasteScore: 92,
+      consumerScore: 90,
+      isAmerican: true
+    },
+    {
+      name: "Crunchy Taco",
+      brand: "Taco Bell",
+      vishScore: 72,
+      nutritionScore: 50,
+      tasteScore: 80,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Italian B.M.T.",
+      brand: "Subway",
+      vishScore: 74,
+      nutritionScore: 55,
+      tasteScore: 85,
+      consumerScore: 82,
+      isAmerican: true
+    },
+
+    // Beverages
+    {
+      name: "Coca-Cola Classic",
+      brand: "Coca-Cola",
+      vishScore: 65,
+      nutritionScore: 15,
+      tasteScore: 85,
+      consumerScore: 95,
+      isAmerican: true
+    },
+    {
+      name: "Pepsi Cola",
+      brand: "PepsiCo",
+      vishScore: 61,
+      nutritionScore: 12,
+      tasteScore: 82,
+      consumerScore: 90,
+      isAmerican: true
+    },
+    {
+      name: "Fairlife Whole Milk",
+      brand: "Fairlife",
+      vishScore: 88,
+      nutritionScore: 92,
+      tasteScore: 85,
+      consumerScore: 87,
+      isAmerican: true
+    },
+    {
+      name: "Mountain Dew",
+      brand: "PepsiCo",
+      vishScore: 58,
+      nutritionScore: 10,
+      tasteScore: 88,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Red Bull Energy Drink",
+      brand: "Red Bull",
+      vishScore: 62,
+      nutritionScore: 25,
+      tasteScore: 78,
+      consumerScore: 83,
+      isAmerican: true
+    },
+
+    // Snacks
+    {
+      name: "Classic Potato Chips",
+      brand: "Lay's",
+      vishScore: 66,
+      nutritionScore: 25,
+      tasteScore: 85,
+      consumerScore: 88,
+      isAmerican: true
+    },
+    {
+      name: "Nacho Cheese Doritos",
+      brand: "Frito-Lay",
+      vishScore: 70,
+      nutritionScore: 28,
+      tasteScore: 90,
+      consumerScore: 92,
+      isAmerican: true
+    },
+    {
+      name: "Crunchy Cheetos",
+      brand: "Frito-Lay",
+      vishScore: 65,
+      nutritionScore: 22,
+      tasteScore: 88,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Original Pringles",
+      brand: "Pringles",
+      vishScore: 68,
+      nutritionScore: 30,
+      tasteScore: 85,
+      consumerScore: 89,
+      isAmerican: true
+    },
+    {
+      name: "Goldfish Crackers",
+      brand: "Pepperidge Farm",
+      vishScore: 72,
+      nutritionScore: 35,
+      tasteScore: 88,
+      consumerScore: 93,
+      isAmerican: true
+    },
+    {
+      name: "Ritz Crackers",
+      brand: "Nabisco",
+      vishScore: 69,
+      nutritionScore: 32,
+      tasteScore: 85,
+      consumerScore: 90,
+      isAmerican: true
+    },
+
+    // Breakfast Cereals
+    {
+      name: "Honey Nut Cheerios",
+      brand: "General Mills",
+      vishScore: 80,
+      nutritionScore: 65,
+      tasteScore: 85,
+      consumerScore: 90,
+      isAmerican: true
+    },
+    {
+      name: "Frosted Flakes",
+      brand: "Kellogg's",
+      vishScore: 69,
+      nutritionScore: 35,
+      tasteScore: 88,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Lucky Charms",
+      brand: "General Mills",
+      vishScore: 67,
+      nutritionScore: 30,
+      tasteScore: 92,
+      consumerScore: 88,
+      isAmerican: true
+    },
+    {
+      name: "Cinnamon Toast Crunch",
+      brand: "General Mills",
+      vishScore: 71,
+      nutritionScore: 38,
+      tasteScore: 95,
+      consumerScore: 90,
+      isAmerican: true
+    },
+    {
+      name: "Corn Flakes",
+      brand: "Kellogg's",
+      vishScore: 75,
+      nutritionScore: 55,
+      tasteScore: 75,
+      consumerScore: 85,
+      isAmerican: true
+    },
+
+    // Desserts & Sweets
+    {
+      name: "Oreo Cookies",
+      brand: "Nabisco",
+      vishScore: 72,
+      nutritionScore: 25,
+      tasteScore: 95,
+      consumerScore: 95,
+      isAmerican: true
+    },
+    {
+      name: "Vanilla Ice Cream",
+      brand: "Ben & Jerry's",
+      vishScore: 72,
+      nutritionScore: 35,
+      tasteScore: 92,
+      consumerScore: 88,
+      isAmerican: true
+    },
+    {
+      name: "Chocolate Chip Cookies",
+      brand: "Chips Ahoy!",
+      vishScore: 68,
+      nutritionScore: 28,
+      tasteScore: 88,
+      consumerScore: 88,
+      isAmerican: true
+    },
+    {
+      name: "Snickers Bar",
+      brand: "Mars",
+      vishScore: 70,
+      nutritionScore: 32,
+      tasteScore: 90,
+      consumerScore: 88,
+      isAmerican: true
+    },
+    {
+      name: "Kit Kat",
+      brand: "Hershey's",
+      vishScore: 69,
+      nutritionScore: 30,
+      tasteScore: 88,
+      consumerScore: 89,
+      isAmerican: true
+    },
+    {
+      name: "Reese's Peanut Butter Cups",
+      brand: "Hershey's",
+      vishScore: 73,
+      nutritionScore: 35,
+      tasteScore: 95,
+      consumerScore: 90,
+      isAmerican: true
+    },
+
+    // Healthier Options
+    {
+      name: "Greek Yogurt Plain",
+      brand: "Chobani",
+      vishScore: 83,
+      nutritionScore: 95,
+      tasteScore: 70,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Crunchy Granola Bar",
+      brand: "Nature Valley",
+      vishScore: 80,
+      nutritionScore: 75,
+      tasteScore: 80,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Protein Bar",
+      brand: "Quest",
+      vishScore: 82,
+      nutritionScore: 85,
+      tasteScore: 75,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Almond Butter",
+      brand: "Justin's",
+      vishScore: 85,
+      nutritionScore: 88,
+      tasteScore: 82,
+      consumerScore: 85,
+      isAmerican: true
+    },
+
+    // Condiments & Sauces
+    {
+      name: "Heinz Ketchup",
+      brand: "Heinz",
+      vishScore: 65,
+      nutritionScore: 35,
+      tasteScore: 85,
+      consumerScore: 95,
+      isAmerican: true
+    },
+    {
+      name: "French's Yellow Mustard",
+      brand: "French's",
+      vishScore: 78,
+      nutritionScore: 70,
+      tasteScore: 80,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Hidden Valley Ranch",
+      brand: "Hidden Valley",
+      vishScore: 62,
+      nutritionScore: 25,
+      tasteScore: 88,
+      consumerScore: 92,
+      isAmerican: true
+    },
+
+    // Frozen Foods
+    {
+      name: "Hot Pockets",
+      brand: "Nestlé",
+      vishScore: 64,
+      nutritionScore: 30,
+      tasteScore: 82,
+      consumerScore: 80,
+      isAmerican: true
+    },
+    {
+      name: "Lean Cuisine",
+      brand: "Nestlé",
+      vishScore: 75,
+      nutritionScore: 65,
+      tasteScore: 75,
+      consumerScore: 85,
+      isAmerican: true
+    },
+    {
+      name: "Stouffer's Lasagna",
+      brand: "Nestlé",
+      vishScore: 71,
+      nutritionScore: 45,
+      tasteScore: 88,
+      consumerScore: 80,
+      isAmerican: true
+    },
+
+    // Some Indian Foods for variety
     {
       name: "Butter Chicken",
-      vishScore: 65,
+      brand: "Tasty Bite",
+      vishScore: 78,
       nutritionScore: 60,
       tasteScore: 90,
       consumerScore: 85,
       isIndian: true
     },
     {
-      name: "Dal Tadka",
-      vishScore: 85,
-      nutritionScore: 90,
-      tasteScore: 80,
-      consumerScore: 75,
-      isIndian: true
-    },
-    {
-      name: "Biryani",
-      vishScore: 70,
-      nutritionScore: 65,
-      tasteScore: 95,
-      consumerScore: 90,
-      isIndian: true
-    },
-    {
-      name: "Samosa",
-      vishScore: 45,
-      nutritionScore: 40,
-      tasteScore: 85,
-      consumerScore: 80,
-      isIndian: true
-    },
-    {
-      name: "Palak Paneer",
+      name: "Basmati Rice",
+      brand: "Tilda",
       vishScore: 80,
-      nutritionScore: 85,
-      tasteScore: 75,
-      consumerScore: 70,
+      nutritionScore: 75,
+      tasteScore: 85,
+      consumerScore: 80,
+      isIndian: true
+    },
+    {
+      name: "Naan Bread",
+      brand: "Stonefire",
+      vishScore: 72,
+      nutritionScore: 50,
+      tasteScore: 88,
+      consumerScore: 78,
       isIndian: true
     }
   ];
 
-  const americanFoods = [
-    {
-      name: "Cheeseburger",
-      vishScore: 35,
-      nutritionScore: 30,
-      tasteScore: 85,
-      consumerScore: 90,
-      isAmerican: true
-    },
-    {
-      name: "Caesar Salad",
-      vishScore: 75,
-      nutritionScore: 80,
-      tasteScore: 70,
-      consumerScore: 65,
-      isAmerican: true
-    },
-    {
-      name: "BBQ Ribs",
-      vishScore: 40,
-      nutritionScore: 35,
-      tasteScore: 90,
-      consumerScore: 85,
-      isAmerican: true
-    },
-    {
-      name: "Apple Pie",
-      vishScore: 50,
-      nutritionScore: 45,
-      tasteScore: 85,
-      consumerScore: 80,
-      isAmerican: true
-    },
-    {
-      name: "Grilled Salmon",
-      vishScore: 90,
-      nutritionScore: 95,
-      tasteScore: 80,
-      consumerScore: 75,
-      isAmerican: true
-    }
-  ];
-
-  const allFoods = [...indianFoods, ...americanFoods];
-
-  return allFoods.map((food, index) => ({
+  return popularAmericanFoods.map((food, index) => ({
     id: `analysis_${index + 1}`,
     timestamp: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000).toISOString(),
     foodName: food.name,
@@ -129,29 +430,45 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
         nutritionScore: food.nutritionScore,
         tasteScore: food.tasteScore,
         consumerScore: food.consumerScore,
-        summary: `Analysis of ${food.name}`,
-        recommendations: [`Enjoy ${food.name} in moderation`]
+        summary: `Comprehensive analysis of ${food.name} by ${food.brand}`,
+        recommendations: [`Enjoy ${food.name} in moderation as part of a balanced diet`],
+        grade: food.vishScore >= 80 ? 'A' : food.vishScore >= 70 ? 'B' : food.vishScore >= 60 ? 'C' : food.vishScore >= 50 ? 'D' : 'F'
       },
       nutrition: {
-        calories: Math.floor(Math.random() * 500) + 200,
-        protein: Math.floor(Math.random() * 30) + 10,
-        carbs: Math.floor(Math.random() * 50) + 20,
-        fat: Math.floor(Math.random() * 25) + 5,
-        fiber: Math.floor(Math.random() * 10) + 2,
-        sugar: Math.floor(Math.random() * 20) + 5,
-        sodium: Math.floor(Math.random() * 1000) + 200,
-        vitamins: ['Vitamin A', 'Vitamin C'],
-        minerals: ['Iron', 'Calcium']
+        calories: Math.floor(Math.random() * 400) + 100,
+        totalFat: `${Math.floor(Math.random() * 25) + 5}g`,
+        saturatedFat: `${Math.floor(Math.random() * 10) + 2}g`,
+        transFat: '0g',
+        cholesterol: `${Math.floor(Math.random() * 50)}mg`,
+        sodium: `${Math.floor(Math.random() * 800) + 200}mg`,
+        totalCarbohydrates: `${Math.floor(Math.random() * 40) + 10}g`,
+        dietaryFiber: `${Math.floor(Math.random() * 8) + 1}g`,
+        totalSugars: `${Math.floor(Math.random() * 20) + 2}g`,
+        addedSugars: `${Math.floor(Math.random() * 15)}g`,
+        protein: `${Math.floor(Math.random() * 25) + 5}g`,
+        vitamins: ['Vitamin A', 'Vitamin C', 'Iron']
       },
-      ingredients: [
-        { name: 'Main ingredient', healthScore: food.nutritionScore, concerns: [] }
-      ],
-      healthBenefits: [`Good source of nutrients for ${food.name}`],
-      concerns: food.vishScore < 60 ? ['High in calories'] : [],
-      culturalContext: food.isIndian ? 'Traditional Indian cuisine' : 'American cuisine'
+      health: {
+        score: food.nutritionScore,
+        warnings: food.nutritionScore < 50 ? ['High in calories', 'Contains processed ingredients'] : [],
+        recommendations: ['Consume as part of a balanced diet', 'Consider portion sizes'],
+        allergens: ['May contain milk', 'May contain wheat']
+      },
+      taste: {
+        score: food.tasteScore,
+        profile: ['Savory', 'Rich', 'Satisfying'],
+        description: `${food.name} offers a classic American taste experience with balanced flavors.`
+      },
+      consumer: {
+        score: food.consumerScore,
+        feedback: `${food.brand} ${food.name} is widely loved by consumers for its consistent quality and taste.`,
+        satisfaction: food.consumerScore >= 85 ? 'Very High' : food.consumerScore >= 70 ? 'High' : 'Moderate',
+        commonComplaints: food.consumerScore < 80 ? ['Price concerns', 'Packaging issues'] : [],
+        positiveAspects: ['Great taste', 'Convenient', 'Widely available', 'Consistent quality']
+      }
     },
     imageUrl: `https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg`,
-    userNotes: `Enjoyed this ${food.name}`,
+    userNotes: `Analyzed ${food.name} - ${food.brand}`,
     isIndian: food.isIndian || false,
     isAmerican: food.isAmerican || false
   }));
@@ -226,7 +543,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
         
         localStorage.setItem('foodcheck_analysis_history', JSON.stringify(sampleData));
         
-        console.log('📊 Generated sample data:', sampleData.length, 'total foods');
+        console.log('📊 Generated comprehensive sample data:', sampleData.length, 'total foods');
         const indianCount = sampleData.filter(food => food.isIndian).length;
         const americanCount = sampleData.filter(food => food.isAmerican).length;
         console.log('🇮🇳 Indian foods:', indianCount);
@@ -326,7 +643,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
             <BarChart3 className="w-8 h-8 text-blue-600" />
             <div>
               <h2 className="text-2xl font-bold text-gray-900">Analysis History</h2>
-              <p className="text-gray-600">Track your food analysis journey</p>
+              <p className="text-gray-600">Track your food analysis journey with popular American foods</p>
             </div>
           </div>
           <button
@@ -529,28 +846,6 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                   <h4 className="font-semibold text-gray-900 mb-2">Summary</h4>
                   <p className="text-gray-700">{selectedAnalysis.analysis.overall.summary}</p>
                 </div>
-                
-                {selectedAnalysis.analysis.healthBenefits.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Health Benefits</h4>
-                    <ul className="list-disc list-inside text-gray-700 space-y-1">
-                      {selectedAnalysis.analysis.healthBenefits.map((benefit, index) => (
-                        <li key={index}>{benefit}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                
-                {selectedAnalysis.analysis.concerns.length > 0 && (
-                  <div>
-                    <h4 className="font-semibold text-gray-900 mb-2">Concerns</h4>
-                    <ul className="list-disc list-inside text-red-600 space-y-1">
-                      {selectedAnalysis.analysis.concerns.map((concern, index) => (
-                        <li key={index}>{concern}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
                 
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">Analyzed on</h4>
