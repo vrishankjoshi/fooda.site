@@ -42,20 +42,20 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
   useEffect(() => {
     const loadAnalysisHistory = () => {
       try {
-        const stored = localStorage.getItem('foodcheck_analysis_history');
-        if (stored) {
-          const history = JSON.parse(stored);
-          setAnalyses(history);
-          setFilteredAnalyses(history);
-          calculateStats(history);
-        } else {
-          // Generate comprehensive sample data with popular brands
-          const sampleData = generateComprehensiveSampleData();
-          setAnalyses(sampleData);
-          setFilteredAnalyses(sampleData);
-          calculateStats(sampleData);
-          localStorage.setItem('foodcheck_analysis_history', JSON.stringify(sampleData));
-        }
+        // FORCE RELOAD: Clear existing data and load fresh comprehensive data
+        console.log('🔄 Loading comprehensive food analysis history...');
+        
+        // Always generate fresh comprehensive data for demo
+        const sampleData = generateComprehensiveSampleData();
+        console.log(`✅ Generated ${sampleData.length} comprehensive food analyses`);
+        
+        setAnalyses(sampleData);
+        setFilteredAnalyses(sampleData);
+        calculateStats(sampleData);
+        
+        // Save to localStorage for future sessions
+        localStorage.setItem('foodcheck_analysis_history', JSON.stringify(sampleData));
+        console.log('💾 Saved comprehensive data to localStorage');
       } catch (error) {
         console.error('Error loading analysis history:', error);
         const sampleData = generateComprehensiveSampleData();
@@ -115,6 +115,8 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
   }, [analyses, searchTerm, filterBy, sortBy]);
 
   const generateComprehensiveSampleData = (): AnalysisRecord[] => {
+    console.log('🏭 Generating comprehensive food database...');
+    
     const comprehensiveFoods = [
       // Coca-Cola Products
       { name: 'Coca-Cola Classic', brand: 'Coca-Cola', score: 25, nutrition: 15, taste: 85, consumer: 95, category: 'Beverages' },
@@ -201,8 +203,33 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
       { name: 'Vitamin Water Power-C Dragonfruit', brand: 'Vitamin Water', score: 45, nutrition: 38, taste: 70, consumer: 78, category: 'Enhanced Water' },
       { name: 'Smartwater', brand: 'Smartwater', score: 88, nutrition: 95, taste: 85, consumer: 85, category: 'Water' },
       { name: 'Planters Dry Roasted Peanuts', brand: 'Planters', score: 68, nutrition: 72, taste: 75, consumer: 82, category: 'Nuts' },
-      { name: 'Sun-Maid Raisins', brand: 'Sun-Maid', score: 75, nutrition: 82, taste: 70, consumer: 78, category: 'Dried Fruit' }
+      { name: 'Sun-Maid Raisins', brand: 'Sun-Maid', score: 75, nutrition: 82, taste: 70, consumer: 78, category: 'Dried Fruit' },
+
+      // Additional Beverages
+      { name: 'Dr Pepper', brand: 'Dr Pepper', score: 26, nutrition: 14, taste: 84, consumer: 87, category: 'Beverages' },
+      { name: '7UP', brand: '7UP', score: 29, nutrition: 17, taste: 79, consumer: 83, category: 'Beverages' },
+      { name: 'Canada Dry Ginger Ale', brand: 'Canada Dry', score: 32, nutrition: 20, taste: 76, consumer: 80, category: 'Beverages' },
+      { name: 'Tropicana Orange Juice', brand: 'Tropicana', score: 65, nutrition: 70, taste: 85, consumer: 88, category: 'Juices' },
+      { name: 'Simply Orange Juice', brand: 'Simply', score: 68, nutrition: 72, taste: 88, consumer: 85, category: 'Juices' },
+
+      // More Snacks
+      { name: 'Triscuit Original', brand: 'Triscuit', score: 65, nutrition: 68, taste: 70, consumer: 78, category: 'Crackers' },
+      { name: 'Wheat Thins Original', brand: 'Wheat Thins', score: 58, nutrition: 55, taste: 72, consumer: 80, category: 'Crackers' },
+      { name: 'Cheez-Its Original', brand: 'Cheez-Its', score: 48, nutrition: 32, taste: 85, consumer: 88, category: 'Crackers' },
+      { name: 'Teddy Grahams Honey', brand: 'Teddy Grahams', score: 45, nutrition: 30, taste: 82, consumer: 85, category: 'Cookies' },
+
+      // Yogurt & Dairy
+      { name: 'Yoplait Original Strawberry', brand: 'Yoplait', score: 58, nutrition: 52, taste: 78, consumer: 82, category: 'Dairy' },
+      { name: 'Dannon Light & Fit Vanilla', brand: 'Dannon', score: 72, nutrition: 78, taste: 70, consumer: 75, category: 'Dairy' },
+      { name: 'Activia Probiotic Yogurt', brand: 'Activia', score: 68, nutrition: 72, taste: 75, consumer: 80, category: 'Dairy' },
+
+      // More Breakfast Items
+      { name: 'Eggo Homestyle Waffles', brand: 'Eggo', score: 52, nutrition: 42, taste: 78, consumer: 85, category: 'Breakfast' },
+      { name: 'Aunt Jemima Pancake Mix', brand: 'Aunt Jemima', score: 48, nutrition: 38, taste: 75, consumer: 82, category: 'Breakfast' },
+      { name: 'Bisquick Original Mix', brand: 'Bisquick', score: 50, nutrition: 40, taste: 72, consumer: 80, category: 'Breakfast' }
     ];
+
+    console.log(`📊 Created ${comprehensiveFoods.length} food items`);
 
     return comprehensiveFoods.map((food, index) => ({
       id: `analysis-${index + 1}`,
