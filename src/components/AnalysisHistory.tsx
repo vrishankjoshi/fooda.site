@@ -120,55 +120,94 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
       { name: 'Coca-Cola Classic', brand: 'Coca-Cola', score: 65, nutrition: 15, taste: 85, consumer: 95, category: 'Beverages' },
       { name: 'Diet Coke', brand: 'Coca-Cola', score: 66, nutrition: 35, taste: 75, consumer: 88, category: 'Beverages' },
       { name: 'Sprite', brand: 'Coca-Cola', score: 62, nutrition: 18, taste: 82, consumer: 85, category: 'Beverages' },
+      { name: 'Fanta Orange', brand: 'Coca-Cola', score: 58, nutrition: 12, taste: 80, consumer: 82, category: 'Beverages' },
       
       // Fairlife Products
       { name: 'Core Power Chocolate Protein Shake', brand: 'Fairlife', score: 85, nutrition: 85, taste: 88, consumer: 82, category: 'Dairy' },
       { name: 'Fairlife Whole Milk', brand: 'Fairlife', score: 81, nutrition: 78, taste: 85, consumer: 80, category: 'Dairy' },
+      { name: 'Fairlife 2% Reduced Fat Milk', brand: 'Fairlife', score: 83, nutrition: 82, taste: 84, consumer: 83, category: 'Dairy' },
+      { name: 'Core Power Vanilla Protein Shake', brand: 'Fairlife', score: 84, nutrition: 84, taste: 86, consumer: 82, category: 'Dairy' },
       
       // PepsiCo Products
       { name: 'Pepsi Cola', brand: 'PepsiCo', score: 61, nutrition: 12, taste: 83, consumer: 88, category: 'Beverages' },
       { name: 'Mountain Dew', brand: 'PepsiCo', score: 60, nutrition: 8, taste: 88, consumer: 85, category: 'Beverages' },
       { name: 'Lay\'s Classic Potato Chips', brand: 'Lay\'s', score: 67, nutrition: 25, taste: 85, consumer: 90, category: 'Snacks' },
       { name: 'Doritos Nacho Cheese', brand: 'Doritos', score: 70, nutrition: 22, taste: 92, consumer: 95, category: 'Snacks' },
+      { name: 'Cheetos Crunchy', brand: 'Cheetos', score: 65, nutrition: 18, taste: 88, consumer: 89, category: 'Snacks' },
+      { name: 'Fritos Original Corn Chips', brand: 'Fritos', score: 63, nutrition: 20, taste: 82, consumer: 87, category: 'Snacks' },
       
       // Sports & Energy Drinks
       { name: 'Gatorade Thirst Quencher Fruit Punch', brand: 'Gatorade', score: 69, nutrition: 45, taste: 78, consumer: 85, category: 'Sports Drinks' },
+      { name: 'Powerade Mountain Berry Blast', brand: 'Powerade', score: 67, nutrition: 42, taste: 76, consumer: 83, category: 'Sports Drinks' },
       { name: 'Red Bull Energy Drink', brand: 'Red Bull', score: 66, nutrition: 35, taste: 75, consumer: 88, category: 'Energy Drinks' },
+      { name: 'Monster Energy', brand: 'Monster', score: 58, nutrition: 25, taste: 78, consumer: 85, category: 'Energy Drinks' },
+      { name: 'Rockstar Energy Drink', brand: 'Rockstar', score: 55, nutrition: 22, taste: 72, consumer: 80, category: 'Energy Drinks' },
       
       // Coffee & Beverages
       { name: 'Starbucks Frappuccino Vanilla', brand: 'Starbucks', score: 70, nutrition: 42, taste: 85, consumer: 82, category: 'Coffee Drinks' },
+      { name: 'Starbucks Doubleshot Espresso', brand: 'Starbucks', score: 72, nutrition: 48, taste: 82, consumer: 85, category: 'Coffee Drinks' },
+      { name: 'Dunkin\' Iced Coffee', brand: 'Dunkin\'', score: 68, nutrition: 38, taste: 80, consumer: 86, category: 'Coffee Drinks' },
       
       // Cereals
       { name: 'Frosted Flakes', brand: 'Kellogg\'s', score: 71, nutrition: 35, taste: 88, consumer: 90, category: 'Cereals' },
       { name: 'Cheerios Original', brand: 'General Mills', score: 78, nutrition: 75, taste: 70, consumer: 88, category: 'Cereals' },
+      { name: 'Lucky Charms', brand: 'General Mills', score: 65, nutrition: 28, taste: 92, consumer: 85, category: 'Cereals' },
+      { name: 'Froot Loops', brand: 'Kellogg\'s', score: 62, nutrition: 25, taste: 85, consumer: 88, category: 'Cereals' },
+      { name: 'Honey Nut Cheerios', brand: 'General Mills', score: 74, nutrition: 65, taste: 78, consumer: 89, category: 'Cereals' },
+      { name: 'Cinnamon Toast Crunch', brand: 'General Mills', score: 68, nutrition: 32, taste: 92, consumer: 90, category: 'Cereals' },
       
       // Cookies & Snacks
       { name: 'Oreo Original Sandwich Cookies', brand: 'Oreo', score: 72, nutrition: 25, taste: 95, consumer: 95, category: 'Cookies' },
+      { name: 'Chips Ahoy! Original', brand: 'Chips Ahoy!', score: 68, nutrition: 22, taste: 88, consumer: 92, category: 'Cookies' },
+      { name: 'Nutter Butter Peanut Butter Cookies', brand: 'Nutter Butter', score: 70, nutrition: 28, taste: 90, consumer: 88, category: 'Cookies' },
+      { name: 'Ritz Crackers Original', brand: 'Ritz', score: 64, nutrition: 30, taste: 82, consumer: 85, category: 'Crackers' },
+      { name: 'Goldfish Crackers Cheddar', brand: 'Pepperidge Farm', score: 66, nutrition: 32, taste: 85, consumer: 88, category: 'Crackers' },
       
       // Packaged Meals
       { name: 'Kraft Macaroni & Cheese Dinner', brand: 'Kraft', score: 69, nutrition: 35, taste: 85, consumer: 88, category: 'Packaged Meals' },
       { name: 'Campbell\'s Chicken Noodle Soup', brand: 'Campbell\'s', score: 68, nutrition: 45, taste: 75, consumer: 85, category: 'Soups' },
+      { name: 'Chef Boyardee Beefaroni', brand: 'Chef Boyardee', score: 62, nutrition: 28, taste: 78, consumer: 80, category: 'Packaged Meals' },
+      { name: 'Progresso Chicken & Rice Soup', brand: 'Progresso', score: 71, nutrition: 52, taste: 78, consumer: 83, category: 'Soups' },
+      
+      // Candy & Chocolate
+      { name: 'Kit Kat Bar', brand: 'Nestlé', score: 58, nutrition: 18, taste: 85, consumer: 92, category: 'Candy' },
+      { name: 'Snickers Bar', brand: 'Mars', score: 55, nutrition: 15, taste: 90, consumer: 88, category: 'Candy' },
+      { name: 'M&M\'s Milk Chocolate', brand: 'Mars', score: 56, nutrition: 16, taste: 88, consumer: 90, category: 'Candy' },
+      { name: 'Reese\'s Peanut Butter Cups', brand: 'Reese\'s', score: 59, nutrition: 20, taste: 92, consumer: 94, category: 'Candy' },
+      { name: 'Twix Caramel Cookie Bars', brand: 'Mars', score: 57, nutrition: 17, taste: 89, consumer: 86, category: 'Candy' },
+      { name: 'Hershey\'s Milk Chocolate Bar', brand: 'Hershey\'s', score: 54, nutrition: 14, taste: 85, consumer: 88, category: 'Candy' },
+      
+      // Breakfast Items
+      { name: 'Pop-Tarts Strawberry', brand: 'Kellogg\'s', score: 48, nutrition: 20, taste: 82, consumer: 78, category: 'Breakfast' },
+      { name: 'Eggo Homestyle Waffles', brand: 'Eggo', score: 65, nutrition: 38, taste: 80, consumer: 85, category: 'Breakfast' },
+      { name: 'Nutella Hazelnut Spread', brand: 'Ferrero', score: 45, nutrition: 12, taste: 95, consumer: 88, category: 'Spreads' },
+      { name: 'Quaker Instant Oatmeal Maple Brown Sugar', brand: 'Quaker', score: 73, nutrition: 68, taste: 75, consumer: 82, category: 'Breakfast' },
+      
+      // More Beverages
+      { name: 'Arizona Iced Tea Green Tea', brand: 'Arizona', score: 42, nutrition: 15, taste: 75, consumer: 72, category: 'Beverages' },
+      { name: 'Vitamin Water Power-C Dragonfruit', brand: 'Glacéau', score: 65, nutrition: 45, taste: 70, consumer: 80, category: 'Enhanced Water' },
+      { name: 'Smartwater', brand: 'Glacéau', score: 88, nutrition: 95, taste: 78, consumer: 85, category: 'Water' },
+      { name: 'Dasani Water', brand: 'Coca-Cola', score: 86, nutrition: 92, taste: 76, consumer: 82, category: 'Water' },
+      { name: 'Aquafina Water', brand: 'PepsiCo', score: 85, nutrition: 90, taste: 75, consumer: 80, category: 'Water' },
+      
+      // Ice Cream & Frozen
+      { name: 'Ben & Jerry\'s Chocolate Chip Cookie Dough', brand: 'Ben & Jerry\'s', score: 52, nutrition: 8, taste: 98, consumer: 92, category: 'Ice Cream' },
+      { name: 'Häagen-Dazs Vanilla', brand: 'Häagen-Dazs', score: 48, nutrition: 12, taste: 95, consumer: 88, category: 'Ice Cream' },
+      { name: 'Breyers Natural Vanilla', brand: 'Breyers', score: 55, nutrition: 18, taste: 85, consumer: 82, category: 'Ice Cream' },
+      { name: 'Hot Pockets Pepperoni Pizza', brand: 'Hot Pockets', score: 58, nutrition: 25, taste: 78, consumer: 75, category: 'Frozen Meals' },
       
       // Healthy Options
       { name: 'Organic Granola Bar', brand: 'Nature Valley', score: 80, nutrition: 75, taste: 80, consumer: 85, category: 'Snack Bars' },
       { name: 'Greek Yogurt Plain', brand: 'Chobani', score: 85, nutrition: 95, taste: 70, consumer: 90, category: 'Dairy' },
+      { name: 'Kind Dark Chocolate Nuts & Sea Salt Bar', brand: 'Kind', score: 82, nutrition: 78, taste: 85, consumer: 83, category: 'Snack Bars' },
+      { name: 'Clif Bar Chocolate Chip', brand: 'Clif Bar', score: 79, nutrition: 72, taste: 82, consumer: 84, category: 'Energy Bars' },
       
       // Additional Popular Items
       { name: 'Pringles Original', brand: 'Pringles', score: 63, nutrition: 20, taste: 88, consumer: 82, category: 'Snacks' },
-      { name: 'Kit Kat Bar', brand: 'Nestlé', score: 58, nutrition: 18, taste: 85, consumer: 92, category: 'Candy' },
-      { name: 'Snickers Bar', brand: 'Mars', score: 55, nutrition: 15, taste: 90, consumer: 88, category: 'Candy' },
-      { name: 'Goldfish Crackers', brand: 'Pepperidge Farm', score: 52, nutrition: 28, taste: 75, consumer: 85, category: 'Snacks' },
-      { name: 'Pop-Tarts Strawberry', brand: 'Kellogg\'s', score: 48, nutrition: 20, taste: 82, consumer: 78, category: 'Breakfast' },
-      { name: 'Nutella Hazelnut Spread', brand: 'Ferrero', score: 45, nutrition: 12, taste: 95, consumer: 88, category: 'Spreads' },
-      
-      // More Beverages
-      { name: 'Arizona Iced Tea', brand: 'Arizona', score: 42, nutrition: 15, taste: 75, consumer: 72, category: 'Beverages' },
-      { name: 'Monster Energy', brand: 'Monster', score: 58, nutrition: 25, taste: 78, consumer: 85, category: 'Energy Drinks' },
-      { name: 'Vitamin Water', brand: 'Glacéau', score: 65, nutrition: 45, taste: 70, consumer: 80, category: 'Enhanced Water' },
-      
-      // Ice Cream & Frozen
-      { name: 'Ben & Jerry\'s Chocolate Chip Cookie Dough', brand: 'Ben & Jerry\'s', score: 52, nutrition: 8, taste: 98, consumer: 92, category: 'Ice Cream' },
-      { name: 'Häagen-Dazs Vanilla', brand: 'Häagen-Dazs', score: 48, nutrition: 12, taste: 95, consumer: 88, category: 'Ice Cream' }
+      { name: 'Triscuit Original Crackers', brand: 'Triscuit', score: 71, nutrition: 58, taste: 75, consumer: 80, category: 'Crackers' },
+      { name: 'Wheat Thins Original', brand: 'Wheat Thins', score: 69, nutrition: 52, taste: 78, consumer: 82, category: 'Crackers' },
+      { name: 'Planters Dry Roasted Peanuts', brand: 'Planters', score: 76, nutrition: 68, taste: 82, consumer: 78, category: 'Nuts' },
+      { name: 'Sun-Maid Raisins', brand: 'Sun-Maid', score: 78, nutrition: 72, taste: 75, consumer: 85, category: 'Dried Fruit' }
     ];
 
     return popularBrandFoods.map((food, index) => ({
