@@ -569,7 +569,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                   >
                     <option value="all">All Foods</option>
                     <option value="healthy">Healthy (70+)</option>
-                    <option value="unhealthy">Unhealthy (<50)</option>
+                    <option value="unhealthy">Unhealthy {'(<50)'}</option>
                     <option value="recent">Recent (7 days)</option>
                   </select>
 
