@@ -113,19 +113,19 @@ class FoodDatabaseService {
     const lowercaseQuery = query.toLowerCase().trim();
     console.log(`🔍 Lowercase query: "${lowercaseQuery}"`);
     
-    // Get ALL foods from cache (this includes our Indian foods)
+    // Get ALL foods from cache (this includes our American foods)
     const allFoods = Array.from(this.cache.values());
     console.log(`📦 Total foods in cache: ${allFoods.length}`);
     
     // Log some sample foods to verify they're there
-    const indianFoods = allFoods.filter(food => 
-      food.category.toLowerCase().includes('indian') ||
-      food.name.toLowerCase().includes('atta') ||
-      food.name.toLowerCase().includes('frooti') ||
-      food.name.toLowerCase().includes('besan')
+    const americanFoods = allFoods.filter(food => 
+      food.category.toLowerCase().includes('american') ||
+      food.name.toLowerCase().includes('burger') ||
+      food.name.toLowerCase().includes('pizza') ||
+      food.name.toLowerCase().includes('fries')
     );
-    console.log(`🇮🇳 Indian foods found in cache: ${indianFoods.length}`);
-    indianFoods.forEach(food => {
+    console.log(`🇺🇸 American foods found in cache: ${americanFoods.length}`);
+    americanFoods.forEach(food => {
       console.log(`  - ${food.name} (${food.brand}) - Category: ${food.category}`);
     });
 
@@ -183,23 +183,22 @@ class FoodDatabaseService {
   private getSearchTerms(query: string): string[] {
     const terms = [query];
     
-    // Add aliases for common Indian food searches
+    // Add aliases for common American food searches
     const aliases: { [key: string]: string[] } = {
-      'atta': ['wheat flour', 'whole wheat', 'aashirvaad'],
-      'besan': ['chickpea flour', 'gram flour', 'everest'],
-      'frooti': ['mango drink', 'mango juice', 'parle agro', 'parle'],
-      'ragi': ['finger millet', 'organic india'],
-      'jowar': ['sorghum', 'patanjali'],
-      'flour': ['atta', 'besan', 'ragi', 'jowar', 'rice flour'],
-      'indian': ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul', 'namkeen', 'khakhra', 'gulab jamun'],
-      'mango': ['frooti', 'aam'],
-      'wheat': ['atta', 'aashirvaad'],
-      'chickpea': ['besan', 'chole'],
-      'drink': ['frooti', 'lassi', 'nimbu paani'],
-      'snack': ['namkeen', 'bhujia', 'khakhra', 'mixture'],
-      'sweet': ['gulab jamun', 'rasgulla'],
-      'biscuit': ['parle-g', 'marie'],
-      'ready': ['rajma', 'chole', 'mtr']
+      'burger': ['cheeseburger', 'hamburger', 'big mac', 'whopper', 'quarter pounder'],
+      'pizza': ['pepperoni', 'cheese pizza', 'margherita', 'supreme'],
+      'fries': ['french fries', 'potato fries', 'mcdonald\'s fries'],
+      'chicken': ['fried chicken', 'chicken nuggets', 'chicken sandwich', 'kfc'],
+      'sandwich': ['sub', 'subway', 'club sandwich', 'blt'],
+      'soda': ['coca cola', 'pepsi', 'sprite', 'dr pepper'],
+      'cereal': ['cheerios', 'frosted flakes', 'corn flakes', 'lucky charms'],
+      'chips': ['doritos', 'lays', 'cheetos', 'pringles'],
+      'ice cream': ['ben jerry', 'haagen dazs', 'vanilla', 'chocolate'],
+      'american': ['burger', 'pizza', 'fries', 'hot dog', 'bbq', 'mac cheese'],
+      'fast food': ['mcdonald', 'burger king', 'kfc', 'taco bell', 'subway'],
+      'snack': ['chips', 'crackers', 'cookies', 'pretzels'],
+      'breakfast': ['pancakes', 'waffles', 'cereal', 'bagel', 'muffin'],
+      'dessert': ['cake', 'pie', 'cookies', 'brownies', 'ice cream']
     };
     
     if (aliases[query]) {
@@ -550,8 +549,8 @@ class FoodDatabaseService {
       'coca-cola', 'pepsi', 'nestle', 'unilever', 'kraft', 'general mills',
       'kellogg', 'mars', 'ferrero', 'mondelez', 'danone', 'campbell',
       'heinz', 'oreo', 'lay\'s', 'doritos', 'cheetos', 'pringles',
-      'parle', 'britannia', 'amul', 'haldiram', 'bikaji', 'iffco', 'patanjali',
-      'aashirvaad', 'everest', 'organic india', 'mtr', 'lijjat', 'kissan', 'priya'
+      'mcdonald\'s', 'burger king', 'kfc', 'subway', 'taco bell',
+      'ben jerry', 'haagen dazs', 'cheerios', 'frosted flakes'
     ];
 
     const brandLower = brand.toLowerCase();
@@ -599,20 +598,20 @@ class FoodDatabaseService {
       if (a.category.toLowerCase().includes(queryLower)) aScore += 20;
       if (b.category.toLowerCase().includes(queryLower)) bScore += 20;
       
-      // Indian food boost for Indian-related queries
-      const isIndianQuery = ['atta', 'besan', 'frooti', 'indian', 'ragi', 'jowar', 'lassi', 'rajma', 'chole'].some(term => queryLower.includes(term));
-      if (isIndianQuery) {
-        const aIsIndian = a.category.toLowerCase().includes('indian') || 
-                         ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul'].some(brand => 
+      // American food boost for American-related queries
+      const isAmericanQuery = ['burger', 'pizza', 'fries', 'american', 'fast food', 'soda', 'chips'].some(term => queryLower.includes(term));
+      if (isAmericanQuery) {
+        const aIsAmerican = a.category.toLowerCase().includes('american') || 
+                         ['burger', 'pizza', 'fries', 'mcdonald', 'coca cola', 'pepsi', 'doritos', 'lays'].some(brand => 
                            a.brand?.toLowerCase().includes(brand) || a.name.toLowerCase().includes(brand)
                          );
-        const bIsIndian = b.category.toLowerCase().includes('indian') || 
-                         ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul'].some(brand => 
+        const bIsAmerican = b.category.toLowerCase().includes('american') || 
+                         ['burger', 'pizza', 'fries', 'mcdonald', 'coca cola', 'pepsi', 'doritos', 'lays'].some(brand => 
                            b.brand?.toLowerCase().includes(brand) || b.name.toLowerCase().includes(brand)
                          );
         
-        if (aIsIndian) aScore += 40;
-        if (bIsIndian) bScore += 40;
+        if (aIsAmerican) aScore += 40;
+        if (bIsAmerican) bScore += 40;
       }
       
       // If scores are equal, sort by Vish score
@@ -661,15 +660,511 @@ class FoodDatabaseService {
     }
   }
 
-  // Get local foods (fallback database) - COMPREHENSIVE INDIAN FOODS DATABASE
+  // Get local foods (fallback database) - POPULAR AMERICAN FOODS DATABASE
   private getLocalFoods(): FoodItem[] {
     return [
-      // Original foods
+      // 🇺🇸 POPULAR AMERICAN FAST FOOD & RESTAURANT CHAINS
       {
-        id: 'local_organic_granola_bar',
-        name: 'Organic Granola Bar',
+        id: 'american_big_mac',
+        name: 'Big Mac',
+        brand: 'McDonald\'s',
+        category: 'American Fast Food',
+        nutrition: {
+          calories: 563,
+          protein: 25,
+          carbohydrates: 45,
+          fat: 33,
+          fiber: 3,
+          sugar: 9,
+          sodium: 1040,
+          saturatedFat: 11,
+          transFat: 1,
+          cholesterol: 85,
+          vitamins: { 'Vitamin A': 4, 'Vitamin C': 2 },
+          minerals: { calcium: 200, iron: 4.5 }
+        },
+        ingredients: ['Sesame seed bun', 'Beef patties', 'Big Mac sauce', 'Lettuce', 'Cheese', 'Pickles', 'Onions'],
+        allergens: ['Contains gluten', 'Contains milk', 'Contains eggs', 'Contains sesame'],
+        servingSize: '1 sandwich (230g)',
+        servingsPerContainer: 1,
+        healthScore: 35,
+        tasteScore: 88,
+        consumerScore: 92,
+        vishScore: 72,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_whopper',
+        name: 'Whopper',
+        brand: 'Burger King',
+        category: 'American Fast Food',
+        nutrition: {
+          calories: 657,
+          protein: 28,
+          carbohydrates: 49,
+          fat: 40,
+          fiber: 3,
+          sugar: 11,
+          sodium: 980,
+          saturatedFat: 13,
+          transFat: 1.5,
+          cholesterol: 90,
+          vitamins: { 'Vitamin A': 6, 'Vitamin C': 15 },
+          minerals: { calcium: 150, iron: 5.2 }
+        },
+        ingredients: ['Sesame seed bun', '1/4 lb beef patty', 'Tomatoes', 'Lettuce', 'Mayonnaise', 'Ketchup', 'Pickles', 'Onions'],
+        allergens: ['Contains gluten', 'Contains eggs', 'Contains sesame'],
+        servingSize: '1 sandwich (270g)',
+        servingsPerContainer: 1,
+        healthScore: 32,
+        tasteScore: 85,
+        consumerScore: 88,
+        vishScore: 68,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_kfc_chicken',
+        name: 'Original Recipe Chicken',
+        brand: 'KFC',
+        category: 'American Fast Food',
+        nutrition: {
+          calories: 320,
+          protein: 29,
+          carbohydrates: 8,
+          fat: 20,
+          fiber: 1,
+          sugar: 0,
+          sodium: 540,
+          saturatedFat: 6,
+          transFat: 0,
+          cholesterol: 115,
+          vitamins: { 'Vitamin B6': 0.5, 'Niacin': 14 },
+          minerals: { phosphorus: 235, selenium: 22 }
+        },
+        ingredients: ['Chicken', 'Wheat flour', '11 herbs and spices', 'Salt', 'Vegetable oil'],
+        allergens: ['Contains gluten'],
+        servingSize: '1 piece (85g)',
+        servingsPerContainer: 1,
+        healthScore: 55,
+        tasteScore: 90,
+        consumerScore: 85,
+        vishScore: 77,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+
+      // 🍕 AMERICAN PIZZA
+      {
+        id: 'american_pepperoni_pizza',
+        name: 'Pepperoni Pizza',
+        brand: 'Domino\'s',
+        category: 'American Pizza',
+        nutrition: {
+          calories: 298,
+          protein: 13,
+          carbohydrates: 36,
+          fat: 11,
+          fiber: 2,
+          sugar: 4,
+          sodium: 760,
+          saturatedFat: 5,
+          transFat: 0,
+          cholesterol: 25,
+          vitamins: { 'Vitamin A': 8, 'Vitamin C': 12 },
+          minerals: { calcium: 180, iron: 2.8 }
+        },
+        ingredients: ['Pizza dough', 'Tomato sauce', 'Mozzarella cheese', 'Pepperoni', 'Italian seasoning'],
+        allergens: ['Contains gluten', 'Contains milk'],
+        servingSize: '1 slice (107g)',
+        servingsPerContainer: 8,
+        healthScore: 45,
+        tasteScore: 92,
+        consumerScore: 90,
+        vishScore: 76,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+
+      // 🥤 AMERICAN BEVERAGES
+      {
+        id: 'american_coca_cola',
+        name: 'Coca-Cola Classic',
+        brand: 'Coca-Cola',
+        category: 'American Beverages',
+        nutrition: {
+          calories: 140,
+          protein: 0,
+          carbohydrates: 39,
+          fat: 0,
+          fiber: 0,
+          sugar: 39,
+          sodium: 45,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Carbonated water', 'High fructose corn syrup', 'Caramel color', 'Phosphoric acid', 'Natural flavors', 'Caffeine'],
+        allergens: [],
+        servingSize: '12 fl oz (355ml)',
+        servingsPerContainer: 1,
+        healthScore: 15,
+        tasteScore: 85,
+        consumerScore: 95,
+        vishScore: 65,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_pepsi',
+        name: 'Pepsi Cola',
+        brand: 'PepsiCo',
+        category: 'American Beverages',
+        nutrition: {
+          calories: 150,
+          protein: 0,
+          carbohydrates: 41,
+          fat: 0,
+          fiber: 0,
+          sugar: 41,
+          sodium: 30,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Carbonated water', 'High fructose corn syrup', 'Caramel color', 'Sugar', 'Phosphoric acid', 'Caffeine', 'Citric acid', 'Natural flavor'],
+        allergens: [],
+        servingSize: '12 fl oz (355ml)',
+        servingsPerContainer: 1,
+        healthScore: 12,
+        tasteScore: 82,
+        consumerScore: 90,
+        vishScore: 61,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+
+      // 🍟 AMERICAN SNACKS
+      {
+        id: 'american_lays_chips',
+        name: 'Classic Potato Chips',
+        brand: 'Lay\'s',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 160,
+          protein: 2,
+          carbohydrates: 15,
+          fat: 10,
+          fiber: 1,
+          sugar: 0,
+          sodium: 170,
+          saturatedFat: 1.5,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: { 'Vitamin C': 9.6 },
+          minerals: { potassium: 350 }
+        },
+        ingredients: ['Potatoes', 'Vegetable oil', 'Salt'],
+        allergens: [],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 5,
+        healthScore: 25,
+        tasteScore: 85,
+        consumerScore: 88,
+        vishScore: 66,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_doritos',
+        name: 'Nacho Cheese Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 150,
+          protein: 2,
+          carbohydrates: 18,
+          fat: 8,
+          fiber: 1,
+          sugar: 1,
+          sodium: 210,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Salt', 'Maltodextrin', 'Natural flavors'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        healthScore: 28,
+        tasteScore: 90,
+        consumerScore: 92,
+        vishScore: 70,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_cheetos',
+        name: 'Crunchy Cheetos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 160,
+          protein: 2,
+          carbohydrates: 13,
+          fat: 10,
+          fiber: 1,
+          sugar: 1,
+          sodium: 250,
+          saturatedFat: 1.5,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Enriched corn meal', 'Vegetable oil', 'Cheese seasoning', 'Salt', 'Whey', 'Monosodium glutamate'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 8,
+        healthScore: 22,
+        tasteScore: 88,
+        consumerScore: 85,
+        vishScore: 65,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+
+      // 🥣 AMERICAN BREAKFAST CEREALS
+      {
+        id: 'american_cheerios',
+        name: 'Honey Nut Cheerios',
+        brand: 'General Mills',
+        category: 'American Breakfast',
+        nutrition: {
+          calories: 110,
+          protein: 3,
+          carbohydrates: 22,
+          fat: 2,
+          fiber: 2,
+          sugar: 9,
+          sodium: 160,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: { 'Vitamin A': 10, 'Vitamin C': 10, 'Iron': 45 },
+          minerals: { calcium: 100, iron: 8.1 }
+        },
+        ingredients: ['Whole grain oats', 'Sugar', 'Oat bran', 'Corn starch', 'Honey', 'Brown sugar syrup', 'Salt', 'Natural almond flavor'],
+        allergens: ['May contain almonds'],
+        servingSize: '3/4 cup (28g)',
+        servingsPerContainer: 12,
+        healthScore: 65,
+        tasteScore: 85,
+        consumerScore: 90,
+        vishScore: 80,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_frosted_flakes',
+        name: 'Frosted Flakes',
+        brand: 'Kellogg\'s',
+        category: 'American Breakfast',
+        nutrition: {
+          calories: 110,
+          protein: 1,
+          carbohydrates: 27,
+          fat: 0,
+          fiber: 1,
+          sugar: 10,
+          sodium: 140,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: { 'Vitamin A': 10, 'Vitamin C': 10, 'Iron': 25 },
+          minerals: { calcium: 0, iron: 4.5 }
+        },
+        ingredients: ['Milled corn', 'Sugar', 'Malt flavor', 'Salt', 'BHT for freshness'],
+        allergens: [],
+        servingSize: '3/4 cup (29g)',
+        servingsPerContainer: 11,
+        healthScore: 35,
+        tasteScore: 88,
+        consumerScore: 85,
+        vishScore: 69,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+
+      // 🍦 AMERICAN DESSERTS & ICE CREAM
+      {
+        id: 'american_ben_jerry_vanilla',
+        name: 'Vanilla Ice Cream',
+        brand: 'Ben & Jerry\'s',
+        category: 'American Desserts',
+        nutrition: {
+          calories: 250,
+          protein: 4,
+          carbohydrates: 23,
+          fat: 16,
+          fiber: 0,
+          sugar: 21,
+          sodium: 50,
+          saturatedFat: 10,
+          transFat: 0,
+          cholesterol: 65,
+          vitamins: { 'Vitamin A': 15 },
+          minerals: { calcium: 150 }
+        },
+        ingredients: ['Cream', 'Skim milk', 'Liquid sugar', 'Water', 'Egg yolks', 'Natural vanilla flavor'],
+        allergens: ['Contains milk', 'Contains eggs'],
+        servingSize: '1/2 cup (104g)',
+        servingsPerContainer: 4,
+        healthScore: 35,
+        tasteScore: 92,
+        consumerScore: 88,
+        vishScore: 72,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_oreo_cookies',
+        name: 'Oreo Cookies',
+        brand: 'Nabisco',
+        category: 'American Desserts',
+        nutrition: {
+          calories: 160,
+          protein: 2,
+          carbohydrates: 25,
+          fat: 7,
+          fiber: 1,
+          sugar: 14,
+          sodium: 135,
+          saturatedFat: 2,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: { iron: 1.1 }
+        },
+        ingredients: ['Unbleached enriched flour', 'Sugar', 'Palm oil', 'Cocoa', 'High fructose corn syrup', 'Leavening', 'Salt', 'Soy lecithin', 'Vanilla'],
+        allergens: ['Contains wheat', 'Contains soy'],
+        servingSize: '3 cookies (34g)',
+        servingsPerContainer: 15,
+        healthScore: 25,
+        tasteScore: 95,
+        consumerScore: 95,
+        vishScore: 72,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+
+      // 🥪 AMERICAN SANDWICHES & SUBS
+      {
+        id: 'american_subway_italian_bmt',
+        name: 'Italian B.M.T.',
+        brand: 'Subway',
+        category: 'American Sandwiches',
+        nutrition: {
+          calories: 410,
+          protein: 19,
+          carbohydrates: 44,
+          fat: 16,
+          fiber: 5,
+          sugar: 7,
+          sodium: 1260,
+          saturatedFat: 6,
+          transFat: 0,
+          cholesterol: 55,
+          vitamins: { 'Vitamin A': 20, 'Vitamin C': 25 },
+          minerals: { calcium: 260, iron: 4.3 }
+        },
+        ingredients: ['Italian bread', 'Pepperoni', 'Salami', 'Ham', 'Provolone cheese', 'Lettuce', 'Tomatoes', 'Onions', 'Oil', 'Vinegar'],
+        allergens: ['Contains gluten', 'Contains milk'],
+        servingSize: '6-inch sub (230g)',
+        servingsPerContainer: 1,
+        healthScore: 55,
+        tasteScore: 85,
+        consumerScore: 82,
+        vishScore: 74,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+
+      // 🌮 AMERICAN-MEXICAN FUSION
+      {
+        id: 'american_taco_bell_crunchy_taco',
+        name: 'Crunchy Taco',
+        brand: 'Taco Bell',
+        category: 'American Fast Food',
+        nutrition: {
+          calories: 170,
+          protein: 8,
+          carbohydrates: 13,
+          fat: 10,
+          fiber: 3,
+          sugar: 1,
+          sodium: 310,
+          saturatedFat: 3.5,
+          transFat: 0,
+          cholesterol: 25,
+          vitamins: { 'Vitamin A': 4, 'Vitamin C': 2 },
+          minerals: { calcium: 80, iron: 1.4 }
+        },
+        ingredients: ['Corn taco shell', 'Seasoned beef', 'Lettuce', 'Cheddar cheese'],
+        allergens: ['Contains milk'],
+        servingSize: '1 taco (78g)',
+        servingsPerContainer: 1,
+        healthScore: 50,
+        tasteScore: 80,
+        consumerScore: 85,
+        vishScore: 72,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+
+      // 🍎 HEALTHIER AMERICAN OPTIONS
+      {
+        id: 'american_greek_yogurt',
+        name: 'Greek Yogurt Plain',
+        brand: 'Chobani',
+        category: 'American Dairy',
+        nutrition: {
+          calories: 100,
+          protein: 18,
+          carbohydrates: 6,
+          fat: 0,
+          fiber: 0,
+          sugar: 4,
+          sodium: 65,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 10,
+          vitamins: { 'Vitamin B12': 1.1 },
+          minerals: { calcium: 200 }
+        },
+        ingredients: ['Cultured pasteurized nonfat milk', 'Live and active cultures'],
+        allergens: ['Contains milk'],
+        servingSize: '1 container (170g)',
+        servingsPerContainer: 1,
+        healthScore: 95,
+        tasteScore: 70,
+        consumerScore: 85,
+        vishScore: 83,
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_granola_bar',
+        name: 'Crunchy Granola Bar',
         brand: 'Nature Valley',
-        category: 'Snack Bars',
+        category: 'American Snacks',
         nutrition: {
           calories: 190,
           protein: 4,
@@ -695,649 +1190,65 @@ class FoodDatabaseService {
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
-      {
-        id: 'local_greek_yogurt',
-        name: 'Greek Yogurt Plain',
-        brand: 'Chobani',
-        category: 'Dairy',
-        nutrition: {
-          calories: 100,
-          protein: 18,
-          carbohydrates: 6,
-          fat: 0,
-          fiber: 0,
-          sugar: 4,
-          sodium: 65,
-          saturatedFat: 0,
-          transFat: 0,
-          cholesterol: 10,
-          vitamins: { 'Vitamin B12': 1.1 },
-          minerals: { calcium: 200 }
-        },
-        ingredients: ['Cultured pasteurized nonfat milk', 'Live and active cultures'],
-        allergens: ['Contains milk'],
-        servingSize: '1 container (170g)',
-        servingsPerContainer: 1,
-        healthScore: 95,
-        tasteScore: 70,
-        consumerScore: 90,
-        vishScore: 85,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'local_potato_chips',
-        name: 'Classic Potato Chips',
-        brand: 'Lay\'s',
-        category: 'Snacks',
-        nutrition: {
-          calories: 160,
-          protein: 2,
-          carbohydrates: 15,
-          fat: 10,
-          fiber: 1,
-          sugar: 0,
-          sodium: 170,
-          saturatedFat: 1.5,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin C': 9.6 },
-          minerals: { potassium: 350 }
-        },
-        ingredients: ['Potatoes', 'Vegetable oil', 'Salt'],
-        allergens: [],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 5,
-        healthScore: 25,
-        tasteScore: 85,
-        consumerScore: 80,
-        vishScore: 63,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
 
-      // 🇮🇳 COMPREHENSIVE INDIAN FOODS DATABASE 🇮🇳
-
-      // INDIAN FLOURS & GRAINS
+      // 🇮🇳 SOME POPULAR INDIAN FOODS (REDUCED)
       {
-        id: 'indian_wheat_atta',
-        name: 'Whole Wheat Atta Flour',
-        brand: 'Aashirvaad',
-        category: 'Indian Flour & Grains',
+        id: 'indian_butter_chicken',
+        name: 'Butter Chicken',
+        brand: 'Tasty Bite',
+        category: 'Indian Ready-to-Eat',
         nutrition: {
-          calories: 340,
-          protein: 12,
-          carbohydrates: 72,
-          fat: 1.5,
-          fiber: 12,
-          sugar: 2,
-          sodium: 2,
-          saturatedFat: 0.3,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin B1': 0.4, 'Vitamin B3': 5.1, 'Folate': 44 },
-          minerals: { iron: 3.6, magnesium: 126, phosphorus: 288, zinc: 2.6 }
-        },
-        ingredients: ['100% Whole wheat flour'],
-        allergens: ['Contains gluten'],
-        servingSize: '100g',
-        servingsPerContainer: 50,
-        healthScore: 88,
-        tasteScore: 75,
-        consumerScore: 92,
-        vishScore: 85,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_besan_flour',
-        name: 'Besan (Chickpea Flour)',
-        brand: 'Everest',
-        category: 'Indian Flour & Grains',
-        nutrition: {
-          calories: 387,
-          protein: 22,
-          carbohydrates: 57,
-          fat: 6,
-          fiber: 11,
-          sugar: 11,
-          sodium: 64,
-          saturatedFat: 1.4,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin B6': 0.5, 'Folate': 557 },
-          minerals: { iron: 4.9, magnesium: 166, phosphorus: 318, potassium: 846 }
-        },
-        ingredients: ['100% Ground chickpeas'],
-        allergens: ['May contain traces of nuts'],
-        servingSize: '100g',
-        servingsPerContainer: 10,
-        healthScore: 92,
-        tasteScore: 78,
-        consumerScore: 85,
-        vishScore: 85,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_rice_flour',
-        name: 'Rice Flour',
-        brand: '24 Mantra Organic',
-        category: 'Indian Flour & Grains',
-        nutrition: {
-          calories: 366,
-          protein: 6,
-          carbohydrates: 80,
-          fat: 1.4,
-          fiber: 2.4,
-          sugar: 0.1,
-          sodium: 1,
-          saturatedFat: 0.4,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin B3': 1.6 },
-          minerals: { iron: 0.8, magnesium: 35, phosphorus: 98 }
-        },
-        ingredients: ['100% Ground rice'],
-        allergens: ['Gluten-free'],
-        servingSize: '100g',
-        servingsPerContainer: 10,
-        healthScore: 75,
-        tasteScore: 70,
-        consumerScore: 80,
-        vishScore: 75,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_ragi_flour',
-        name: 'Ragi Flour (Finger Millet)',
-        brand: 'Organic India',
-        category: 'Indian Flour & Grains',
-        nutrition: {
-          calories: 328,
-          protein: 7.3,
-          carbohydrates: 72,
-          fat: 1.3,
-          fiber: 3.6,
-          sugar: 0.6,
-          sodium: 11,
-          saturatedFat: 0.2,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin B1': 0.4, 'Vitamin B3': 1.1 },
-          minerals: { calcium: 344, iron: 3.9, magnesium: 137, phosphorus: 283 }
-        },
-        ingredients: ['100% Finger millet flour'],
-        allergens: ['Gluten-free'],
-        servingSize: '100g',
-        servingsPerContainer: 5,
-        healthScore: 90,
-        tasteScore: 72,
-        consumerScore: 78,
-        vishScore: 80,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_jowar_flour',
-        name: 'Jowar Flour (Sorghum)',
-        brand: 'Patanjali',
-        category: 'Indian Flour & Grains',
-        nutrition: {
-          calories: 329,
-          protein: 10.4,
-          carbohydrates: 70.7,
-          fat: 1.9,
-          fiber: 9.7,
-          sugar: 2.5,
-          sodium: 2,
-          saturatedFat: 0.6,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin B1': 0.2, 'Vitamin B3': 2.9 },
-          minerals: { iron: 9.9, magnesium: 171, phosphorus: 222, potassium: 130 }
-        },
-        ingredients: ['100% Sorghum flour'],
-        allergens: ['Gluten-free'],
-        servingSize: '100g',
-        servingsPerContainer: 10,
-        healthScore: 88,
-        tasteScore: 74,
-        consumerScore: 76,
-        vishScore: 79,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // INDIAN BEVERAGES
-      {
-        id: 'indian_frooti_mango',
-        name: 'Frooti Mango Drink',
-        brand: 'Parle Agro',
-        category: 'Indian Beverages',
-        nutrition: {
-          calories: 60,
-          protein: 0,
-          carbohydrates: 15,
-          fat: 0,
-          fiber: 0,
-          sugar: 14,
-          sodium: 10,
-          saturatedFat: 0,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin C': 30 },
-          minerals: {}
-        },
-        ingredients: ['Water', 'Sugar', 'Mango pulp (8%)', 'Acidity regulator (330)', 'Natural identical flavoring substances', 'Vitamin C', 'Preservative (211)', 'Antioxidant (300)'],
-        allergens: [],
-        servingSize: '200ml',
-        servingsPerContainer: 1,
-        healthScore: 35,
-        tasteScore: 88,
-        consumerScore: 92,
-        vishScore: 72,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_lassi_sweet',
-        name: 'Sweet Lassi',
-        brand: 'Amul',
-        category: 'Indian Beverages',
-        nutrition: {
-          calories: 89,
-          protein: 3.1,
-          carbohydrates: 13.8,
-          fat: 2.5,
-          fiber: 0,
-          sugar: 13.8,
-          sodium: 46,
-          saturatedFat: 1.6,
-          transFat: 0,
-          cholesterol: 10,
-          vitamins: { 'Vitamin B12': 0.4, 'Riboflavin': 0.2 },
-          minerals: { calcium: 120, phosphorus: 95 }
-        },
-        ingredients: ['Cultured buttermilk', 'Sugar', 'Stabilizer (412)', 'Natural flavoring'],
-        allergens: ['Contains milk'],
-        servingSize: '200ml',
-        servingsPerContainer: 1,
-        healthScore: 65,
-        tasteScore: 85,
-        consumerScore: 88,
-        vishScore: 79,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_nimbu_paani',
-        name: 'Nimbu Paani (Lemon Water)',
-        brand: 'Real',
-        category: 'Indian Beverages',
-        nutrition: {
-          calories: 45,
-          protein: 0.1,
-          carbohydrates: 11.2,
-          fat: 0,
-          fiber: 0.1,
-          sugar: 10.8,
-          sodium: 15,
-          saturatedFat: 0,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin C': 25 },
-          minerals: { potassium: 80 }
-        },
-        ingredients: ['Water', 'Sugar', 'Lemon juice (5%)', 'Salt', 'Acidity regulator (330)', 'Natural lemon flavor', 'Preservative (211)'],
-        allergens: [],
-        servingSize: '200ml',
-        servingsPerContainer: 1,
-        healthScore: 55,
-        tasteScore: 82,
-        consumerScore: 78,
-        vishScore: 72,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // INDIAN SNACKS
-      {
-        id: 'indian_namkeen_mixture',
-        name: 'Namkeen Mixture',
-        brand: 'Haldiram\'s',
-        category: 'Indian Snacks',
-        nutrition: {
-          calories: 520,
+          calories: 280,
           protein: 15,
-          carbohydrates: 45,
-          fat: 32,
-          fiber: 8,
-          sugar: 3,
-          sodium: 850,
+          carbohydrates: 18,
+          fat: 18,
+          fiber: 2,
+          sugar: 12,
+          sodium: 680,
           saturatedFat: 8,
           transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin E': 2.5 },
-          minerals: { iron: 4.2, magnesium: 85 }
+          cholesterol: 45,
+          vitamins: { 'Vitamin A': 15, 'Vitamin C': 8 },
+          minerals: { iron: 2.5, calcium: 120 }
         },
-        ingredients: ['Gram flour noodles', 'Peanuts', 'Green peas', 'Curry leaves', 'Vegetable oil', 'Salt', 'Spices', 'Turmeric'],
-        allergens: ['Contains nuts', 'May contain sesame'],
-        servingSize: '30g',
-        servingsPerContainer: 10,
-        healthScore: 45,
-        tasteScore: 92,
-        consumerScore: 90,
-        vishScore: 76,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_bhujia_sev',
-        name: 'Aloo Bhujia',
-        brand: 'Bikaji',
-        category: 'Indian Snacks',
-        nutrition: {
-          calories: 545,
-          protein: 12,
-          carbohydrates: 42,
-          fat: 36,
-          fiber: 6,
-          sugar: 2,
-          sodium: 920,
-          saturatedFat: 9,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin A': 15 },
-          minerals: { iron: 3.8, potassium: 280 }
-        },
-        ingredients: ['Gram flour', 'Potato flakes', 'Vegetable oil', 'Salt', 'Red chili powder', 'Turmeric', 'Asafoetida', 'Spices'],
-        allergens: ['May contain nuts'],
-        servingSize: '25g',
-        servingsPerContainer: 8,
-        healthScore: 38,
-        tasteScore: 90,
-        consumerScore: 88,
-        vishScore: 72,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_khakhra_methi',
-        name: 'Methi Khakhra',
-        brand: 'Lijjat',
-        category: 'Indian Snacks',
-        nutrition: {
-          calories: 380,
-          protein: 14,
-          carbohydrates: 65,
-          fat: 8,
-          fiber: 12,
-          sugar: 2,
-          sodium: 650,
-          saturatedFat: 2,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin B1': 0.3, 'Folate': 25 },
-          minerals: { iron: 6.2, calcium: 180, magnesium: 95 }
-        },
-        ingredients: ['Whole wheat flour', 'Fenugreek leaves', 'Vegetable oil', 'Salt', 'Turmeric', 'Red chili powder', 'Cumin'],
-        allergens: ['Contains gluten'],
-        servingSize: '20g (1 piece)',
-        servingsPerContainer: 10,
-        healthScore: 78,
-        tasteScore: 85,
-        consumerScore: 82,
-        vishScore: 82,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // INDIAN SWEETS & DESSERTS
-      {
-        id: 'indian_gulab_jamun',
-        name: 'Gulab Jamun',
-        brand: 'Haldiram\'s',
-        category: 'Indian Sweets',
-        nutrition: {
-          calories: 387,
-          protein: 6,
-          carbohydrates: 52,
-          fat: 18,
-          fiber: 1,
-          sugar: 48,
-          sodium: 45,
-          saturatedFat: 11,
-          transFat: 0,
-          cholesterol: 25,
-          vitamins: { 'Vitamin A': 8 },
-          minerals: { calcium: 150, phosphorus: 120 }
-        },
-        ingredients: ['Milk solids', 'Sugar', 'Refined flour', 'Ghee', 'Cardamom', 'Rose water', 'Vegetable oil'],
-        allergens: ['Contains milk', 'Contains gluten'],
-        servingSize: '50g (2 pieces)',
-        servingsPerContainer: 4,
-        healthScore: 25,
-        tasteScore: 95,
-        consumerScore: 92,
-        vishScore: 71,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_rasgulla',
-        name: 'Rasgulla',
-        brand: 'Bengali Sweet House',
-        category: 'Indian Sweets',
-        nutrition: {
-          calories: 186,
-          protein: 4,
-          carbohydrates: 32,
-          fat: 4,
-          fiber: 0,
-          sugar: 30,
-          sodium: 25,
-          saturatedFat: 2.5,
-          transFat: 0,
-          cholesterol: 15,
-          vitamins: { 'Vitamin B12': 0.2 },
-          minerals: { calcium: 120, phosphorus: 95 }
-        },
-        ingredients: ['Cottage cheese', 'Sugar', 'Water', 'Cardamom', 'Rose water'],
+        ingredients: ['Chicken', 'Tomato puree', 'Cream', 'Onions', 'Ginger', 'Garlic', 'Spices', 'Butter'],
         allergens: ['Contains milk'],
-        servingSize: '50g (2 pieces)',
-        servingsPerContainer: 4,
-        healthScore: 35,
-        tasteScore: 88,
+        servingSize: '1 package (285g)',
+        servingsPerContainer: 1,
+        healthScore: 60,
+        tasteScore: 90,
         consumerScore: 85,
-        vishScore: 69,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // INDIAN READY-TO-EAT
-      {
-        id: 'indian_rajma_ready',
-        name: 'Ready to Eat Rajma',
-        brand: 'MTR',
-        category: 'Indian Ready-to-Eat',
-        nutrition: {
-          calories: 142,
-          protein: 8,
-          carbohydrates: 22,
-          fat: 3,
-          fiber: 6,
-          sugar: 4,
-          sodium: 580,
-          saturatedFat: 0.8,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin C': 5, 'Folate': 45 },
-          minerals: { iron: 2.8, potassium: 350, magnesium: 65 }
-        },
-        ingredients: ['Red kidney beans', 'Water', 'Onions', 'Tomatoes', 'Vegetable oil', 'Ginger-garlic paste', 'Spices', 'Salt'],
-        allergens: [],
-        servingSize: '300g (1 pack)',
-        servingsPerContainer: 1,
-        healthScore: 82,
-        tasteScore: 85,
-        consumerScore: 88,
-        vishScore: 85,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_chole_ready',
-        name: 'Ready to Eat Chole',
-        brand: 'ITC Aashirvaad',
-        category: 'Indian Ready-to-Eat',
-        nutrition: {
-          calories: 156,
-          protein: 9,
-          carbohydrates: 24,
-          fat: 4,
-          fiber: 7,
-          sugar: 5,
-          sodium: 620,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin B6': 0.3, 'Folate': 55 },
-          minerals: { iron: 3.2, potassium: 380, magnesium: 75 }
-        },
-        ingredients: ['Chickpeas', 'Water', 'Onions', 'Tomatoes', 'Vegetable oil', 'Ginger-garlic paste', 'Spices', 'Salt'],
-        allergens: [],
-        servingSize: '300g (1 pack)',
-        servingsPerContainer: 1,
-        healthScore: 85,
-        tasteScore: 88,
-        consumerScore: 90,
-        vishScore: 88,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // INDIAN BISCUITS & COOKIES
-      {
-        id: 'indian_parle_g_biscuit',
-        name: 'Parle-G Glucose Biscuits',
-        brand: 'Parle',
-        category: 'Indian Biscuits',
-        nutrition: {
-          calories: 456,
-          protein: 7,
-          carbohydrates: 75,
-          fat: 14,
-          fiber: 2,
-          sugar: 22,
-          sodium: 350,
-          saturatedFat: 6,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin B1': 0.2, 'Iron': 12 },
-          minerals: { calcium: 50, iron: 12 }
-        },
-        ingredients: ['Wheat flour', 'Sugar', 'Edible vegetable oil', 'Invert syrup', 'Baking powder', 'Salt', 'Milk solids', 'Emulsifiers'],
-        allergens: ['Contains gluten', 'Contains milk'],
-        servingSize: '25g (4-5 biscuits)',
-        servingsPerContainer: 20,
-        healthScore: 45,
-        tasteScore: 85,
-        consumerScore: 95,
-        vishScore: 75,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_marie_biscuit',
-        name: 'Marie Gold Biscuits',
-        brand: 'Britannia',
-        category: 'Indian Biscuits',
-        nutrition: {
-          calories: 443,
-          protein: 8,
-          carbohydrates: 70,
-          fat: 15,
-          fiber: 3,
-          sugar: 18,
-          sodium: 420,
-          saturatedFat: 7,
-          transFat: 0,
-          cholesterol: 5,
-          vitamins: { 'Vitamin B1': 0.3, 'Iron': 10 },
-          minerals: { calcium: 80, iron: 10 }
-        },
-        ingredients: ['Wheat flour', 'Sugar', 'Edible vegetable oil', 'Milk solids', 'Salt', 'Baking powder', 'Emulsifiers', 'Dough conditioner'],
-        allergens: ['Contains gluten', 'Contains milk'],
-        servingSize: '20g (3-4 biscuits)',
-        servingsPerContainer: 25,
-        healthScore: 48,
-        tasteScore: 80,
-        consumerScore: 88,
-        vishScore: 72,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // INDIAN SPICES & CONDIMENTS
-      {
-        id: 'indian_pickle_mango',
-        name: 'Mango Pickle (Aam ka Achaar)',
-        brand: 'Priya',
-        category: 'Indian Condiments',
-        nutrition: {
-          calories: 165,
-          protein: 2,
-          carbohydrates: 8,
-          fat: 15,
-          fiber: 3,
-          sugar: 5,
-          sodium: 1200,
-          saturatedFat: 2,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin A': 20, 'Vitamin C': 15 },
-          minerals: { iron: 1.5, potassium: 180 }
-        },
-        ingredients: ['Raw mango', 'Mustard oil', 'Salt', 'Red chili powder', 'Turmeric', 'Fenugreek seeds', 'Mustard seeds', 'Asafoetida'],
-        allergens: ['Contains mustard'],
-        servingSize: '15g (1 tablespoon)',
-        servingsPerContainer: 33,
-        healthScore: 55,
-        tasteScore: 92,
-        consumerScore: 88,
         vishScore: 78,
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
       {
-        id: 'indian_chutney_mint',
-        name: 'Mint Chutney',
-        brand: 'Kissan',
-        category: 'Indian Condiments',
+        id: 'indian_basmati_rice',
+        name: 'Basmati Rice',
+        brand: 'Tilda',
+        category: 'Indian Grains',
         nutrition: {
-          calories: 85,
-          protein: 1.5,
-          carbohydrates: 18,
-          fat: 1,
-          fiber: 2,
-          sugar: 15,
-          sodium: 450,
-          saturatedFat: 0.2,
+          calories: 160,
+          protein: 3,
+          carbohydrates: 36,
+          fat: 0,
+          fiber: 1,
+          sugar: 0,
+          sodium: 0,
+          saturatedFat: 0,
           transFat: 0,
           cholesterol: 0,
-          vitamins: { 'Vitamin C': 25, 'Vitamin A': 10 },
-          minerals: { iron: 1.2, potassium: 120 }
+          vitamins: { 'Thiamin': 0.2 },
+          minerals: { iron: 1.2 }
         },
-        ingredients: ['Mint leaves', 'Sugar', 'Water', 'Green chilies', 'Ginger', 'Salt', 'Acetic acid', 'Preservatives'],
+        ingredients: ['Basmati rice'],
         allergens: [],
-        servingSize: '20g (1 tablespoon)',
-        servingsPerContainer: 25,
-        healthScore: 62,
-        tasteScore: 88,
-        consumerScore: 82,
-        vishScore: 77,
+        servingSize: '1/4 cup dry (45g)',
+        servingsPerContainer: 10,
+        healthScore: 75,
+        tasteScore: 85,
+        consumerScore: 80,
+        vishScore: 80,
         lastUpdated: new Date().toISOString(),
         source: 'database'
       }
@@ -1363,23 +1274,23 @@ class FoodDatabaseService {
     // Save to storage
     this.saveCacheToStorage();
     
-    // Verify Indian foods are properly added
-    const indianFoods = localFoods.filter(food => 
-      food.category.toLowerCase().includes('indian') ||
-      food.name.toLowerCase().includes('atta') ||
-      food.name.toLowerCase().includes('frooti') ||
-      food.name.toLowerCase().includes('besan')
+    // Verify American foods are properly added
+    const americanFoods = localFoods.filter(food => 
+      food.category.toLowerCase().includes('american') ||
+      food.name.toLowerCase().includes('burger') ||
+      food.name.toLowerCase().includes('pizza') ||
+      food.name.toLowerCase().includes('coca')
     );
     
-    console.log(`🇮🇳 INDIAN FOODS VERIFICATION:`);
-    console.log(`   Total Indian foods: ${indianFoods.length}`);
-    indianFoods.forEach((food, index) => {
+    console.log(`🇺🇸 AMERICAN FOODS VERIFICATION:`);
+    console.log(`   Total American foods: ${americanFoods.length}`);
+    americanFoods.forEach((food, index) => {
       console.log(`   ${index + 1}. ${food.name} (${food.brand}) - ID: ${food.id}`);
     });
     
     console.log(`🎉 DATABASE INITIALIZATION COMPLETE!`);
     console.log(`   Total foods in cache: ${this.cache.size}`);
-    console.log(`   Indian foods: ${indianFoods.length}`);
+    console.log(`   American foods: ${americanFoods.length}`);
     console.log(`   Cache saved to localStorage: ✅`);
   }
 
@@ -1420,13 +1331,27 @@ class FoodDatabaseService {
       .slice(0, limit);
   }
 
+  // Get American foods specifically
+  getAmericanFoods(limit: number = 20): FoodItem[] {
+    const foods = Array.from(this.cache.values());
+    return foods
+      .filter(food => 
+        food.category.toLowerCase().includes('american') ||
+        ['burger', 'pizza', 'fries', 'coca cola', 'pepsi', 'mcdonald', 'kfc', 'subway'].some(brand => 
+          food.brand?.toLowerCase().includes(brand) || food.name.toLowerCase().includes(brand)
+        )
+      )
+      .sort((a, b) => b.vishScore - a.vishScore)
+      .slice(0, limit);
+  }
+
   // Get Indian foods specifically
-  getIndianFoods(limit: number = 20): FoodItem[] {
+  getIndianFoods(limit: number = 10): FoodItem[] {
     const foods = Array.from(this.cache.values());
     return foods
       .filter(food => 
         food.category.toLowerCase().includes('indian') ||
-        ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul'].some(brand => 
+        ['butter chicken', 'basmati', 'curry', 'naan', 'biryani'].some(brand => 
           food.brand?.toLowerCase().includes(brand) || food.name.toLowerCase().includes(brand)
         )
       )
@@ -1448,6 +1373,7 @@ class FoodDatabaseService {
     apiSources: number;
     userSources: number;
     databaseSources: number;
+    americanFoods: number;
     indianFoods: number;
     cacheSize: string;
   } {
@@ -1455,9 +1381,15 @@ class FoodDatabaseService {
     const apiSources = foods.filter(f => f.source === 'api').length;
     const userSources = foods.filter(f => f.source === 'user').length;
     const databaseSources = foods.filter(f => f.source === 'database').length;
+    const americanFoods = foods.filter(f => 
+      f.category.toLowerCase().includes('american') ||
+      ['burger', 'pizza', 'fries', 'coca cola', 'pepsi', 'mcdonald', 'kfc', 'subway'].some(brand => 
+        f.brand?.toLowerCase().includes(brand) || f.name.toLowerCase().includes(brand)
+      )
+    ).length;
     const indianFoods = foods.filter(f => 
       f.category.toLowerCase().includes('indian') ||
-      ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul'].some(brand => 
+      ['butter chicken', 'basmati', 'curry', 'naan', 'biryani'].some(brand => 
         f.brand?.toLowerCase().includes(brand) || f.name.toLowerCase().includes(brand)
       )
     ).length;
@@ -1470,6 +1402,7 @@ class FoodDatabaseService {
       apiSources,
       userSources,
       databaseSources,
+      americanFoods,
       indianFoods,
       cacheSize
     };
