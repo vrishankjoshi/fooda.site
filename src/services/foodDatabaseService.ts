@@ -103,69 +103,115 @@ class FoodDatabaseService {
     this.initializeDefaultDatabase();
   }
 
-  // Search foods from multiple sources
+  // MAIN SEARCH FUNCTION - COMPLETELY REWRITTEN FOR RELIABILITY
   async searchFoods(query: string, page: number = 1, limit: number = 20): Promise<FoodSearchResult> {
-    const cacheKey = `search_${query}_${page}_${limit}`;
+    console.log(`🔍 SEARCH CALLED: "${query}" (page ${page}, limit ${limit})`);
     
-    // Check cache first
-    if (this.searchCache.has(cacheKey)) {
-      const cached = this.searchCache.get(cacheKey)!;
-      if (this.isCacheValid(cached as any)) {
-        return cached;
+    // Clear search cache to ensure fresh results
+    this.searchCache.clear();
+    
+    const lowercaseQuery = query.toLowerCase().trim();
+    console.log(`🔍 Lowercase query: "${lowercaseQuery}"`);
+    
+    // Get ALL foods from cache (this includes our Indian foods)
+    const allFoods = Array.from(this.cache.values());
+    console.log(`📦 Total foods in cache: ${allFoods.length}`);
+    
+    // Log some sample foods to verify they're there
+    const indianFoods = allFoods.filter(food => 
+      food.category.toLowerCase().includes('indian') ||
+      food.name.toLowerCase().includes('atta') ||
+      food.name.toLowerCase().includes('frooti') ||
+      food.name.toLowerCase().includes('besan')
+    );
+    console.log(`🇮🇳 Indian foods found in cache: ${indianFoods.length}`);
+    indianFoods.forEach(food => {
+      console.log(`  - ${food.name} (${food.brand}) - Category: ${food.category}`);
+    });
+
+    // ENHANCED SEARCH LOGIC
+    const searchTerms = this.getSearchTerms(lowercaseQuery);
+    console.log(`🔍 Search terms: ${searchTerms.join(', ')}`);
+    
+    const matchedFoods = allFoods.filter(food => {
+      const foodName = food.name.toLowerCase();
+      const foodBrand = (food.brand || '').toLowerCase();
+      const foodCategory = food.category.toLowerCase();
+      const foodIngredients = food.ingredients.join(' ').toLowerCase();
+      
+      // Check if any search term matches
+      const matches = searchTerms.some(term => 
+        foodName.includes(term) ||
+        foodBrand.includes(term) ||
+        foodCategory.includes(term) ||
+        foodIngredients.includes(term) ||
+        food.id.toLowerCase().includes(term)
+      );
+      
+      if (matches) {
+        console.log(`✅ MATCH: ${food.name} (${food.brand})`);
       }
+      
+      return matches;
+    });
+
+    console.log(`🎯 Total matches found: ${matchedFoods.length}`);
+
+    // Sort results by relevance
+    const sortedFoods = this.sortByRelevance(matchedFoods, lowercaseQuery);
+    
+    // Paginate results
+    const startIndex = (page - 1) * limit;
+    const paginatedFoods = sortedFoods.slice(startIndex, startIndex + limit);
+
+    const result: FoodSearchResult = {
+      items: paginatedFoods,
+      total: sortedFoods.length,
+      page,
+      hasMore: startIndex + limit < sortedFoods.length
+    };
+
+    console.log(`📊 SEARCH RESULT: ${result.items.length} items on page ${page} of ${Math.ceil(result.total / limit)}`);
+    result.items.forEach(item => {
+      console.log(`  📄 ${item.name} (${item.brand}) - Score: ${item.vishScore}`);
+    });
+
+    return result;
+  }
+
+  // Get comprehensive search terms including aliases
+  private getSearchTerms(query: string): string[] {
+    const terms = [query];
+    
+    // Add aliases for common Indian food searches
+    const aliases: { [key: string]: string[] } = {
+      'atta': ['wheat flour', 'whole wheat', 'aashirvaad'],
+      'besan': ['chickpea flour', 'gram flour', 'everest'],
+      'frooti': ['mango drink', 'mango juice', 'parle agro', 'parle'],
+      'ragi': ['finger millet', 'organic india'],
+      'jowar': ['sorghum', 'patanjali'],
+      'flour': ['atta', 'besan', 'ragi', 'jowar', 'rice flour'],
+      'indian': ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul', 'namkeen', 'khakhra', 'gulab jamun'],
+      'mango': ['frooti', 'aam'],
+      'wheat': ['atta', 'aashirvaad'],
+      'chickpea': ['besan', 'chole'],
+      'drink': ['frooti', 'lassi', 'nimbu paani'],
+      'snack': ['namkeen', 'bhujia', 'khakhra', 'mixture'],
+      'sweet': ['gulab jamun', 'rasgulla'],
+      'biscuit': ['parle-g', 'marie'],
+      'ready': ['rajma', 'chole', 'mtr']
+    };
+    
+    if (aliases[query]) {
+      terms.push(...aliases[query]);
     }
-
-    try {
-      // Search from multiple sources in parallel
-      const [nutritionixResults, openFoodFactsResults, localResults] = await Promise.allSettled([
-        this.searchNutritionix(query, limit),
-        this.searchOpenFoodFacts(query, limit),
-        this.searchLocalDatabase(query, page, limit)
-      ]);
-
-      // Combine results
-      const allItems: FoodItem[] = [];
-      
-      // Add local results FIRST (prioritize our comprehensive Indian database)
-      if (localResults.status === 'fulfilled') {
-        allItems.push(...localResults.value.items);
-      }
-      
-      // Add Nutritionix results
-      if (nutritionixResults.status === 'fulfilled') {
-        allItems.push(...nutritionixResults.value);
-      }
-      
-      // Add OpenFoodFacts results
-      if (openFoodFactsResults.status === 'fulfilled') {
-        allItems.push(...openFoodFactsResults.value);
-      }
-
-      // Remove duplicates and sort by relevance
-      const uniqueItems = this.removeDuplicates(allItems);
-      const sortedItems = this.sortByRelevance(uniqueItems, query);
-      
-      // Paginate results
-      const startIndex = (page - 1) * limit;
-      const paginatedItems = sortedItems.slice(startIndex, startIndex + limit);
-
-      const result: FoodSearchResult = {
-        items: paginatedItems,
-        total: sortedItems.length,
-        page,
-        hasMore: startIndex + limit < sortedItems.length
-      };
-
-      // Cache the result
-      this.searchCache.set(cacheKey, result);
-      
-      return result;
-    } catch (error) {
-      console.error('Error searching foods:', error);
-      
-      // Fallback to local database only
-      return this.searchLocalDatabase(query, page, limit);
+    
+    // Add partial matches for compound words
+    if (query.includes(' ')) {
+      terms.push(...query.split(' '));
     }
+    
+    return terms;
   }
 
   // Search Nutritionix API
@@ -240,74 +286,6 @@ class FoodDatabaseService {
       console.error('OpenFoodFacts search error:', error);
       return [];
     }
-  }
-
-  // Search local database - ENHANCED FOR INDIAN FOODS
-  private async searchLocalDatabase(query: string, page: number, limit: number): Promise<FoodSearchResult> {
-    // Get ALL foods from cache (includes our comprehensive Indian database)
-    const allCachedFoods = Array.from(this.cache.values());
-    const lowercaseQuery = query.toLowerCase();
-    
-    // Enhanced search that includes multiple search terms and aliases
-    const searchTerms = [
-      lowercaseQuery,
-      // Add common aliases for Indian foods
-      ...(lowercaseQuery === 'atta' ? ['wheat flour', 'whole wheat'] : []),
-      ...(lowercaseQuery === 'besan' ? ['chickpea flour', 'gram flour'] : []),
-      ...(lowercaseQuery === 'frooti' ? ['mango drink', 'mango juice'] : []),
-      ...(lowercaseQuery === 'ragi' ? ['finger millet'] : []),
-      ...(lowercaseQuery === 'jowar' ? ['sorghum'] : []),
-      ...(lowercaseQuery.includes('flour') ? ['atta', 'besan', 'ragi', 'jowar'] : []),
-      ...(lowercaseQuery.includes('indian') ? ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram'] : [])
-    ];
-    
-    const filteredFoods = allCachedFoods.filter(food => {
-      // Check if any search term matches
-      return searchTerms.some(term => 
-        food.name.toLowerCase().includes(term) ||
-        food.brand?.toLowerCase().includes(term) ||
-        food.category.toLowerCase().includes(term) ||
-        food.ingredients.some(ingredient => ingredient.toLowerCase().includes(term)) ||
-        food.id.toLowerCase().includes(term)
-      );
-    });
-
-    // Sort by relevance - prioritize exact matches and Indian foods
-    const sortedFoods = filteredFoods.sort((a, b) => {
-      const aIsIndian = a.category.toLowerCase().includes('indian') || 
-                       ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul'].some(brand => 
-                         a.brand?.toLowerCase().includes(brand) || a.name.toLowerCase().includes(brand)
-                       );
-      const bIsIndian = b.category.toLowerCase().includes('indian') || 
-                       ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul'].some(brand => 
-                         b.brand?.toLowerCase().includes(brand) || b.name.toLowerCase().includes(brand)
-                       );
-      
-      // Prioritize Indian foods for Indian-related searches
-      if (lowercaseQuery.includes('indian') || ['atta', 'besan', 'frooti', 'ragi', 'jowar'].includes(lowercaseQuery)) {
-        if (aIsIndian && !bIsIndian) return -1;
-        if (!aIsIndian && bIsIndian) return 1;
-      }
-      
-      // Then sort by exact name matches
-      const aExactMatch = a.name.toLowerCase().includes(lowercaseQuery);
-      const bExactMatch = b.name.toLowerCase().includes(lowercaseQuery);
-      if (aExactMatch && !bExactMatch) return -1;
-      if (!aExactMatch && bExactMatch) return 1;
-      
-      // Finally sort by Vish score
-      return b.vishScore - a.vishScore;
-    });
-
-    const startIndex = (page - 1) * limit;
-    const paginatedFoods = sortedFoods.slice(startIndex, startIndex + limit);
-
-    return {
-      items: paginatedFoods,
-      total: sortedFoods.length,
-      page,
-      hasMore: startIndex + limit < sortedFoods.length
-    };
   }
 
   // Get food by barcode
@@ -572,7 +550,8 @@ class FoodDatabaseService {
       'coca-cola', 'pepsi', 'nestle', 'unilever', 'kraft', 'general mills',
       'kellogg', 'mars', 'ferrero', 'mondelez', 'danone', 'campbell',
       'heinz', 'oreo', 'lay\'s', 'doritos', 'cheetos', 'pringles',
-      'parle', 'britannia', 'amul', 'haldiram', 'bikaji', 'iffco', 'patanjali'
+      'parle', 'britannia', 'amul', 'haldiram', 'bikaji', 'iffco', 'patanjali',
+      'aashirvaad', 'everest', 'organic india', 'mtr', 'lijjat', 'kissan', 'priya'
     ];
 
     const brandLower = brand.toLowerCase();
@@ -600,19 +579,48 @@ class FoodDatabaseService {
     const queryLower = query.toLowerCase();
     
     return foods.sort((a, b) => {
-      const aNameMatch = a.name.toLowerCase().includes(queryLower);
-      const bNameMatch = b.name.toLowerCase().includes(queryLower);
+      // Calculate relevance scores
+      let aScore = 0;
+      let bScore = 0;
       
-      const aBrandMatch = a.brand?.toLowerCase().includes(queryLower) || false;
-      const bBrandMatch = b.brand?.toLowerCase().includes(queryLower) || false;
+      // Exact name match gets highest priority
+      if (a.name.toLowerCase() === queryLower) aScore += 100;
+      if (b.name.toLowerCase() === queryLower) bScore += 100;
       
-      // Prioritize exact name matches, then brand matches, then Vish score
-      if (aNameMatch && !bNameMatch) return -1;
-      if (!aNameMatch && bNameMatch) return 1;
-      if (aBrandMatch && !bBrandMatch) return -1;
-      if (!aBrandMatch && bBrandMatch) return 1;
+      // Name contains query
+      if (a.name.toLowerCase().includes(queryLower)) aScore += 50;
+      if (b.name.toLowerCase().includes(queryLower)) bScore += 50;
       
-      return b.vishScore - a.vishScore;
+      // Brand contains query
+      if (a.brand?.toLowerCase().includes(queryLower)) aScore += 30;
+      if (b.brand?.toLowerCase().includes(queryLower)) bScore += 30;
+      
+      // Category contains query
+      if (a.category.toLowerCase().includes(queryLower)) aScore += 20;
+      if (b.category.toLowerCase().includes(queryLower)) bScore += 20;
+      
+      // Indian food boost for Indian-related queries
+      const isIndianQuery = ['atta', 'besan', 'frooti', 'indian', 'ragi', 'jowar', 'lassi', 'rajma', 'chole'].some(term => queryLower.includes(term));
+      if (isIndianQuery) {
+        const aIsIndian = a.category.toLowerCase().includes('indian') || 
+                         ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul'].some(brand => 
+                           a.brand?.toLowerCase().includes(brand) || a.name.toLowerCase().includes(brand)
+                         );
+        const bIsIndian = b.category.toLowerCase().includes('indian') || 
+                         ['atta', 'besan', 'frooti', 'lassi', 'rajma', 'chole', 'parle', 'haldiram', 'bikaji', 'amul'].some(brand => 
+                           b.brand?.toLowerCase().includes(brand) || b.name.toLowerCase().includes(brand)
+                         );
+        
+        if (aIsIndian) aScore += 40;
+        if (bIsIndian) bScore += 40;
+      }
+      
+      // If scores are equal, sort by Vish score
+      if (aScore === bScore) {
+        return b.vishScore - a.vishScore;
+      }
+      
+      return bScore - aScore;
     });
   }
 
@@ -631,6 +639,7 @@ class FoodDatabaseService {
         const data = JSON.parse(stored);
         this.cache = new Map(data.cache || []);
         this.searchCache = new Map(data.searchCache || []);
+        console.log(`📦 Loaded ${this.cache.size} foods from cache`);
       }
     } catch (error) {
       console.error('Error loading food cache:', error);
@@ -646,12 +655,13 @@ class FoodDatabaseService {
         lastSaved: new Date().toISOString()
       };
       localStorage.setItem('foodcheck_food_cache', JSON.stringify(data));
+      console.log(`💾 Saved ${this.cache.size} foods to cache`);
     } catch (error) {
       console.error('Error saving food cache:', error);
     }
   }
 
-  // Get local foods (fallback database) - NOW WITH COMPREHENSIVE INDIAN FOODS
+  // Get local foods (fallback database) - COMPREHENSIVE INDIAN FOODS DATABASE
   private getLocalFoods(): FoodItem[] {
     return [
       // Original foods
@@ -746,7 +756,7 @@ class FoodDatabaseService {
         source: 'database'
       },
 
-      // COMPREHENSIVE INDIAN FOODS SECTION
+      // 🇮🇳 COMPREHENSIVE INDIAN FOODS DATABASE 🇮🇳
 
       // INDIAN FLOURS & GRAINS
       {
@@ -1334,25 +1344,43 @@ class FoodDatabaseService {
     ];
   }
 
-  // Initialize default database - ENHANCED TO ENSURE ALL FOODS ARE CACHED
+  // Initialize default database - FORCE REFRESH AND DETAILED LOGGING
   private initializeDefaultDatabase(): void {
+    console.log('🚀 INITIALIZING FOOD DATABASE...');
+    
+    // Clear existing cache to ensure fresh data
+    this.cache.clear();
+    
     const localFoods = this.getLocalFoods();
-    console.log(`🇮🇳 Initializing database with ${localFoods.length} foods including comprehensive Indian foods...`);
+    console.log(`📦 Generated ${localFoods.length} local foods`);
     
-    localFoods.forEach(food => {
+    // Add each food to cache with detailed logging
+    localFoods.forEach((food, index) => {
       this.cache.set(food.id, food);
-      console.log(`✅ Added to cache: ${food.name} (${food.brand}) - Category: ${food.category}`);
+      console.log(`✅ [${index + 1}/${localFoods.length}] Added: ${food.name} (${food.brand}) - Category: ${food.category}`);
     });
     
+    // Save to storage
     this.saveCacheToStorage();
-    console.log(`🎉 Database initialized! Total foods in cache: ${this.cache.size}`);
     
-    // Log Indian foods specifically
-    const indianFoods = localFoods.filter(food => food.category.toLowerCase().includes('indian'));
-    console.log(`🇮🇳 Indian foods added: ${indianFoods.length}`);
-    indianFoods.forEach(food => {
-      console.log(`  - ${food.name} (${food.brand})`);
+    // Verify Indian foods are properly added
+    const indianFoods = localFoods.filter(food => 
+      food.category.toLowerCase().includes('indian') ||
+      food.name.toLowerCase().includes('atta') ||
+      food.name.toLowerCase().includes('frooti') ||
+      food.name.toLowerCase().includes('besan')
+    );
+    
+    console.log(`🇮🇳 INDIAN FOODS VERIFICATION:`);
+    console.log(`   Total Indian foods: ${indianFoods.length}`);
+    indianFoods.forEach((food, index) => {
+      console.log(`   ${index + 1}. ${food.name} (${food.brand}) - ID: ${food.id}`);
     });
+    
+    console.log(`🎉 DATABASE INITIALIZATION COMPLETE!`);
+    console.log(`   Total foods in cache: ${this.cache.size}`);
+    console.log(`   Indian foods: ${indianFoods.length}`);
+    console.log(`   Cache saved to localStorage: ✅`);
   }
 
   // Add custom food item
