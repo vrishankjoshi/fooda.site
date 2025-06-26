@@ -1,6 +1,3 @@
-Here's the fixed version with all missing closing brackets added:
-
-```typescript
 import React, { useState, useEffect } from 'react';
 import { X, BarChart3, Calendar, TrendingUp, Award, Heart, Star, Users, Filter, Download, Search, Clock, CheckCircle, AlertTriangle, Trash2, Eye } from 'lucide-react';
 import { NutritionAnalysis } from '../services/visionService';
@@ -798,4 +795,464 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
     }, {} as Record<string, number>);
 
     const topCategories = Object.entries(categories)
-      .map(
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    // Monthly analyses (simplified)
+    const monthlyAnalyses = [
+      { month: 'Jan', count: Math.floor(totalAnalyses * 0.15) },
+      { month: 'Feb', count: Math.floor(totalAnalyses * 0.18) },
+      { month: 'Mar', count: Math.floor(totalAnalyses * 0.22) },
+      { month: 'Apr', count: Math.floor(totalAnalyses * 0.25) },
+      { month: 'May', count: Math.floor(totalAnalyses * 0.20) }
+    ];
+
+    setStats({
+      totalAnalyses,
+      averageVishScore,
+      averageNutritionScore,
+      averageTasteScore,
+      averageConsumerScore,
+      healthyChoices,
+      improvementTrend,
+      topCategories,
+      monthlyAnalyses
+    });
+  };
+
+  const deleteAnalysis = (id: string) => {
+    const updatedAnalyses = analyses.filter(analysis => analysis.id !== id);
+    setAnalyses(updatedAnalyses);
+    calculateStats(updatedAnalyses);
+    localStorage.setItem('foodcheck_analysis_history', JSON.stringify(updatedAnalyses));
+  };
+
+  const exportData = () => {
+    const dataStr = JSON.stringify(analyses, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+    const exportFileDefaultName = 'foodcheck_analysis_history.json';
+    
+    const linkElement = document.createElement('a');
+    linkElement.setAttribute('href', dataUri);
+    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.click();
+  };
+
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-green-600';
+    if (score >= 60) return 'text-yellow-600';
+    if (score >= 40) return 'text-orange-600';
+    return 'text-red-600';
+  };
+
+  const getScoreBgColor = (score: number) => {
+    if (score >= 80) return 'bg-green-100';
+    if (score >= 60) return 'bg-yellow-100';
+    if (score >= 40) return 'bg-orange-100';
+    return 'bg-red-100';
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-7xl h-[90vh] flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <div className="flex items-center space-x-3">
+            <BarChart3 className="h-8 w-8 text-blue-600" />
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Analysis History</h2>
+              <p className="text-gray-600">Track your food analysis journey</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          >
+            <X className="h-6 w-6 text-gray-500" />
+          </button>
+        </div>
+
+        {/* Stats Overview */}
+        {showStats && stats && (
+          <div className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 border-b border-gray-200">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <BarChart3 className="h-5 w-5 text-blue-600" />
+                  <span className="text-sm font-medium text-gray-600">Total</span>
+                </div>
+                <p className="text-2xl font-bold text-gray-900">{stats.totalAnalyses}</p>
+              </div>
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <Award className="h-5 w-5 text-purple-600" />
+                  <span className="text-sm font-medium text-gray-600">Avg Score</span>
+                </div>
+                <p className={`text-2xl font-bold ${getScoreColor(stats.averageVishScore)}`}>
+                  {stats.averageVishScore}
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <Heart className="h-5 w-5 text-red-600" />
+                  <span className="text-sm font-medium text-gray-600">Nutrition</span>
+                </div>
+                <p className={`text-2xl font-bold ${getScoreColor(stats.averageNutritionScore)}`}>
+                  {stats.averageNutritionScore}
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <Star className="h-5 w-5 text-yellow-600" />
+                  <span className="text-sm font-medium text-gray-600">Taste</span>
+                </div>
+                <p className={`text-2xl font-bold ${getScoreColor(stats.averageTasteScore)}`}>
+                  {stats.averageTasteScore}
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <Users className="h-5 w-5 text-green-600" />
+                  <span className="text-sm font-medium text-gray-600">Consumer</span>
+                </div>
+                <p className={`text-2xl font-bold ${getScoreColor(stats.averageConsumerScore)}`}>
+                  {stats.averageConsumerScore}
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 shadow-sm">
+                <div className="flex items-center space-x-2">
+                  <CheckCircle className="h-5 w-5 text-green-600" />
+                  <span className="text-sm font-medium text-gray-600">Healthy</span>
+                </div>
+                <p className="text-2xl font-bold text-green-600">{stats.healthyChoices}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Controls */}
+        <div className="p-6 border-b border-gray-200">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+            <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search foods..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <select
+                value={filterBy}
+                onChange={(e) => setFilterBy(e.target.value as any)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="all">All Foods</option>
+                <option value="healthy">Healthy (70+)</option>
+                <option value="unhealthy">Unhealthy (&lt;50)</option>
+                <option value="recent">Recent (7 days)</option>
+                <option value="indian">🇮🇳 Indian Foods</option>
+              </select>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="date">Sort by Date</option>
+                <option value="score">Sort by Score</option>
+                <option value="name">Sort by Name</option>
+              </select>
+            </div>
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setShowStats(!showStats)}
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              >
+                <BarChart3 className="h-4 w-4" />
+                <span>{showStats ? 'Hide' : 'Show'} Stats</span>
+              </button>
+              <button
+                onClick={exportData}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              >
+                <Download className="h-4 w-4" />
+                <span>Export</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Analysis List */}
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full overflow-y-auto p-6">
+            {filteredAnalyses.length === 0 ? (
+              <div className="text-center py-12">
+                <BarChart3 className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No analyses found</h3>
+                <p className="text-gray-600">
+                  {searchTerm || filterBy !== 'all' 
+                    ? 'Try adjusting your search or filter criteria.'
+                    : 'Start analyzing foods to see your history here.'}
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredAnalyses.map((analysis) => (
+                  <div
+                    key={analysis.id}
+                    className="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex-1">
+                          <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">
+                            {analysis.isIndian && <span className="mr-2">🇮🇳</span>}
+                            {analysis.foodName}
+                          </h3>
+                          <div className="flex items-center space-x-2 text-sm text-gray-500">
+                            <Clock className="h-4 w-4" />
+                            <span>{new Date(analysis.timestamp).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={() => setSelectedAnalysis(analysis)}
+                            className="p-1 hover:bg-gray-100 rounded transition-colors"
+                          >
+                            <Eye className="h-4 w-4 text-gray-500" />
+                          </button>
+                          <button
+                            onClick={() => deleteAnalysis(analysis.id)}
+                            className="p-1 hover:bg-red-100 rounded transition-colors"
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium text-gray-600">Vish Score</span>
+                          <div className="flex items-center space-x-2">
+                            <div className={`px-2 py-1 rounded-full text-xs font-medium ${getScoreBgColor(analysis.analysis.overall.vishScore)} ${getScoreColor(analysis.analysis.overall.vishScore)}`}>
+                              {analysis.analysis.overall.vishScore}
+                            </div>
+                            <span className={`text-sm font-medium ${getScoreColor(analysis.analysis.overall.vishScore)}`}>
+                              {analysis.analysis.overall.grade}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2 text-xs">
+                          <div className="text-center">
+                            <div className={`font-medium ${getScoreColor(analysis.analysis.health.score)}`}>
+                              {analysis.analysis.health.score}
+                            </div>
+                            <div className="text-gray-500">Nutrition</div>
+                          </div>
+                          <div className="text-center">
+                            <div className={`font-medium ${getScoreColor(analysis.analysis.taste.score)}`}>
+                              {analysis.analysis.taste.score}
+                            </div>
+                            <div className="text-gray-500">Taste</div>
+                          </div>
+                          <div className="text-center">
+                            <div className={`font-medium ${getScoreColor(analysis.analysis.consumer.score)}`}>
+                              {analysis.analysis.consumer.score}
+                            </div>
+                            <div className="text-gray-500">Consumer</div>
+                          </div>
+                        </div>
+
+                        {analysis.userNotes && (
+                          <div className="bg-gray-50 rounded-lg p-3">
+                            <p className="text-sm text-gray-600 line-clamp-2">{analysis.userNotes}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Analysis Detail Modal */}
+        {selectedAnalysis && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-60 p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-y-auto">
+              <div className="p-6 border-b border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-xl font-bold text-gray-900">
+                      {selectedAnalysis.isIndian && <span className="mr-2">🇮🇳</span>}
+                      {selectedAnalysis.foodName}
+                    </h3>
+                    <p className="text-gray-600">
+                      Analyzed on {new Date(selectedAnalysis.timestamp).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setSelectedAnalysis(null)}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                  >
+                    <X className="h-6 w-6 text-gray-500" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="p-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Overall Score */}
+                  <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-xl p-6">
+                    <h4 className="font-semibold text-gray-900 mb-4">Overall Assessment</h4>
+                    <div className="text-center">
+                      <div className={`text-4xl font-bold mb-2 ${getScoreColor(selectedAnalysis.analysis.overall.vishScore)}`}>
+                        {selectedAnalysis.analysis.overall.vishScore}
+                      </div>
+                      <div className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getScoreBgColor(selectedAnalysis.analysis.overall.vishScore)} ${getScoreColor(selectedAnalysis.analysis.overall.vishScore)}`}>
+                        Grade {selectedAnalysis.analysis.overall.grade}
+                      </div>
+                      <p className="text-gray-600 mt-3">{selectedAnalysis.analysis.overall.summary}</p>
+                    </div>
+                  </div>
+
+                  {/* Score Breakdown */}
+                  <div className="space-y-4">
+                    <h4 className="font-semibold text-gray-900">Score Breakdown</h4>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Nutrition</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-24 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-red-500 h-2 rounded-full"
+                              style={{ width: `${selectedAnalysis.analysis.health.score}%` }}
+                            ></div>
+                          </div>
+                          <span className={`font-medium ${getScoreColor(selectedAnalysis.analysis.health.score)}`}>
+                            {selectedAnalysis.analysis.health.score}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Taste</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-24 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-yellow-500 h-2 rounded-full"
+                              style={{ width: `${selectedAnalysis.analysis.taste.score}%` }}
+                            ></div>
+                          </div>
+                          <span className={`font-medium ${getScoreColor(selectedAnalysis.analysis.taste.score)}`}>
+                            {selectedAnalysis.analysis.taste.score}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600">Consumer</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="w-24 bg-gray-200 rounded-full h-2">
+                            <div 
+                              className="bg-green-500 h-2 rounded-full"
+                              style={{ width: `${selectedAnalysis.analysis.consumer.score}%` }}
+                            ></div>
+                          </div>
+                          <span className={`font-medium ${getScoreColor(selectedAnalysis.analysis.consumer.score)}`}>
+                            {selectedAnalysis.analysis.consumer.score}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Nutrition Facts */}
+                  <div className="bg-gray-50 rounded-xl p-6">
+                    <h4 className="font-semibold text-gray-900 mb-4">Nutrition Facts</h4>
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div className="flex justify-between">
+                        <span>Calories</span>
+                        <span className="font-medium">{selectedAnalysis.analysis.nutrition.calories}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Total Fat</span>
+                        <span className="font-medium">{selectedAnalysis.analysis.nutrition.totalFat}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Sodium</span>
+                        <span className="font-medium">{selectedAnalysis.analysis.nutrition.sodium}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Protein</span>
+                        <span className="font-medium">{selectedAnalysis.analysis.nutrition.protein}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Carbs</span>
+                        <span className="font-medium">{selectedAnalysis.analysis.nutrition.totalCarbohydrates}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Fiber</span>
+                        <span className="font-medium">{selectedAnalysis.analysis.nutrition.dietaryFiber}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Health Insights */}
+                  <div className="bg-gray-50 rounded-xl p-6">
+                    <h4 className="font-semibold text-gray-900 mb-4">Health Insights</h4>
+                    
+                    {selectedAnalysis.analysis.health.warnings.length > 0 && (
+                      <div className="mb-4">
+                        <h5 className="text-sm font-medium text-red-600 mb-2">⚠️ Warnings</h5>
+                        <ul className="text-sm text-red-600 space-y-1">
+                          {selectedAnalysis.analysis.health.warnings.map((warning, index) => (
+                            <li key={index}>• {warning}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    <div className="mb-4">
+                      <h5 className="text-sm font-medium text-green-600 mb-2">💡 Recommendations</h5>
+                      <ul className="text-sm text-green-600 space-y-1">
+                        {selectedAnalysis.analysis.health.recommendations.map((rec, index) => (
+                          <li key={index}>• {rec}</li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {selectedAnalysis.analysis.health.allergens.length > 0 && (
+                      <div>
+                        <h5 className="text-sm font-medium text-orange-600 mb-2">🚨 Allergens</h5>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedAnalysis.analysis.health.allergens.map((allergen, index) => (
+                            <span key={index} className="px-2 py-1 bg-orange-100 text-orange-600 rounded-full text-xs">
+                              {allergen}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {selectedAnalysis.userNotes && (
+                  <div className="mt-6 bg-blue-50 rounded-xl p-6">
+                    <h4 className="font-semibold text-gray-900 mb-2">Your Notes</h4>
+                    <p className="text-gray-700">{selectedAnalysis.userNotes}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
