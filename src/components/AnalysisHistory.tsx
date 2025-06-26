@@ -30,6 +30,135 @@ interface AnalysisStats {
   monthlyAnalyses: { month: string; count: number }[];
 }
 
+// Food image mapping for high-quality images
+const getFoodImage = (foodName: string, brand: string): string => {
+  const foodKey = `${foodName.toLowerCase()}_${brand.toLowerCase()}`;
+  
+  // High-quality food images from Pexels
+  const foodImages: { [key: string]: string } = {
+    // McDonald's
+    'big mac_mcdonald\'s': 'https://images.pexels.com/photos/552056/pexels-photo-552056.jpeg',
+    'chicken mcnuggets_mcdonald\'s': 'https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg',
+    
+    // Burger King
+    'whopper_burger king': 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg',
+    
+    // KFC
+    'original recipe chicken_kfc': 'https://images.pexels.com/photos/2233348/pexels-photo-2233348.jpeg',
+    
+    // Pizza
+    'pepperoni pizza_domino\'s': 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg',
+    'digiorno pizza_nestlé': 'https://images.pexels.com/photos/708587/pexels-photo-708587.jpeg',
+    
+    // Taco Bell
+    'crunchy taco_taco bell': 'https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg',
+    
+    // Subway
+    'italian b.m.t._subway': 'https://images.pexels.com/photos/7595072/pexels-photo-7595072.jpeg',
+    
+    // Wendy's
+    'baconator_wendy\'s': 'https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg',
+    
+    // In-N-Out
+    'double cheeseburger_in-n-out': 'https://images.pexels.com/photos/1556698/pexels-photo-1556698.jpeg',
+    
+    // Chick-fil-A
+    'chicken sandwich_chick-fil-a': 'https://images.pexels.com/photos/6896379/pexels-photo-6896379.jpeg',
+    
+    // Beverages
+    'coca-cola classic_coca-cola': 'https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-coke-50593.jpeg',
+    'pepsi cola_pepsico': 'https://images.pexels.com/photos/8105/food-drink-cola-pepsi.jpg',
+    'fairlife whole milk_fairlife': 'https://images.pexels.com/photos/236010/pexels-photo-236010.jpeg',
+    'mountain dew_pepsico': 'https://images.pexels.com/photos/8105/food-drink-cola-pepsi.jpg',
+    'red bull energy drink_red bull': 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg',
+    'sprite_coca-cola': 'https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-coke-50593.jpeg',
+    'dr pepper_dr pepper': 'https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-coke-50593.jpeg',
+    'monster energy_monster': 'https://images.pexels.com/photos/302899/pexels-photo-302899.jpeg',
+    'gatorade_pepsico': 'https://images.pexels.com/photos/1346155/pexels-photo-1346155.jpeg',
+    'arizona iced tea_arizona': 'https://images.pexels.com/photos/1346155/pexels-photo-1346155.jpeg',
+    
+    // Snacks
+    'classic potato chips_lay\'s': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'nacho cheese doritos_frito-lay': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'crunchy cheetos_frito-lay': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'original pringles_pringles': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'goldfish crackers_pepperidge farm': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'ritz crackers_nabisco': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'fritos corn chips_frito-lay': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'cheez-its_kellogg\'s': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'triscuits_nabisco': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'wheat thins_nabisco': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'popcorn_orville redenbacher\'s': 'https://images.pexels.com/photos/33129/popcorn-movie-party-entertainment.jpg',
+    'pretzels_snyder\'s': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    
+    // Breakfast Cereals
+    'honey nut cheerios_general mills': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    'frosted flakes_kellogg\'s': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    'lucky charms_general mills': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    'cinnamon toast crunch_general mills': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    'corn flakes_kellogg\'s': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    'froot loops_kellogg\'s': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    'cap\'n crunch_quaker': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    'rice krispies_kellogg\'s': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    'special k_kellogg\'s': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    
+    // Desserts & Sweets
+    'oreo cookies_nabisco': 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg',
+    'vanilla ice cream_ben & jerry\'s': 'https://images.pexels.com/photos/1362534/pexels-photo-1362534.jpeg',
+    'chocolate chip cookies_chips ahoy!': 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg',
+    'snickers bar_mars': 'https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg',
+    'kit kat_hershey\'s': 'https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg',
+    'reese\'s peanut butter cups_hershey\'s': 'https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg',
+    'm&m\'s_mars': 'https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg',
+    'twix_mars': 'https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg',
+    'skittles_mars': 'https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg',
+    'starburst_mars': 'https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg',
+    'hershey\'s chocolate bar_hershey\'s': 'https://images.pexels.com/photos/65882/chocolate-dark-coffee-confiserie-65882.jpeg',
+    'pop-tarts_kellogg\'s': 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg',
+    
+    // Healthier Options
+    'greek yogurt plain_chobani': 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg',
+    'crunchy granola bar_nature valley': 'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg',
+    'protein bar_quest': 'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg',
+    'almond butter_justin\'s': 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg',
+    'protein shake_premier protein': 'https://images.pexels.com/photos/1346155/pexels-photo-1346155.jpeg',
+    'organic oatmeal_quaker': 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
+    
+    // Condiments & Sauces
+    'heinz ketchup_heinz': 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
+    'french\'s yellow mustard_french\'s': 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
+    'hidden valley ranch_hidden valley': 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
+    'tabasco sauce_tabasco': 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
+    'a.1. steak sauce_kraft': 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
+    
+    // Frozen Foods
+    'hot pockets_nestlé': 'https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg',
+    'lean cuisine_nestlé': 'https://images.pexels.com/photos/1633578/pexels-photo-1633578.jpeg',
+    'stouffer\'s lasagna_nestlé': 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg',
+    'eggo waffles_kellogg\'s': 'https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg',
+    'bagel bites_kraft heinz': 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg',
+    
+    // Bread & Bakery
+    'wonder bread_wonder': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'pepperidge farm bread_pepperidge farm': 'https://images.pexels.com/photos/209206/pexels-photo-209206.jpeg',
+    'hostess twinkies_hostess': 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg',
+    'little debbie snacks_little debbie': 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg',
+    
+    // Pasta & Sauces
+    'kraft mac & cheese_kraft': 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg',
+    'ragu pasta sauce_ragu': 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg',
+    'barilla pasta_barilla': 'https://images.pexels.com/photos/4518843/pexels-photo-4518843.jpeg',
+    
+    // Indian Foods
+    'butter chicken_tasty bite': 'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg',
+    'basmati rice_tilda': 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg',
+    'naan bread_stonefire': 'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg'
+  };
+  
+  // Return specific image or fallback to a generic food image
+  return foodImages[foodKey] || 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg';
+};
+
 const generateComprehensiveSampleData = (): AnalysisRecord[] => {
   const popularAmericanFoods = [
     // Fast Food Classics
@@ -822,7 +951,7 @@ const generateComprehensiveSampleData = (): AnalysisRecord[] => {
         positiveAspects: ['Great taste', 'Convenient', 'Widely available', 'Consistent quality']
       }
     },
-    imageUrl: `https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg`,
+    imageUrl: getFoodImage(food.name, food.brand),
     userNotes: `Analyzed ${food.name} - ${food.brand}`,
     isIndian: food.isIndian || false,
     isAmerican: food.isAmerican || false
@@ -1121,7 +1250,11 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
                           <img
                             src={analysis.imageUrl}
                             alt={analysis.foodName}
-                            className="w-16 h-16 rounded-lg object-cover"
+                            className="w-20 h-20 rounded-lg object-cover shadow-sm border border-gray-200"
+                            onError={(e) => {
+                              // Fallback to a generic food image if the specific image fails to load
+                              e.currentTarget.src = 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg';
+                            }}
                           />
                         )}
                         <div>
@@ -1173,7 +1306,19 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({ isOpen, onClos
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[80vh] overflow-y-auto">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-xl font-bold text-gray-900">{selectedAnalysis.foodName}</h3>
+                <div className="flex items-center space-x-4">
+                  {selectedAnalysis.imageUrl && (
+                    <img
+                      src={selectedAnalysis.imageUrl}
+                      alt={selectedAnalysis.foodName}
+                      className="w-16 h-16 rounded-lg object-cover shadow-sm border border-gray-200"
+                      onError={(e) => {
+                        e.currentTarget.src = 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg';
+                      }}
+                    />
+                  )}
+                  <h3 className="text-xl font-bold text-gray-900">{selectedAnalysis.foodName}</h3>
+                </div>
                 <button
                   onClick={() => setSelectedAnalysis(null)}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
