@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Globe, MessageCircle, Camera, Mail, Star, BarChart3, Heart, Users, TrendingUp, Award, Zap, Brain, Beaker, Eye, History, UserPlus, Settings, HelpCircle, Play, Search } from 'lucide-react';
+import { Moon, Sun, Globe, MessageCircle, Camera, Mail, Star, BarChart3, Heart, Users, TrendingUp, Award, Zap, Brain, Beaker, Eye, History, UserPlus, Settings, HelpCircle, Play, Search, X } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { ChatAssistant } from './components/ChatAssistant';
 import { AuthModal } from './components/AuthModal';
