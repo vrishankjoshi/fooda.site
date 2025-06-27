@@ -149,7 +149,7 @@ class FoodDatabaseService {
       );
       
       if (matches) {
-        console.log(`✅ MATCH: ${food.name} (${food.brand})`);
+        console.log(`✅ MATCH: ${food.name} (${food.brand}) - Nutrition: ${food.healthScore}, Taste: ${food.tasteScore}, Consumer: ${food.consumerScore}, Vish: ${food.vishScore}`);
       }
       
       return matches;
@@ -173,7 +173,7 @@ class FoodDatabaseService {
 
     console.log(`📊 SEARCH RESULT: ${result.items.length} items on page ${page} of ${Math.ceil(result.total / limit)}`);
     result.items.forEach(item => {
-      console.log(`  📄 ${item.name} (${item.brand}) - Score: ${item.vishScore}`);
+      console.log(`  📄 ${item.name} (${item.brand}) - Nutrition: ${item.healthScore}, Taste: ${item.tasteScore}, Consumer: ${item.consumerScore}, Vish: ${item.vishScore}`);
     });
 
     return result;
@@ -199,7 +199,7 @@ class FoodDatabaseService {
       'snack': ['chips', 'crackers', 'cookies', 'pretzels'],
       'breakfast': ['pancakes', 'waffles', 'cereal', 'bagel', 'muffin'],
       'dessert': ['cake', 'pie', 'cookies', 'brownies', 'ice cream'],
-      'doritos': ['nacho cheese', 'cool ranch', 'spicy nacho', 'flamin hot', 'sweet chili'],
+      'doritos': ['nacho cheese', 'cool ranch', 'spicy nacho', 'flamin hot', 'sweet chili', 'blaze'],
       'deritors': ['doritos', 'nacho cheese', 'cool ranch', 'spicy nacho', 'flamin hot']
     };
     
@@ -213,6 +213,207 @@ class FoodDatabaseService {
     }
     
     return terms;
+  }
+
+  // ENHANCED NUTRITION SCORE CALCULATION
+  private calculateNutritionScore(nutrition: {
+    calories: number;
+    protein: number;
+    fiber: number;
+    sugar: number;
+    sodium: number;
+    saturatedFat: number;
+    carbohydrates?: number;
+    fat?: number;
+  }): number {
+    let score = 50; // Base score
+
+    console.log(`🧮 Calculating nutrition score for:`, nutrition);
+
+    // POSITIVE FACTORS (add points)
+    // High protein is good
+    if (nutrition.protein >= 20) score += 20;
+    else if (nutrition.protein >= 15) score += 15;
+    else if (nutrition.protein >= 10) score += 10;
+    else if (nutrition.protein >= 5) score += 5;
+    
+    // High fiber is excellent
+    if (nutrition.fiber >= 10) score += 20;
+    else if (nutrition.fiber >= 5) score += 15;
+    else if (nutrition.fiber >= 3) score += 10;
+    else if (nutrition.fiber >= 1) score += 5;
+
+    // Moderate calories are good
+    if (nutrition.calories <= 100) score += 10;
+    else if (nutrition.calories <= 200) score += 5;
+
+    // NEGATIVE FACTORS (subtract points)
+    // High sugar is bad
+    if (nutrition.sugar >= 30) score -= 25;
+    else if (nutrition.sugar >= 20) score -= 20;
+    else if (nutrition.sugar >= 15) score -= 15;
+    else if (nutrition.sugar >= 10) score -= 10;
+    else if (nutrition.sugar >= 5) score -= 5;
+    
+    // High sodium is bad
+    if (nutrition.sodium >= 1000) score -= 25;
+    else if (nutrition.sodium >= 800) score -= 20;
+    else if (nutrition.sodium >= 600) score -= 15;
+    else if (nutrition.sodium >= 400) score -= 10;
+    else if (nutrition.sodium >= 200) score -= 5;
+    
+    // High saturated fat is bad
+    if (nutrition.saturatedFat >= 15) score -= 20;
+    else if (nutrition.saturatedFat >= 10) score -= 15;
+    else if (nutrition.saturatedFat >= 7) score -= 10;
+    else if (nutrition.saturatedFat >= 5) score -= 5;
+
+    // Very high calories are bad
+    if (nutrition.calories >= 500) score -= 15;
+    else if (nutrition.calories >= 400) score -= 10;
+    else if (nutrition.calories >= 300) score -= 5;
+
+    const finalScore = Math.max(0, Math.min(100, score));
+    console.log(`🧮 Nutrition score calculated: ${finalScore}`);
+    return finalScore;
+  }
+
+  // ENHANCED TASTE SCORE CALCULATION
+  private calculateTasteScore(nutrition: {
+    sugar: number;
+    fat: number;
+    sodium: number;
+    protein?: number;
+  }, brand?: string, category?: string): number {
+    let score = 50; // Base score
+
+    console.log(`👅 Calculating taste score for:`, nutrition, brand, category);
+
+    // TASTE ENHANCING FACTORS
+    // Moderate sugar enhances taste (but too much is cloying)
+    if (nutrition.sugar >= 5 && nutrition.sugar <= 15) score += 20;
+    else if (nutrition.sugar >= 15 && nutrition.sugar <= 25) score += 15;
+    else if (nutrition.sugar >= 25) score += 10; // Still tasty but too sweet
+    
+    // Fat adds richness and mouthfeel
+    if (nutrition.fat >= 8 && nutrition.fat <= 20) score += 20;
+    else if (nutrition.fat >= 20 && nutrition.fat <= 30) score += 15;
+    else if (nutrition.fat >= 5 && nutrition.fat < 8) score += 10;
+    else if (nutrition.fat >= 30) score += 5; // Too greasy
+    
+    // Sodium enhances flavor (in moderation)
+    if (nutrition.sodium >= 200 && nutrition.sodium <= 600) score += 15;
+    else if (nutrition.sodium >= 600 && nutrition.sodium <= 1000) score += 10;
+    else if (nutrition.sodium >= 100 && nutrition.sodium < 200) score += 5;
+    else if (nutrition.sodium >= 1000) score -= 5; // Too salty
+
+    // Protein can add umami and satisfaction
+    if (nutrition.protein && nutrition.protein >= 10) score += 10;
+    else if (nutrition.protein && nutrition.protein >= 5) score += 5;
+
+    // BRAND AND CATEGORY BONUSES
+    const popularTasteBrands = [
+      'doritos', 'lay\'s', 'cheetos', 'oreo', 'coca-cola', 'pepsi',
+      'mcdonald\'s', 'kfc', 'burger king', 'ben jerry', 'haagen dazs',
+      'kit kat', 'snickers', 'reese\'s', 'hershey\'s'
+    ];
+    
+    if (brand && popularTasteBrands.some(b => brand.toLowerCase().includes(b))) {
+      score += 15; // Popular brands are popular for a reason
+    }
+
+    // Category-specific taste bonuses
+    if (category) {
+      const categoryLower = category.toLowerCase();
+      if (categoryLower.includes('dessert') || categoryLower.includes('ice cream') || categoryLower.includes('candy')) {
+        score += 10; // Desserts are designed to taste good
+      } else if (categoryLower.includes('snack') || categoryLower.includes('chip')) {
+        score += 8; // Snacks are engineered for taste
+      } else if (categoryLower.includes('beverage') || categoryLower.includes('soda')) {
+        score += 5; // Beverages focus on taste
+      }
+    }
+
+    const finalScore = Math.max(0, Math.min(100, score));
+    console.log(`👅 Taste score calculated: ${finalScore}`);
+    return finalScore;
+  }
+
+  // ENHANCED CONSUMER SCORE CALCULATION
+  private calculateConsumerScore(brand?: string, category?: string, name?: string): number {
+    let score = 50; // Base score
+
+    console.log(`👥 Calculating consumer score for:`, brand, category, name);
+
+    // BRAND RECOGNITION AND POPULARITY
+    const megaBrands = [
+      'coca-cola', 'pepsi', 'mcdonald\'s', 'kfc', 'burger king', 'subway',
+      'doritos', 'lay\'s', 'cheetos', 'pringles', 'oreo', 'kit kat'
+    ];
+    
+    const popularBrands = [
+      'nestle', 'unilever', 'kraft', 'general mills', 'kellogg', 'mars',
+      'ferrero', 'mondelez', 'danone', 'campbell', 'heinz', 'frito-lay',
+      'nabisco', 'ben jerry', 'haagen dazs', 'cheerios', 'frosted flakes',
+      'taco bell', 'domino\'s', 'pizza hut', 'starbucks', 'dunkin'
+    ];
+
+    if (brand) {
+      const brandLower = brand.toLowerCase();
+      if (megaBrands.some(b => brandLower.includes(b))) {
+        score += 25; // Mega brands have highest consumer recognition
+      } else if (popularBrands.some(b => brandLower.includes(b))) {
+        score += 15; // Popular brands have good recognition
+      } else {
+        score += 5; // Any brand is better than generic
+      }
+    }
+
+    // PRODUCT NAME RECOGNITION
+    const iconicProducts = [
+      'big mac', 'whopper', 'coca-cola', 'pepsi', 'oreo', 'doritos',
+      'cheerios', 'frosted flakes', 'kit kat', 'snickers', 'reese\'s'
+    ];
+
+    if (name) {
+      const nameLower = name.toLowerCase();
+      if (iconicProducts.some(p => nameLower.includes(p))) {
+        score += 20; // Iconic products have massive consumer appeal
+      }
+    }
+
+    // CATEGORY CONSUMER PREFERENCES
+    if (category) {
+      const categoryLower = category.toLowerCase();
+      
+      // Categories consumers love
+      if (categoryLower.includes('fast food') || categoryLower.includes('pizza')) {
+        score += 15; // Fast food has high consumer satisfaction
+      } else if (categoryLower.includes('snack') || categoryLower.includes('chip')) {
+        score += 12; // Snacks are impulse purchases with high satisfaction
+      } else if (categoryLower.includes('dessert') || categoryLower.includes('ice cream')) {
+        score += 10; // Desserts make people happy
+      } else if (categoryLower.includes('beverage') || categoryLower.includes('soda')) {
+        score += 8; // Beverages have loyal followings
+      } else if (categoryLower.includes('breakfast') || categoryLower.includes('cereal')) {
+        score += 6; // Breakfast foods have routine satisfaction
+      }
+    }
+
+    // RANDOM VARIATION FOR REALISM (consumer preferences vary)
+    const variation = Math.floor(Math.random() * 11) - 5; // -5 to +5
+    score += variation;
+
+    const finalScore = Math.max(0, Math.min(100, score));
+    console.log(`👥 Consumer score calculated: ${finalScore}`);
+    return finalScore;
+  }
+
+  // CALCULATE VISH SCORE (AVERAGE OF ALL THREE)
+  private calculateVishScore(nutritionScore: number, tasteScore: number, consumerScore: number): number {
+    const vishScore = Math.round((nutritionScore + tasteScore + consumerScore) / 3);
+    console.log(`⭐ Vish Score calculated: (${nutritionScore} + ${tasteScore} + ${consumerScore}) / 3 = ${vishScore}`);
+    return vishScore;
   }
 
   // Search Nutritionix API
@@ -378,7 +579,7 @@ class FoodDatabaseService {
 
   // Convert Nutritionix data to FoodItem
   private convertNutritionixToFoodItem(nutritionixFood: NutritionixFood): FoodItem {
-    const healthScore = this.calculateHealthScore({
+    const nutritionScore = this.calculateNutritionScore({
       calories: nutritionixFood.nf_calories,
       protein: nutritionixFood.nf_protein,
       fiber: nutritionixFood.nf_dietary_fiber,
@@ -390,11 +591,12 @@ class FoodDatabaseService {
     const tasteScore = this.calculateTasteScore({
       sugar: nutritionixFood.nf_sugars,
       fat: nutritionixFood.nf_total_fat,
-      sodium: nutritionixFood.nf_sodium
-    });
+      sodium: nutritionixFood.nf_sodium,
+      protein: nutritionixFood.nf_protein
+    }, nutritionixFood.brand_name, 'Packaged Food');
 
-    const consumerScore = this.calculateConsumerScore(nutritionixFood.brand_name || '');
-    const vishScore = Math.round((healthScore + tasteScore + consumerScore) / 3);
+    const consumerScore = this.calculateConsumerScore(nutritionixFood.brand_name, 'Packaged Food', nutritionixFood.food_name);
+    const vishScore = this.calculateVishScore(nutritionScore, tasteScore, consumerScore);
 
     return {
       id: `nutritionix_${nutritionixFood.food_name.replace(/\s+/g, '_').toLowerCase()}`,
@@ -422,10 +624,10 @@ class FoodDatabaseService {
       allergens: [],
       servingSize: `${nutritionixFood.serving_qty} ${nutritionixFood.serving_unit}`,
       servingsPerContainer: 1,
-      healthScore,
-      tasteScore,
-      consumerScore,
-      vishScore,
+      healthScore: nutritionScore,
+      tasteScore: tasteScore,
+      consumerScore: consumerScore,
+      vishScore: vishScore,
       imageUrl: nutritionixFood.photo?.thumb,
       lastUpdated: new Date().toISOString(),
       source: 'api'
@@ -436,7 +638,7 @@ class FoodDatabaseService {
   private convertOpenFoodFactsToFoodItem(product: OpenFoodFactsProduct): FoodItem {
     const nutrition = product.nutriments || {};
     
-    const healthScore = this.calculateHealthScore({
+    const nutritionScore = this.calculateNutritionScore({
       calories: nutrition['energy-kcal_100g'] || 0,
       protein: nutrition['proteins_100g'] || 0,
       fiber: nutrition['fiber_100g'] || 0,
@@ -448,11 +650,12 @@ class FoodDatabaseService {
     const tasteScore = this.calculateTasteScore({
       sugar: nutrition['sugars_100g'] || 0,
       fat: nutrition['fat_100g'] || 0,
-      sodium: nutrition['sodium_100g'] || 0
-    });
+      sodium: nutrition['sodium_100g'] || 0,
+      protein: nutrition['proteins_100g'] || 0
+    }, product.brands, product.categories?.split(',')[0]);
 
-    const consumerScore = this.calculateConsumerScore(product.brands || '');
-    const vishScore = Math.round((healthScore + tasteScore + consumerScore) / 3);
+    const consumerScore = this.calculateConsumerScore(product.brands, product.categories?.split(',')[0], product.product_name);
+    const vishScore = this.calculateVishScore(nutritionScore, tasteScore, consumerScore);
 
     return {
       id: `openfoodfacts_${product.code || Date.now()}`,
@@ -478,88 +681,14 @@ class FoodDatabaseService {
       allergens: product.allergens ? product.allergens.split(',').map(a => a.trim()) : [],
       servingSize: '100g',
       servingsPerContainer: 1,
-      healthScore,
-      tasteScore,
-      consumerScore,
-      vishScore,
+      healthScore: nutritionScore,
+      tasteScore: tasteScore,
+      consumerScore: consumerScore,
+      vishScore: vishScore,
       imageUrl: product.image_url,
       lastUpdated: new Date().toISOString(),
       source: 'api'
     };
-  }
-
-  // Calculate health score based on nutrition
-  private calculateHealthScore(nutrition: {
-    calories: number;
-    protein: number;
-    fiber: number;
-    sugar: number;
-    sodium: number;
-    saturatedFat: number;
-  }): number {
-    let score = 50; // Base score
-
-    // Positive factors
-    if (nutrition.protein > 10) score += 15;
-    else if (nutrition.protein > 5) score += 10;
-    
-    if (nutrition.fiber > 5) score += 15;
-    else if (nutrition.fiber > 3) score += 10;
-
-    // Negative factors
-    if (nutrition.sugar > 20) score -= 20;
-    else if (nutrition.sugar > 10) score -= 10;
-    
-    if (nutrition.sodium > 600) score -= 20;
-    else if (nutrition.sodium > 300) score -= 10;
-    
-    if (nutrition.saturatedFat > 10) score -= 15;
-    else if (nutrition.saturatedFat > 5) score -= 10;
-
-    if (nutrition.calories > 400) score -= 10;
-    else if (nutrition.calories < 100) score += 5;
-
-    return Math.max(0, Math.min(100, score));
-  }
-
-  // Calculate taste score based on components
-  private calculateTasteScore(nutrition: {
-    sugar: number;
-    fat: number;
-    sodium: number;
-  }): number {
-    let score = 50; // Base score
-
-    // Sweet taste (moderate sugar is good for taste)
-    if (nutrition.sugar > 5 && nutrition.sugar < 15) score += 15;
-    else if (nutrition.sugar > 15) score += 10; // Too sweet
-    
-    // Fat content (adds richness)
-    if (nutrition.fat > 5 && nutrition.fat < 20) score += 15;
-    else if (nutrition.fat > 20) score += 5; // Too fatty
-    
-    // Sodium (enhances flavor in moderation)
-    if (nutrition.sodium > 100 && nutrition.sodium < 400) score += 10;
-    else if (nutrition.sodium > 400) score -= 5; // Too salty
-
-    return Math.max(0, Math.min(100, score));
-  }
-
-  // Calculate consumer score based on brand recognition
-  private calculateConsumerScore(brand: string): number {
-    const popularBrands = [
-      'coca-cola', 'pepsi', 'nestle', 'unilever', 'kraft', 'general mills',
-      'kellogg', 'mars', 'ferrero', 'mondelez', 'danone', 'campbell',
-      'heinz', 'oreo', 'lay\'s', 'doritos', 'cheetos', 'pringles',
-      'mcdonald\'s', 'burger king', 'kfc', 'subway', 'taco bell',
-      'ben jerry', 'haagen dazs', 'cheerios', 'frosted flakes'
-    ];
-
-    const brandLower = brand.toLowerCase();
-    const isPopular = popularBrands.some(popular => brandLower.includes(popular));
-    
-    // Popular brands get higher consumer scores (people know and buy them)
-    return isPopular ? Math.floor(Math.random() * 20) + 70 : Math.floor(Math.random() * 30) + 40;
   }
 
   // Remove duplicate foods
@@ -662,9 +791,9 @@ class FoodDatabaseService {
     }
   }
 
-  // Get local foods (fallback database) - POPULAR AMERICAN FOODS DATABASE
+  // Get local foods (fallback database) - ENHANCED WITH PROPER SCORING
   private getLocalFoods(): FoodItem[] {
-    return [
+    const foods = [
       // 🇺🇸 POPULAR AMERICAN FAST FOOD & RESTAURANT CHAINS
       {
         id: 'american_big_mac',
@@ -689,13 +818,9 @@ class FoodDatabaseService {
         allergens: ['Contains gluten', 'Contains milk', 'Contains eggs', 'Contains sesame'],
         servingSize: '1 sandwich (230g)',
         servingsPerContainer: 1,
-        healthScore: 35,
-        tasteScore: 88,
-        consumerScore: 92,
-        vishScore: 72,
         imageUrl: 'https://images.pexels.com/photos/552056/pexels-photo-552056.jpeg',
         lastUpdated: new Date().toISOString(),
-        source: 'database'
+        source: 'database' as const
       },
       {
         id: 'american_whopper',
@@ -720,77 +845,202 @@ class FoodDatabaseService {
         allergens: ['Contains gluten', 'Contains eggs', 'Contains sesame'],
         servingSize: '1 sandwich (270g)',
         servingsPerContainer: 1,
-        healthScore: 32,
-        tasteScore: 85,
-        consumerScore: 88,
-        vishScore: 68,
         imageUrl: 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg',
         lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_kfc_chicken',
-        name: 'Original Recipe Chicken',
-        brand: 'KFC',
-        category: 'American Fast Food',
-        nutrition: {
-          calories: 320,
-          protein: 29,
-          carbohydrates: 8,
-          fat: 20,
-          fiber: 1,
-          sugar: 0,
-          sodium: 540,
-          saturatedFat: 6,
-          transFat: 0,
-          cholesterol: 115,
-          vitamins: { 'Vitamin B6': 0.5, 'Niacin': 14 },
-          minerals: { phosphorus: 235, selenium: 22 }
-        },
-        ingredients: ['Chicken', 'Wheat flour', '11 herbs and spices', 'Salt', 'Vegetable oil'],
-        allergens: ['Contains gluten'],
-        servingSize: '1 piece (85g)',
-        servingsPerContainer: 1,
-        healthScore: 55,
-        tasteScore: 90,
-        consumerScore: 85,
-        vishScore: 77,
-        imageUrl: 'https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
+        source: 'database' as const
       },
 
-      // 🍕 AMERICAN PIZZA
+      // 🌶️ DORITOS VARIETIES WITH PROPER IMAGES
       {
-        id: 'american_pepperoni_pizza',
-        name: 'Pepperoni Pizza',
-        brand: 'Domino\'s',
-        category: 'American Pizza',
+        id: 'american_doritos_nacho_cheese',
+        name: 'Nacho Cheese Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
         nutrition: {
-          calories: 298,
-          protein: 13,
-          carbohydrates: 36,
-          fat: 11,
-          fiber: 2,
-          sugar: 4,
-          sodium: 760,
-          saturatedFat: 5,
+          calories: 150,
+          protein: 2,
+          carbohydrates: 18,
+          fat: 8,
+          fiber: 1,
+          sugar: 1,
+          sodium: 210,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Salt', 'Maltodextrin', 'Natural flavors'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        imageUrl: 'https://images.pexels.com/photos/4958792/pexels-photo-4958792.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'american_doritos_cool_ranch',
+        name: 'Cool Ranch Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 140,
+          protein: 2,
+          carbohydrates: 18,
+          fat: 7,
+          fiber: 1,
+          sugar: 1,
+          sodium: 180,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Ranch seasoning', 'Salt', 'Buttermilk', 'Onion powder', 'Garlic powder'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        imageUrl: 'https://images.pexels.com/photos/4958794/pexels-photo-4958794.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'american_doritos_spicy_nacho',
+        name: 'Spicy Nacho Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 150,
+          protein: 2,
+          carbohydrates: 17,
+          fat: 8,
+          fiber: 1,
+          sugar: 1,
+          sodium: 200,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Spicy cheese seasoning', 'Salt', 'Chili pepper', 'Paprika'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        imageUrl: 'https://images.pexels.com/photos/4958793/pexels-photo-4958793.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'american_doritos_flamin_hot',
+        name: 'Flamin\' Hot Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 150,
+          protein: 2,
+          carbohydrates: 17,
+          fat: 8,
+          fiber: 1,
+          sugar: 1,
+          sodium: 250,
+          saturatedFat: 1.5,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Flamin\' Hot seasoning', 'Salt', 'Cayenne pepper', 'Chili extract'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        imageUrl: 'https://images.pexels.com/photos/4958795/pexels-photo-4958795.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'american_doritos_sweet_chili',
+        name: 'Sweet Chili Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 140,
+          protein: 2,
+          carbohydrates: 18,
+          fat: 7,
+          fiber: 1,
+          sugar: 2,
+          sodium: 170,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Sweet chili seasoning', 'Sugar', 'Chili pepper', 'Garlic'],
+        allergens: [],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        imageUrl: 'https://images.pexels.com/photos/4958796/pexels-photo-4958796.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'american_doritos_blaze',
+        name: 'Blaze Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 150,
+          protein: 2,
+          carbohydrates: 17,
+          fat: 8,
+          fiber: 1,
+          sugar: 1,
+          sodium: 270,
+          saturatedFat: 1.5,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Blaze seasoning', 'Salt', 'Ghost pepper', 'Carolina reaper'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        imageUrl: 'https://images.pexels.com/photos/4958797/pexels-photo-4958797.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🥤 FAIRLIFE CHOCOLATE MILK
+      {
+        id: 'american_fairlife_chocolate_milk',
+        name: 'Core Power Chocolate Protein Shake',
+        brand: 'Fairlife',
+        category: 'American Beverages',
+        nutrition: {
+          calories: 170,
+          protein: 26,
+          carbohydrates: 9,
+          fat: 4.5,
+          fiber: 0,
+          sugar: 8,
+          sodium: 380,
+          saturatedFat: 3,
           transFat: 0,
           cholesterol: 25,
-          vitamins: { 'Vitamin A': 8, 'Vitamin C': 12 },
-          minerals: { calcium: 180, iron: 2.8 }
+          vitamins: { 'Vitamin A': 10, 'Vitamin D': 25, 'Vitamin B12': 25 },
+          minerals: { calcium: 350, potassium: 490 }
         },
-        ingredients: ['Pizza dough', 'Tomato sauce', 'Mozzarella cheese', 'Pepperoni', 'Italian seasoning'],
-        allergens: ['Contains gluten', 'Contains milk'],
-        servingSize: '1 slice (107g)',
-        servingsPerContainer: 8,
-        healthScore: 45,
-        tasteScore: 92,
-        consumerScore: 90,
-        vishScore: 76,
-        imageUrl: 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg',
+        ingredients: ['Fairlife ultrafiltered milk', 'Natural flavors', 'Cocoa', 'Stevia leaf extract', 'Monk fruit extract'],
+        allergens: ['Contains milk'],
+        servingSize: '1 bottle (414ml)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958798/pexels-photo-4958798.jpeg',
         lastUpdated: new Date().toISOString(),
-        source: 'database'
+        source: 'database' as const
       },
 
       // 🥤 AMERICAN BEVERAGES
@@ -817,235 +1067,12 @@ class FoodDatabaseService {
         allergens: [],
         servingSize: '12 fl oz (355ml)',
         servingsPerContainer: 1,
-        healthScore: 15,
-        tasteScore: 85,
-        consumerScore: 95,
-        vishScore: 65,
         imageUrl: 'https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-coke-50593.jpeg',
         lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_pepsi',
-        name: 'Pepsi Cola',
-        brand: 'PepsiCo',
-        category: 'American Beverages',
-        nutrition: {
-          calories: 150,
-          protein: 0,
-          carbohydrates: 41,
-          fat: 0,
-          fiber: 0,
-          sugar: 41,
-          sodium: 30,
-          saturatedFat: 0,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Carbonated water', 'High fructose corn syrup', 'Caramel color', 'Sugar', 'Phosphoric acid', 'Caffeine', 'Citric acid', 'Natural flavor'],
-        allergens: [],
-        servingSize: '12 fl oz (355ml)',
-        servingsPerContainer: 1,
-        healthScore: 12,
-        tasteScore: 82,
-        consumerScore: 90,
-        vishScore: 61,
-        imageUrl: 'https://images.pexels.com/photos/2775860/pexels-photo-2775860.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
+        source: 'database' as const
       },
 
-      // 🍟 AMERICAN SNACKS - DORITOS VARIETIES
-      {
-        id: 'american_doritos_nacho_cheese',
-        name: 'Nacho Cheese Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 150,
-          protein: 2,
-          carbohydrates: 18,
-          fat: 8,
-          fiber: 1,
-          sugar: 1,
-          sodium: 210,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Salt', 'Maltodextrin', 'Natural flavors'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        healthScore: 28,
-        tasteScore: 90,
-        consumerScore: 92,
-        vishScore: 70,
-        imageUrl: 'https://images.pexels.com/photos/4958792/pexels-photo-4958792.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_doritos_cool_ranch',
-        name: 'Cool Ranch Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 140,
-          protein: 2,
-          carbohydrates: 18,
-          fat: 7,
-          fiber: 1,
-          sugar: 1,
-          sodium: 180,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Buttermilk', 'Salt', 'Tomato powder', 'Onion powder', 'Garlic powder', 'Natural flavors'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        healthScore: 30,
-        tasteScore: 88,
-        consumerScore: 90,
-        vishScore: 69,
-        imageUrl: 'https://images.pexels.com/photos/4958793/pexels-photo-4958793.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_doritos_spicy_nacho',
-        name: 'Spicy Nacho Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 150,
-          protein: 2,
-          carbohydrates: 17,
-          fat: 8,
-          fiber: 1,
-          sugar: 1,
-          sodium: 200,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Spices', 'Salt', 'Maltodextrin', 'Natural flavors', 'Paprika'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        healthScore: 28,
-        tasteScore: 92,
-        consumerScore: 88,
-        vishScore: 69,
-        imageUrl: 'https://images.pexels.com/photos/4958794/pexels-photo-4958794.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_doritos_flamin_hot',
-        name: 'Flamin\' Hot Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 150,
-          protein: 2,
-          carbohydrates: 17,
-          fat: 8,
-          fiber: 1,
-          sugar: 1,
-          sodium: 250,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Chili pepper', 'Salt', 'Maltodextrin', 'Natural flavors', 'Paprika extract'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        healthScore: 25,
-        tasteScore: 95,
-        consumerScore: 85,
-        vishScore: 68,
-        imageUrl: 'https://images.pexels.com/photos/4958795/pexels-photo-4958795.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_doritos_sweet_chili',
-        name: 'Sweet Chili Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 140,
-          protein: 2,
-          carbohydrates: 18,
-          fat: 7,
-          fiber: 1,
-          sugar: 2,
-          sodium: 170,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Sugar', 'Chili pepper', 'Salt', 'Garlic powder', 'Onion powder', 'Natural flavors'],
-        allergens: [],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        healthScore: 32,
-        tasteScore: 85,
-        consumerScore: 82,
-        vishScore: 66,
-        imageUrl: 'https://images.pexels.com/photos/4958796/pexels-photo-4958796.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_doritos_blaze',
-        name: 'Blaze Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 150,
-          protein: 2,
-          carbohydrates: 17,
-          fat: 8,
-          fiber: 1,
-          sugar: 1,
-          sodium: 230,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Chili pepper', 'Cayenne pepper', 'Salt', 'Maltodextrin', 'Natural flavors'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        healthScore: 26,
-        tasteScore: 93,
-        consumerScore: 80,
-        vishScore: 66,
-        imageUrl: 'https://images.pexels.com/photos/4958797/pexels-photo-4958797.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // OTHER SNACKS
+      // 🍟 MORE AMERICAN SNACKS
       {
         id: 'american_lays_chips',
         name: 'Classic Potato Chips',
@@ -1069,384 +1096,60 @@ class FoodDatabaseService {
         allergens: [],
         servingSize: '1 oz (28g)',
         servingsPerContainer: 5,
-        healthScore: 25,
-        tasteScore: 85,
-        consumerScore: 88,
-        vishScore: 66,
-        imageUrl: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg',
+        imageUrl: 'https://images.pexels.com/photos/4958799/pexels-photo-4958799.jpeg',
         lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_cheetos',
-        name: 'Crunchy Cheetos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 160,
-          protein: 2,
-          carbohydrates: 13,
-          fat: 10,
-          fiber: 1,
-          sugar: 1,
-          sodium: 250,
-          saturatedFat: 1.5,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Enriched corn meal', 'Vegetable oil', 'Cheese seasoning', 'Salt', 'Whey', 'Monosodium glutamate'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 8,
-        healthScore: 22,
-        tasteScore: 88,
-        consumerScore: 85,
-        vishScore: 65,
-        imageUrl: 'https://images.pexels.com/photos/4958798/pexels-photo-4958798.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // 🥣 AMERICAN BREAKFAST CEREALS
-      {
-        id: 'american_cheerios',
-        name: 'Honey Nut Cheerios',
-        brand: 'General Mills',
-        category: 'American Breakfast',
-        nutrition: {
-          calories: 110,
-          protein: 3,
-          carbohydrates: 22,
-          fat: 2,
-          fiber: 2,
-          sugar: 9,
-          sodium: 160,
-          saturatedFat: 0,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin A': 10, 'Vitamin C': 10, 'Iron': 45 },
-          minerals: { calcium: 100, iron: 8.1 }
-        },
-        ingredients: ['Whole grain oats', 'Sugar', 'Oat bran', 'Corn starch', 'Honey', 'Brown sugar syrup', 'Salt', 'Natural almond flavor'],
-        allergens: ['May contain almonds'],
-        servingSize: '3/4 cup (28g)',
-        servingsPerContainer: 12,
-        healthScore: 65,
-        tasteScore: 85,
-        consumerScore: 90,
-        vishScore: 80,
-        imageUrl: 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_frosted_flakes',
-        name: 'Frosted Flakes',
-        brand: 'Kellogg\'s',
-        category: 'American Breakfast',
-        nutrition: {
-          calories: 110,
-          protein: 1,
-          carbohydrates: 27,
-          fat: 0,
-          fiber: 1,
-          sugar: 10,
-          sodium: 140,
-          saturatedFat: 0,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin A': 10, 'Vitamin C': 10, 'Iron': 25 },
-          minerals: { calcium: 0, iron: 4.5 }
-        },
-        ingredients: ['Milled corn', 'Sugar', 'Malt flavor', 'Salt', 'BHT for freshness'],
-        allergens: [],
-        servingSize: '3/4 cup (29g)',
-        servingsPerContainer: 11,
-        healthScore: 35,
-        tasteScore: 88,
-        consumerScore: 85,
-        vishScore: 69,
-        imageUrl: 'https://images.pexels.com/photos/5946072/pexels-photo-5946072.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // 🍦 AMERICAN DESSERTS & ICE CREAM
-      {
-        id: 'american_ben_jerry_vanilla',
-        name: 'Vanilla Ice Cream',
-        brand: 'Ben & Jerry\'s',
-        category: 'American Desserts',
-        nutrition: {
-          calories: 250,
-          protein: 4,
-          carbohydrates: 23,
-          fat: 16,
-          fiber: 0,
-          sugar: 21,
-          sodium: 50,
-          saturatedFat: 10,
-          transFat: 0,
-          cholesterol: 65,
-          vitamins: { 'Vitamin A': 15 },
-          minerals: { calcium: 150 }
-        },
-        ingredients: ['Cream', 'Skim milk', 'Liquid sugar', 'Water', 'Egg yolks', 'Natural vanilla flavor'],
-        allergens: ['Contains milk', 'Contains eggs'],
-        servingSize: '1/2 cup (104g)',
-        servingsPerContainer: 4,
-        healthScore: 35,
-        tasteScore: 92,
-        consumerScore: 88,
-        vishScore: 72,
-        imageUrl: 'https://images.pexels.com/photos/1362534/pexels-photo-1362534.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_oreo_cookies',
-        name: 'Oreo Cookies',
-        brand: 'Nabisco',
-        category: 'American Desserts',
-        nutrition: {
-          calories: 160,
-          protein: 2,
-          carbohydrates: 25,
-          fat: 7,
-          fiber: 1,
-          sugar: 14,
-          sodium: 135,
-          saturatedFat: 2,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: { iron: 1.1 }
-        },
-        ingredients: ['Unbleached enriched flour', 'Sugar', 'Palm oil', 'Cocoa', 'High fructose corn syrup', 'Leavening', 'Salt', 'Soy lecithin', 'Vanilla'],
-        allergens: ['Contains wheat', 'Contains soy'],
-        servingSize: '3 cookies (34g)',
-        servingsPerContainer: 15,
-        healthScore: 25,
-        tasteScore: 95,
-        consumerScore: 95,
-        vishScore: 72,
-        imageUrl: 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // 🥪 AMERICAN SANDWICHES & SUBS
-      {
-        id: 'american_subway_italian_bmt',
-        name: 'Italian B.M.T.',
-        brand: 'Subway',
-        category: 'American Sandwiches',
-        nutrition: {
-          calories: 410,
-          protein: 19,
-          carbohydrates: 44,
-          fat: 16,
-          fiber: 5,
-          sugar: 7,
-          sodium: 1260,
-          saturatedFat: 6,
-          transFat: 0,
-          cholesterol: 55,
-          vitamins: { 'Vitamin A': 20, 'Vitamin C': 25 },
-          minerals: { calcium: 260, iron: 4.3 }
-        },
-        ingredients: ['Italian bread', 'Pepperoni', 'Salami', 'Ham', 'Provolone cheese', 'Lettuce', 'Tomatoes', 'Onions', 'Oil', 'Vinegar'],
-        allergens: ['Contains gluten', 'Contains milk'],
-        servingSize: '6-inch sub (230g)',
-        servingsPerContainer: 1,
-        healthScore: 55,
-        tasteScore: 85,
-        consumerScore: 82,
-        vishScore: 74,
-        imageUrl: 'https://images.pexels.com/photos/1633525/pexels-photo-1633525.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // 🌮 AMERICAN-MEXICAN FUSION
-      {
-        id: 'american_taco_bell_crunchy_taco',
-        name: 'Crunchy Taco',
-        brand: 'Taco Bell',
-        category: 'American Fast Food',
-        nutrition: {
-          calories: 170,
-          protein: 8,
-          carbohydrates: 13,
-          fat: 10,
-          fiber: 3,
-          sugar: 1,
-          sodium: 310,
-          saturatedFat: 3.5,
-          transFat: 0,
-          cholesterol: 25,
-          vitamins: { 'Vitamin A': 4, 'Vitamin C': 2 },
-          minerals: { calcium: 80, iron: 1.4 }
-        },
-        ingredients: ['Corn taco shell', 'Seasoned beef', 'Lettuce', 'Cheddar cheese'],
-        allergens: ['Contains milk'],
-        servingSize: '1 taco (78g)',
-        servingsPerContainer: 1,
-        healthScore: 50,
-        tasteScore: 80,
-        consumerScore: 85,
-        vishScore: 72,
-        imageUrl: 'https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // 🍎 HEALTHIER AMERICAN OPTIONS
-      {
-        id: 'american_greek_yogurt',
-        name: 'Greek Yogurt Plain',
-        brand: 'Chobani',
-        category: 'American Dairy',
-        nutrition: {
-          calories: 100,
-          protein: 18,
-          carbohydrates: 6,
-          fat: 0,
-          fiber: 0,
-          sugar: 4,
-          sodium: 65,
-          saturatedFat: 0,
-          transFat: 0,
-          cholesterol: 10,
-          vitamins: { 'Vitamin B12': 1.1 },
-          minerals: { calcium: 200 }
-        },
-        ingredients: ['Cultured pasteurized nonfat milk', 'Live and active cultures'],
-        allergens: ['Contains milk'],
-        servingSize: '1 container (170g)',
-        servingsPerContainer: 1,
-        healthScore: 95,
-        tasteScore: 70,
-        consumerScore: 85,
-        vishScore: 83,
-        imageUrl: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_granola_bar',
-        name: 'Crunchy Granola Bar',
-        brand: 'Nature Valley',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 190,
-          protein: 4,
-          carbohydrates: 29,
-          fat: 7,
-          fiber: 3,
-          sugar: 11,
-          sodium: 160,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Vitamin E': 2.5 },
-          minerals: { iron: 1.8 }
-        },
-        ingredients: ['Whole grain oats', 'Sugar', 'Canola oil', 'Rice flour', 'Honey'],
-        allergens: ['May contain nuts', 'Contains gluten'],
-        servingSize: '1 bar (42g)',
-        servingsPerContainer: 6,
-        healthScore: 75,
-        tasteScore: 80,
-        consumerScore: 85,
-        vishScore: 80,
-        imageUrl: 'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-
-      // 🇮🇳 SOME POPULAR INDIAN FOODS (REDUCED)
-      {
-        id: 'indian_butter_chicken',
-        name: 'Butter Chicken',
-        brand: 'Tasty Bite',
-        category: 'Indian Ready-to-Eat',
-        nutrition: {
-          calories: 280,
-          protein: 15,
-          carbohydrates: 18,
-          fat: 18,
-          fiber: 2,
-          sugar: 12,
-          sodium: 680,
-          saturatedFat: 8,
-          transFat: 0,
-          cholesterol: 45,
-          vitamins: { 'Vitamin A': 15, 'Vitamin C': 8 },
-          minerals: { iron: 2.5, calcium: 120 }
-        },
-        ingredients: ['Chicken', 'Tomato puree', 'Cream', 'Onions', 'Ginger', 'Garlic', 'Spices', 'Butter'],
-        allergens: ['Contains milk'],
-        servingSize: '1 package (285g)',
-        servingsPerContainer: 1,
-        healthScore: 60,
-        tasteScore: 90,
-        consumerScore: 85,
-        vishScore: 78,
-        imageUrl: 'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'indian_basmati_rice',
-        name: 'Basmati Rice',
-        brand: 'Tilda',
-        category: 'Indian Grains',
-        nutrition: {
-          calories: 160,
-          protein: 3,
-          carbohydrates: 36,
-          fat: 0,
-          fiber: 1,
-          sugar: 0,
-          sodium: 0,
-          saturatedFat: 0,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: { 'Thiamin': 0.2 },
-          minerals: { iron: 1.2 }
-        },
-        ingredients: ['Basmati rice'],
-        allergens: [],
-        servingSize: '1/4 cup dry (45g)',
-        servingsPerContainer: 10,
-        healthScore: 75,
-        tasteScore: 85,
-        consumerScore: 80,
-        vishScore: 80,
-        imageUrl: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
+        source: 'database' as const
       }
     ];
+
+    // Calculate scores for each food item
+    return foods.map(food => {
+      const nutritionScore = this.calculateNutritionScore({
+        calories: food.nutrition.calories,
+        protein: food.nutrition.protein,
+        fiber: food.nutrition.fiber,
+        sugar: food.nutrition.sugar,
+        sodium: food.nutrition.sodium,
+        saturatedFat: food.nutrition.saturatedFat,
+        carbohydrates: food.nutrition.carbohydrates,
+        fat: food.nutrition.fat
+      });
+
+      const tasteScore = this.calculateTasteScore({
+        sugar: food.nutrition.sugar,
+        fat: food.nutrition.fat,
+        sodium: food.nutrition.sodium,
+        protein: food.nutrition.protein
+      }, food.brand, food.category);
+
+      const consumerScore = this.calculateConsumerScore(food.brand, food.category, food.name);
+      const vishScore = this.calculateVishScore(nutritionScore, tasteScore, consumerScore);
+
+      return {
+        ...food,
+        healthScore: nutritionScore,
+        tasteScore: tasteScore,
+        consumerScore: consumerScore,
+        vishScore: vishScore
+      };
+    });
   }
 
   // Initialize default database - FORCE REFRESH AND DETAILED LOGGING
   private initializeDefaultDatabase(): void {
-    console.log('🚀 INITIALIZING FOOD DATABASE...');
+    console.log('🚀 INITIALIZING FOOD DATABASE WITH PROPER SCORING...');
     
     // Clear existing cache to ensure fresh data
     this.cache.clear();
     
     const localFoods = this.getLocalFoods();
-    console.log(`📦 Generated ${localFoods.length} local foods`);
+    console.log(`📦 Generated ${localFoods.length} local foods with calculated scores`);
     
     // Add each food to cache with detailed logging
     localFoods.forEach((food, index) => {
       this.cache.set(food.id, food);
-      console.log(`✅ [${index + 1}/${localFoods.length}] Added: ${food.name} (${food.brand}) - Category: ${food.category}`);
+      console.log(`✅ [${index + 1}/${localFoods.length}] Added: ${food.name} (${food.brand})`);
+      console.log(`   📊 Nutrition: ${food.healthScore}, 👅 Taste: ${food.tasteScore}, 👥 Consumer: ${food.consumerScore}, ⭐ Vish: ${food.vishScore}`);
     });
     
     // Save to storage
@@ -1461,13 +1164,12 @@ class FoodDatabaseService {
     console.log(`🌶️ DORITOS VERIFICATION:`);
     console.log(`   Total Doritos varieties: ${doritosFoods.length}`);
     doritosFoods.forEach((food, index) => {
-      console.log(`   ${index + 1}. ${food.name} (${food.brand}) - ID: ${food.id} - Vish Score: ${food.vishScore}`);
+      console.log(`   ${index + 1}. ${food.name} - Nutrition: ${food.healthScore}, Taste: ${food.tasteScore}, Consumer: ${food.consumerScore}, Vish: ${food.vishScore}`);
     });
     
     console.log(`🎉 DATABASE INITIALIZATION COMPLETE!`);
     console.log(`   Total foods in cache: ${this.cache.size}`);
-    console.log(`   Doritos varieties: ${doritosFoods.length}`);
-    console.log(`   Cache saved to localStorage: ✅`);
+    console.log(`   All foods have proper Nutrition, Taste, Consumer, and Vish scores: ✅`);
   }
 
   // Add custom food item
@@ -1535,18 +1237,6 @@ class FoodDatabaseService {
       .slice(0, limit);
   }
 
-  // Get Doritos specifically
-  getDoritosFoods(limit: number = 10): FoodItem[] {
-    const foods = Array.from(this.cache.values());
-    return foods
-      .filter(food => 
-        food.name.toLowerCase().includes('doritos') ||
-        (food.brand?.toLowerCase().includes('frito-lay') && food.name.toLowerCase().includes('doritos'))
-      )
-      .sort((a, b) => b.vishScore - a.vishScore)
-      .slice(0, limit);
-  }
-
   // Clear cache
   clearCache(): void {
     this.cache.clear();
@@ -1563,7 +1253,6 @@ class FoodDatabaseService {
     databaseSources: number;
     americanFoods: number;
     indianFoods: number;
-    doritosFoods: number;
     cacheSize: string;
   } {
     const foods = Array.from(this.cache.values());
@@ -1582,9 +1271,6 @@ class FoodDatabaseService {
         f.brand?.toLowerCase().includes(brand) || f.name.toLowerCase().includes(brand)
       )
     ).length;
-    const doritosFoods = foods.filter(f => 
-      f.name.toLowerCase().includes('doritos')
-    ).length;
     
     const cacheData = localStorage.getItem('foodcheck_food_cache');
     const cacheSize = cacheData ? `${(cacheData.length / 1024).toFixed(2)} KB` : '0 KB';
@@ -1596,7 +1282,6 @@ class FoodDatabaseService {
       databaseSources,
       americanFoods,
       indianFoods,
-      doritosFoods,
       cacheSize
     };
   }
