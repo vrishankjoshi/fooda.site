@@ -42,6 +42,9 @@ export interface NutritionAnalysis {
     grade: string;
     summary: string;
     vishScore: number;
+    nutritionScore: number;
+    tasteScore: number;
+    consumerScore: number;
   };
 }
 
@@ -104,9 +107,46 @@ export const analyzeNutritionLabel = async (
   "overall": {
     "grade": "A-F letter grade",
     "summary": "brief overall assessment",
-    "vishScore": number (1-100, average of nutrition, taste, and consumer scores)
+    "vishScore": number (1-100, average of nutrition, taste, and consumer scores),
+    "nutritionScore": number (1-100, same as health.score),
+    "tasteScore": number (1-100, same as taste.score),
+    "consumerScore": number (1-100, same as consumer.score)
   }
 }
+
+IMPORTANT SCORING GUIDELINES:
+
+NUTRITION SCORE (health.score):
+- Start with base score of 50
+- HIGH PROTEIN (15g+): +15-20 points
+- HIGH FIBER (5g+): +15-20 points  
+- LOW SUGAR (<10g): +10-15 points
+- LOW SODIUM (<400mg): +10-15 points
+- LOW SATURATED FAT (<5g): +10-15 points
+- HIGH SUGAR (20g+): -15-25 points
+- HIGH SODIUM (800mg+): -15-25 points
+- HIGH SATURATED FAT (10g+): -15-20 points
+- VERY HIGH CALORIES (500+): -10-15 points
+
+TASTE SCORE (taste.score):
+- Start with base score of 50
+- MODERATE SUGAR (5-15g): +15-20 points (enhances taste)
+- MODERATE FAT (8-20g): +15-20 points (adds richness)
+- MODERATE SODIUM (200-600mg): +10-15 points (enhances flavor)
+- PROTEIN (10g+): +5-10 points (adds umami)
+- Popular brands (McDonald's, Coca-Cola, Doritos, etc.): +10-15 points
+- Dessert/snack categories: +5-10 points
+
+CONSUMER SCORE (consumer.score):
+- Start with base score of 50
+- MEGA BRANDS (Coca-Cola, McDonald's, Doritos, KFC): +20-25 points
+- POPULAR BRANDS (Nestle, Kraft, General Mills): +10-15 points
+- ICONIC PRODUCTS (Big Mac, Oreo, Cheerios): +15-20 points
+- FAST FOOD/SNACKS: +10-15 points (high consumer appeal)
+- DESSERTS/ICE CREAM: +8-12 points
+- Add random variation of -5 to +5 for realism
+
+VISH SCORE = (nutritionScore + tasteScore + consumerScore) / 3
 
 For the consumer analysis, base it on typical consumer feedback patterns for similar products, considering factors like:
 - Taste satisfaction vs health benefits
@@ -151,13 +191,24 @@ Provide only the JSON response, no additional text.`;
     try {
       const analysis = JSON.parse(response);
       
-      // Calculate Vish Score as average of the three components
-      const vishScore = Math.round((analysis.health.score + analysis.taste.score + analysis.consumer.score) / 3);
-      analysis.overall.vishScore = vishScore;
+      // Ensure all required scores are present and calculate Vish Score
+      const nutritionScore = analysis.health?.score || 50;
+      const tasteScore = analysis.taste?.score || 50;
+      const consumerScore = analysis.consumer?.score || 50;
+      const vishScore = Math.round((nutritionScore + tasteScore + consumerScore) / 3);
+      
+      // Update the overall section with all scores
+      analysis.overall = {
+        ...analysis.overall,
+        nutritionScore,
+        tasteScore,
+        consumerScore,
+        vishScore
+      };
       
       return analysis;
     } catch (parseError) {
-      // If JSON parsing fails, create a fallback response
+      // If JSON parsing fails, create a fallback response with proper scoring
       return {
         nutrition: {
           calories: 0,
@@ -194,7 +245,10 @@ Provide only the JSON response, no additional text.`;
         overall: {
           grade: "N/A",
           summary: "Analysis incomplete due to image quality. Please try again with a clearer photo.",
-          vishScore: 50
+          vishScore: 50,
+          nutritionScore: 50,
+          tasteScore: 50,
+          consumerScore: 50
         }
       };
     }

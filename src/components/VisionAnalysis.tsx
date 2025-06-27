@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Camera, Upload, X, Loader2, CheckCircle, AlertTriangle, Star, BarChart3, Heart, Smartphone, QrCode, Users, TrendingUp } from 'lucide-react';
+import { Camera, Upload, X, Loader2, CheckCircle, AlertTriangle, Star, BarChart3, Heart, Smartphone, QrCode, Users, TrendingUp, Award } from 'lucide-react';
 import { analyzeNutritionLabel, NutritionAnalysis } from '../services/visionService';
 import { CameraCapture } from './CameraCapture';
 import { QRCodeModal } from './QRCodeModal';
@@ -297,36 +297,44 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
                   Overall Grade: {analysis.overall.grade}
                 </div>
                 <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full text-xl font-bold inline-block mb-4">
-                  Vish Score: {analysis.overall.vishScore}/100
+                  ⭐ Vish Score: {analysis.overall.vishScore}/100
                 </div>
                 <p className="text-gray-600 dark:text-gray-300 mt-2">{analysis.overall.summary}</p>
               </div>
 
-              {/* Three Pillar Scores */}
-              <div className="grid md:grid-cols-3 gap-4">
+              {/* Four Pillar Scores */}
+              <div className="grid md:grid-cols-4 gap-4">
                 <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
                   <BarChart3 className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
                   <h4 className="font-semibold text-gray-900 dark:text-white">Nutrition</h4>
-                  <p className={`text-2xl font-bold ${getScoreColor(analysis.health.score)}`}>
-                    {analysis.health.score}/100
+                  <p className={`text-2xl font-bold ${getScoreColor(analysis.overall.nutritionScore)}`}>
+                    {analysis.overall.nutritionScore}/100
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Health Impact</p>
                 </div>
                 <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
                   <Star className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
                   <h4 className="font-semibold text-gray-900 dark:text-white">Taste</h4>
-                  <p className={`text-2xl font-bold ${getScoreColor(analysis.taste.score)}`}>
-                    {analysis.taste.score}/100
+                  <p className={`text-2xl font-bold ${getScoreColor(analysis.overall.tasteScore)}`}>
+                    {analysis.overall.tasteScore}/100
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Flavor Quality</p>
                 </div>
                 <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg text-center">
                   <Users className="h-8 w-8 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
                   <h4 className="font-semibold text-gray-900 dark:text-white">Consumer</h4>
-                  <p className={`text-2xl font-bold ${getScoreColor(analysis.consumer.score)}`}>
-                    {analysis.consumer.score}/100
+                  <p className={`text-2xl font-bold ${getScoreColor(analysis.overall.consumerScore)}`}>
+                    {analysis.overall.consumerScore}/100
                   </p>
                   <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">User Satisfaction</p>
+                </div>
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg text-center">
+                  <Award className="h-8 w-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
+                  <h4 className="font-semibold text-gray-900 dark:text-white">Vish Score</h4>
+                  <p className={`text-2xl font-bold ${getScoreColor(analysis.overall.vishScore)}`}>
+                    {analysis.overall.vishScore}/100
+                  </p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Overall Rating</p>
                 </div>
               </div>
 

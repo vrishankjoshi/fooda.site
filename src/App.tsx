@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Globe, MessageCircle, Camera, Mail, Star, BarChart3, Heart, Users, TrendingUp, Award, Zap, Brain, Beaker, Eye, History, UserPlus, Settings, HelpCircle, Play, Search, X } from 'lucide-react';
+import { Moon, Sun, Globe, MessageCircle, Camera, Mail, Star, BarChart3, Heart, Users, TrendingUp, Award, Zap, Brain, Beaker, Eye, History, UserPlus, Settings, HelpCircle, Play } from 'lucide-react';
 import { VisionAnalysis } from './components/VisionAnalysis';
 import { ChatAssistant } from './components/ChatAssistant';
 import { AuthModal } from './components/AuthModal';
@@ -7,12 +7,10 @@ import { AdminPanel } from './components/AdminPanel';
 import { AnalysisHistory } from './components/AnalysisHistory';
 import { ImageGallery } from './components/ImageGallery';
 import { Tour } from './components/Tour';
-import { FoodSearch } from './components/FoodSearch';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
 import { useAuth } from './hooks/useAuth';
 import { NutritionAnalysis } from './services/visionService';
 import { emailService } from './services/emailService';
-import { FoodItem } from './services/foodDatabaseService';
 
 type Language = 'en' | 'es' | 'fr' | 'de' | 'it' | 'pt' | 'hi';
 
@@ -42,7 +40,6 @@ function App() {
   const [showAnalysisHistory, setShowAnalysisHistory] = useState(false);
   const [showImageGallery, setShowImageGallery] = useState(false);
   const [showTour, setShowTour] = useState(false);
-  const [showFoodSearch, setShowFoodSearch] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [analysisForChat, setAnalysisForChat] = useState<NutritionAnalysis | null>(null);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
@@ -102,13 +99,6 @@ function App() {
   const handleTourComplete = () => {
     localStorage.setItem('foodcheck_tour_seen', 'true');
     setHasSeenTour(true);
-  };
-
-  const handleFoodSelect = (food: FoodItem) => {
-    console.log('Selected food:', food);
-    // You can add logic here to do something with the selected food
-    // For example, show detailed analysis or add to favorites
-    setShowFoodSearch(false);
   };
 
   // Admin panel access (simple check - in production, use proper authentication)
@@ -180,13 +170,6 @@ function App() {
               >
                 <MessageCircle className="h-4 w-4" />
                 <span>Chat Assistant</span>
-              </button>
-              <button
-                onClick={() => setShowFoodSearch(true)}
-                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
-              >
-                <Search className="h-4 w-4" />
-                <span>Food Database</span>
               </button>
             </nav>
 
@@ -324,11 +307,11 @@ function App() {
               </button>
               
               <button
-                onClick={() => setShowFoodSearch(true)}
+                onClick={() => setShowChatAssistant(true)}
                 className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-8 py-4 rounded-full text-lg font-semibold border-2 border-gray-300 dark:border-gray-600 hover:border-green-500 dark:hover:border-green-400 transition-all duration-300 transform hover:scale-105 flex items-center space-x-3"
               >
-                <Search className="h-6 w-6" />
-                <span>Search Food Database</span>
+                <MessageCircle className="h-6 w-6" />
+                <span>Ask AI Assistant</span>
               </button>
             </div>
 
@@ -339,8 +322,8 @@ function App() {
                 <div className="text-sm text-gray-600 dark:text-gray-400">Analysis Time</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">3 Pillars</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Nutrition, Taste, Consumer</div>
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400">4 Pillars</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Nutrition, Taste, Consumer, Vish</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">AI Powered</div>
@@ -496,16 +479,16 @@ function App() {
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto">
                 Unlike other systems that only consider nutrition, our Vish Score evaluates food across 
-                three critical dimensions for a complete picture of food quality.
+                four critical dimensions for a complete picture of food quality.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="grid md:grid-cols-4 gap-6 mb-12">
               <div className="text-center">
                 <div className="bg-green-100 dark:bg-green-900/20 p-6 rounded-2xl mb-6">
                   <BarChart3 className="h-12 w-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Nutrition Analysis</h3>
-                  <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">33.3%</div>
+                  <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">25%</div>
                   <p className="text-gray-600 dark:text-gray-300">
                     Complete macro and micronutrient breakdown with health impact assessment
                   </p>
@@ -516,7 +499,7 @@ function App() {
                 <div className="bg-blue-100 dark:bg-blue-900/20 p-6 rounded-2xl mb-6">
                   <Star className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Taste Quality</h3>
-                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">33.3%</div>
+                  <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">25%</div>
                   <p className="text-gray-600 dark:text-gray-300">
                     Advanced flavor profiling and sensory analysis for taste satisfaction
                   </p>
@@ -527,9 +510,20 @@ function App() {
                 <div className="bg-purple-100 dark:bg-purple-900/20 p-6 rounded-2xl mb-6">
                   <Users className="h-12 w-12 text-purple-600 dark:text-purple-400 mx-auto mb-4" />
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Consumer Rating</h3>
-                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">33.3%</div>
+                  <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">25%</div>
                   <p className="text-gray-600 dark:text-gray-300">
                     Real user feedback and satisfaction scores from actual consumers
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-center">
+                <div className="bg-yellow-100 dark:bg-yellow-900/20 p-6 rounded-2xl mb-6">
+                  <Award className="h-12 w-12 text-yellow-600 dark:text-yellow-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Vish Score</h3>
+                  <div className="text-3xl font-bold text-yellow-600 dark:text-yellow-400 mb-2">25%</div>
+                  <p className="text-gray-600 dark:text-gray-300">
+                    Final comprehensive score combining all three analysis pillars
                   </p>
                 </div>
               </div>
@@ -613,9 +607,9 @@ function App() {
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
               <div className="text-center">
                 <div className="bg-green-100 dark:bg-green-900/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <Heart className="h-8 w-8 text-green-600 dark:text-green-400" />
+                  <BarChart3 className="h-8 w-8 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Deep Nutrition Analysis</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Nutrition Analysis</h3>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
                   Complete breakdown of macros, micros, vitamins, and minerals with health impact assessment
                 </p>
@@ -632,12 +626,12 @@ function App() {
               </div>
 
               <div className="text-center">
-                <div className="bg-red-100 dark:bg-red-900/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                  <TrendingUp className="h-8 w-8 text-red-600 dark:text-red-400" />
+                <div className="bg-purple-100 dark:bg-purple-900/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                  <Users className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Personalized Warnings</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Consumer Insights</h3>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Custom health alerts based on your conditions like diabetes, heart disease, allergies
+                  Real user feedback and satisfaction scores from actual consumers and market data
                 </p>
               </div>
 
@@ -645,9 +639,9 @@ function App() {
                 <div className="bg-yellow-100 dark:bg-yellow-900/20 p-4 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                   <Award className="h-8 w-8 text-yellow-600 dark:text-yellow-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Unified Scoring</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Vish Score</h3>
                 <p className="text-gray-600 dark:text-gray-300 text-sm">
-                  Single Vish Score that balances health, taste, and consumer satisfaction
+                  Unified scoring that balances nutrition, taste, and consumer satisfaction
                 </p>
               </div>
             </div>
@@ -704,43 +698,6 @@ function App() {
           }}
           initialAnalysis={analysisForChat}
         />
-      )}
-
-      {showFoodSearch && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-6xl w-full max-h-[90vh] overflow-hidden transition-colors duration-300">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6">
-              <div className="flex justify-between items-center">
-                <div className="flex items-center space-x-3">
-                  <div className="bg-white p-2 rounded-full">
-                    <Search className="h-6 w-6 text-green-600" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-white">Food Database Search</h2>
-                    <p className="text-green-100">Search thousands of foods with comprehensive nutrition data</p>
-                  </div>
-                </div>
-                <button 
-                  onClick={() => setShowFoodSearch(false)}
-                  className="text-white hover:text-gray-200 transition-colors"
-                >
-                  <X className="h-6 w-6" />
-                </button>
-              </div>
-            </div>
-
-            {/* Search Content */}
-            <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
-              <FoodSearch 
-                onFoodSelect={handleFoodSelect}
-                placeholder="Search for Indian foods like Atta, Frooti, Besan, or any packaged food..."
-                showFilters={true}
-                maxResults={20}
-              />
-            </div>
-          </div>
-        </div>
       )}
 
       {showAuthModal && (
