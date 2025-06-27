@@ -198,7 +198,9 @@ class FoodDatabaseService {
       'fast food': ['mcdonald', 'burger king', 'kfc', 'taco bell', 'subway'],
       'snack': ['chips', 'crackers', 'cookies', 'pretzels'],
       'breakfast': ['pancakes', 'waffles', 'cereal', 'bagel', 'muffin'],
-      'dessert': ['cake', 'pie', 'cookies', 'brownies', 'ice cream']
+      'dessert': ['cake', 'pie', 'cookies', 'brownies', 'ice cream'],
+      'doritos': ['nacho cheese', 'cool ranch', 'spicy nacho', 'flamin hot', 'sweet chili'],
+      'deritors': ['doritos', 'nacho cheese', 'cool ranch', 'spicy nacho', 'flamin hot']
     };
     
     if (aliases[query]) {
@@ -691,6 +693,7 @@ class FoodDatabaseService {
         tasteScore: 88,
         consumerScore: 92,
         vishScore: 72,
+        imageUrl: 'https://images.pexels.com/photos/552056/pexels-photo-552056.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -721,6 +724,7 @@ class FoodDatabaseService {
         tasteScore: 85,
         consumerScore: 88,
         vishScore: 68,
+        imageUrl: 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -751,6 +755,7 @@ class FoodDatabaseService {
         tasteScore: 90,
         consumerScore: 85,
         vishScore: 77,
+        imageUrl: 'https://images.pexels.com/photos/60616/fried-chicken-chicken-fried-crunchy-60616.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -783,6 +788,7 @@ class FoodDatabaseService {
         tasteScore: 92,
         consumerScore: 90,
         vishScore: 76,
+        imageUrl: 'https://images.pexels.com/photos/315755/pexels-photo-315755.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -815,6 +821,7 @@ class FoodDatabaseService {
         tasteScore: 85,
         consumerScore: 95,
         vishScore: 65,
+        imageUrl: 'https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-coke-50593.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -845,11 +852,200 @@ class FoodDatabaseService {
         tasteScore: 82,
         consumerScore: 90,
         vishScore: 61,
+        imageUrl: 'https://images.pexels.com/photos/2775860/pexels-photo-2775860.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
 
-      // 🍟 AMERICAN SNACKS
+      // 🍟 AMERICAN SNACKS - DORITOS VARIETIES
+      {
+        id: 'american_doritos_nacho_cheese',
+        name: 'Nacho Cheese Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 150,
+          protein: 2,
+          carbohydrates: 18,
+          fat: 8,
+          fiber: 1,
+          sugar: 1,
+          sodium: 210,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Salt', 'Maltodextrin', 'Natural flavors'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        healthScore: 28,
+        tasteScore: 90,
+        consumerScore: 92,
+        vishScore: 70,
+        imageUrl: 'https://images.pexels.com/photos/4958792/pexels-photo-4958792.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_doritos_cool_ranch',
+        name: 'Cool Ranch Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 140,
+          protein: 2,
+          carbohydrates: 18,
+          fat: 7,
+          fiber: 1,
+          sugar: 1,
+          sodium: 180,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Buttermilk', 'Salt', 'Tomato powder', 'Onion powder', 'Garlic powder', 'Natural flavors'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        healthScore: 30,
+        tasteScore: 88,
+        consumerScore: 90,
+        vishScore: 69,
+        imageUrl: 'https://images.pexels.com/photos/4958793/pexels-photo-4958793.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_doritos_spicy_nacho',
+        name: 'Spicy Nacho Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 150,
+          protein: 2,
+          carbohydrates: 17,
+          fat: 8,
+          fiber: 1,
+          sugar: 1,
+          sodium: 200,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Spices', 'Salt', 'Maltodextrin', 'Natural flavors', 'Paprika'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        healthScore: 28,
+        tasteScore: 92,
+        consumerScore: 88,
+        vishScore: 69,
+        imageUrl: 'https://images.pexels.com/photos/4958794/pexels-photo-4958794.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_doritos_flamin_hot',
+        name: 'Flamin\' Hot Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 150,
+          protein: 2,
+          carbohydrates: 17,
+          fat: 8,
+          fiber: 1,
+          sugar: 1,
+          sodium: 250,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Chili pepper', 'Salt', 'Maltodextrin', 'Natural flavors', 'Paprika extract'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        healthScore: 25,
+        tasteScore: 95,
+        consumerScore: 85,
+        vishScore: 68,
+        imageUrl: 'https://images.pexels.com/photos/4958795/pexels-photo-4958795.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_doritos_sweet_chili',
+        name: 'Sweet Chili Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 140,
+          protein: 2,
+          carbohydrates: 18,
+          fat: 7,
+          fiber: 1,
+          sugar: 2,
+          sodium: 170,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Sugar', 'Chili pepper', 'Salt', 'Garlic powder', 'Onion powder', 'Natural flavors'],
+        allergens: [],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        healthScore: 32,
+        tasteScore: 85,
+        consumerScore: 82,
+        vishScore: 66,
+        imageUrl: 'https://images.pexels.com/photos/4958796/pexels-photo-4958796.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+      {
+        id: 'american_doritos_blaze',
+        name: 'Blaze Doritos',
+        brand: 'Frito-Lay',
+        category: 'American Snacks',
+        nutrition: {
+          calories: 150,
+          protein: 2,
+          carbohydrates: 17,
+          fat: 8,
+          fiber: 1,
+          sugar: 1,
+          sodium: 230,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Chili pepper', 'Cayenne pepper', 'Salt', 'Maltodextrin', 'Natural flavors'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        healthScore: 26,
+        tasteScore: 93,
+        consumerScore: 80,
+        vishScore: 66,
+        imageUrl: 'https://images.pexels.com/photos/4958797/pexels-photo-4958797.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database'
+      },
+
+      // OTHER SNACKS
       {
         id: 'american_lays_chips',
         name: 'Classic Potato Chips',
@@ -877,36 +1073,7 @@ class FoodDatabaseService {
         tasteScore: 85,
         consumerScore: 88,
         vishScore: 66,
-        lastUpdated: new Date().toISOString(),
-        source: 'database'
-      },
-      {
-        id: 'american_doritos',
-        name: 'Nacho Cheese Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 150,
-          protein: 2,
-          carbohydrates: 18,
-          fat: 8,
-          fiber: 1,
-          sugar: 1,
-          sodium: 210,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Cheese seasoning', 'Salt', 'Maltodextrin', 'Natural flavors'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        healthScore: 28,
-        tasteScore: 90,
-        consumerScore: 92,
-        vishScore: 70,
+        imageUrl: 'https://images.pexels.com/photos/1583884/pexels-photo-1583884.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -937,6 +1104,7 @@ class FoodDatabaseService {
         tasteScore: 88,
         consumerScore: 85,
         vishScore: 65,
+        imageUrl: 'https://images.pexels.com/photos/4958798/pexels-photo-4958798.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -969,6 +1137,7 @@ class FoodDatabaseService {
         tasteScore: 85,
         consumerScore: 90,
         vishScore: 80,
+        imageUrl: 'https://images.pexels.com/photos/5946071/pexels-photo-5946071.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -999,6 +1168,7 @@ class FoodDatabaseService {
         tasteScore: 88,
         consumerScore: 85,
         vishScore: 69,
+        imageUrl: 'https://images.pexels.com/photos/5946072/pexels-photo-5946072.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -1031,6 +1201,7 @@ class FoodDatabaseService {
         tasteScore: 92,
         consumerScore: 88,
         vishScore: 72,
+        imageUrl: 'https://images.pexels.com/photos/1362534/pexels-photo-1362534.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -1061,6 +1232,7 @@ class FoodDatabaseService {
         tasteScore: 95,
         consumerScore: 95,
         vishScore: 72,
+        imageUrl: 'https://images.pexels.com/photos/230325/pexels-photo-230325.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -1093,6 +1265,7 @@ class FoodDatabaseService {
         tasteScore: 85,
         consumerScore: 82,
         vishScore: 74,
+        imageUrl: 'https://images.pexels.com/photos/1633525/pexels-photo-1633525.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -1125,6 +1298,7 @@ class FoodDatabaseService {
         tasteScore: 80,
         consumerScore: 85,
         vishScore: 72,
+        imageUrl: 'https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -1157,6 +1331,7 @@ class FoodDatabaseService {
         tasteScore: 70,
         consumerScore: 85,
         vishScore: 83,
+        imageUrl: 'https://images.pexels.com/photos/1435735/pexels-photo-1435735.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -1187,6 +1362,7 @@ class FoodDatabaseService {
         tasteScore: 80,
         consumerScore: 85,
         vishScore: 80,
+        imageUrl: 'https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -1219,6 +1395,7 @@ class FoodDatabaseService {
         tasteScore: 90,
         consumerScore: 85,
         vishScore: 78,
+        imageUrl: 'https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       },
@@ -1249,6 +1426,7 @@ class FoodDatabaseService {
         tasteScore: 85,
         consumerScore: 80,
         vishScore: 80,
+        imageUrl: 'https://images.pexels.com/photos/723198/pexels-photo-723198.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database'
       }
@@ -1274,23 +1452,21 @@ class FoodDatabaseService {
     // Save to storage
     this.saveCacheToStorage();
     
-    // Verify American foods are properly added
-    const americanFoods = localFoods.filter(food => 
-      food.category.toLowerCase().includes('american') ||
-      food.name.toLowerCase().includes('burger') ||
-      food.name.toLowerCase().includes('pizza') ||
-      food.name.toLowerCase().includes('coca')
+    // Verify Doritos are properly added
+    const doritosFoods = localFoods.filter(food => 
+      food.name.toLowerCase().includes('doritos') ||
+      food.brand?.toLowerCase().includes('frito-lay')
     );
     
-    console.log(`🇺🇸 AMERICAN FOODS VERIFICATION:`);
-    console.log(`   Total American foods: ${americanFoods.length}`);
-    americanFoods.forEach((food, index) => {
-      console.log(`   ${index + 1}. ${food.name} (${food.brand}) - ID: ${food.id}`);
+    console.log(`🌶️ DORITOS VERIFICATION:`);
+    console.log(`   Total Doritos varieties: ${doritosFoods.length}`);
+    doritosFoods.forEach((food, index) => {
+      console.log(`   ${index + 1}. ${food.name} (${food.brand}) - ID: ${food.id} - Vish Score: ${food.vishScore}`);
     });
     
     console.log(`🎉 DATABASE INITIALIZATION COMPLETE!`);
     console.log(`   Total foods in cache: ${this.cache.size}`);
-    console.log(`   American foods: ${americanFoods.length}`);
+    console.log(`   Doritos varieties: ${doritosFoods.length}`);
     console.log(`   Cache saved to localStorage: ✅`);
   }
 
@@ -1359,6 +1535,18 @@ class FoodDatabaseService {
       .slice(0, limit);
   }
 
+  // Get Doritos specifically
+  getDoritosFoods(limit: number = 10): FoodItem[] {
+    const foods = Array.from(this.cache.values());
+    return foods
+      .filter(food => 
+        food.name.toLowerCase().includes('doritos') ||
+        (food.brand?.toLowerCase().includes('frito-lay') && food.name.toLowerCase().includes('doritos'))
+      )
+      .sort((a, b) => b.vishScore - a.vishScore)
+      .slice(0, limit);
+  }
+
   // Clear cache
   clearCache(): void {
     this.cache.clear();
@@ -1375,6 +1563,7 @@ class FoodDatabaseService {
     databaseSources: number;
     americanFoods: number;
     indianFoods: number;
+    doritosFoods: number;
     cacheSize: string;
   } {
     const foods = Array.from(this.cache.values());
@@ -1393,6 +1582,9 @@ class FoodDatabaseService {
         f.brand?.toLowerCase().includes(brand) || f.name.toLowerCase().includes(brand)
       )
     ).length;
+    const doritosFoods = foods.filter(f => 
+      f.name.toLowerCase().includes('doritos')
+    ).length;
     
     const cacheData = localStorage.getItem('foodcheck_food_cache');
     const cacheSize = cacheData ? `${(cacheData.length / 1024).toFixed(2)} KB` : '0 KB';
@@ -1404,6 +1596,7 @@ class FoodDatabaseService {
       databaseSources,
       americanFoods,
       indianFoods,
+      doritosFoods,
       cacheSize
     };
   }
