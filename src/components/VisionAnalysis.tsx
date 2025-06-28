@@ -3,6 +3,10 @@ import { Camera, Upload, X, Loader2, CheckCircle, AlertTriangle, Star, BarChart3
 import { analyzeNutritionLabel, NutritionAnalysis } from '../services/visionService';
 import { CameraCapture } from './CameraCapture';
 import { QRCodeModal } from './QRCodeModal';
+import { VishScoreDisplay } from './VishScoreDisplay';
+import { NutritionAnalysisPanel } from './NutritionAnalysisPanel';
+import { TasteAnalysisPanel } from './TasteAnalysisPanel';
+import { ConsumerRatingsPanel } from './ConsumerRatingsPanel';
 
 interface VisionAnalysisProps {
   onClose: () => void;
@@ -19,6 +23,7 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
   const [showCamera, setShowCamera] = useState(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [isMobileMode, setIsMobileMode] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'nutrition' | 'taste' | 'consumer'>('overview');
 
   // Check if opened via QR code for mobile camera mode
   useEffect(() => {
@@ -91,23 +96,6 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
     }
   };
 
-  const getGradeColor = (grade: string) => {
-    switch (grade) {
-      case 'A': return 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-900/20';
-      case 'B': return 'text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/20';
-      case 'C': return 'text-yellow-600 dark:text-yellow-400 bg-yellow-100 dark:bg-yellow-900/20';
-      case 'D': return 'text-orange-600 dark:text-orange-400 bg-orange-100 dark:bg-orange-900/20';
-      case 'F': return 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-900/20';
-      default: return 'text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-900/20';
-    }
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-600 dark:text-green-400';
-    if (score >= 60) return 'text-yellow-600 dark:text-yellow-400';
-    return 'text-red-600 dark:text-red-400';
-  };
-
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   // Show camera directly on mobile mode
@@ -152,7 +140,7 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto transition-colors duration-300">
+      <div className="bg-white dark:bg-gray-800 rounded-2xl max-w-7xl w-full max-h-[95vh] overflow-hidden transition-colors duration-300">
         {/* Header */}
         <div className="bg-gradient-to-r from-green-500 to-blue-500 p-6 rounded-t-2xl">
           <div className="flex justify-between items-center">
@@ -174,9 +162,9 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
           </div>
         </div>
 
-        <div className="p-6">
+        <div className="flex-1 overflow-y-auto">
           {!analysis ? (
-            <>
+            <div className="p-6">
               {/* Health Info Input */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -287,186 +275,131 @@ export const VisionAnalysis: React.FC<VisionAnalysisProps> = ({ onClose, onCamer
                   </div>
                 </div>
               )}
-            </>
+            </div>
           ) : (
             /* Analysis Results */
-            <div className="space-y-6">
-              {/* Overall Grade and Vish Score */}
-              <div className="text-center">
-                <div className={`inline-flex items-center px-6 py-3 rounded-full text-2xl font-bold ${getGradeColor(analysis.overall.grade)} mb-4`}>
-                  Overall Grade: {analysis.overall.grade}
-                </div>
-                <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-6 py-3 rounded-full text-xl font-bold inline-block mb-4">
-                  ⭐ Vish Score: {analysis.overall.vishScore}/100
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 mt-2">{analysis.overall.summary}</p>
+            <div className="h-full flex flex-col">
+              {/* Tab Navigation */}
+              <div className="border-b border-gray-200 dark:border-gray-700 px-6">
+                <nav className="flex space-x-8">
+                  <button
+                    onClick={() => setActiveTab('overview')}
+                    className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                      activeTab === 'overview'
+                        ? 'border-green-500 text-green-600 dark:text-green-400'
+                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Award className="h-4 w-4" />
+                      <span>Vish Score Overview</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('nutrition')}
+                    className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                      activeTab === 'nutrition'
+                        ? 'border-green-500 text-green-600 dark:text-green-400'
+                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <BarChart3 className="h-4 w-4" />
+                      <span>Nutrition Analysis</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('taste')}
+                    className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                      activeTab === 'taste'
+                        ? 'border-green-500 text-green-600 dark:text-green-400'
+                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Star className="h-4 w-4" />
+                      <span>Taste Analysis</span>
+                    </div>
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('consumer')}
+                    className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                      activeTab === 'consumer'
+                        ? 'border-green-500 text-green-600 dark:text-green-400'
+                        : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Users className="h-4 w-4" />
+                      <span>Consumer Ratings</span>
+                    </div>
+                  </button>
+                </nav>
               </div>
 
-              {/* Four Pillar Scores */}
-              <div className="grid md:grid-cols-4 gap-4">
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
-                  <BarChart3 className="h-8 w-8 text-green-600 dark:text-green-400 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Nutrition</h4>
-                  <p className={`text-2xl font-bold ${getScoreColor(analysis.overall.nutritionScore)}`}>
-                    {analysis.overall.nutritionScore}/100
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Health Impact</p>
-                </div>
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
-                  <Star className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Taste</h4>
-                  <p className={`text-2xl font-bold ${getScoreColor(analysis.overall.tasteScore)}`}>
-                    {analysis.overall.tasteScore}/100
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Flavor Quality</p>
-                </div>
-                <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg text-center">
-                  <Users className="h-8 w-8 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Consumer</h4>
-                  <p className={`text-2xl font-bold ${getScoreColor(analysis.overall.consumerScore)}`}>
-                    {analysis.overall.consumerScore}/100
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">User Satisfaction</p>
-                </div>
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg text-center">
-                  <Award className="h-8 w-8 text-yellow-600 dark:text-yellow-400 mx-auto mb-2" />
-                  <h4 className="font-semibold text-gray-900 dark:text-white">Vish Score</h4>
-                  <p className={`text-2xl font-bold ${getScoreColor(analysis.overall.vishScore)}`}>
-                    {analysis.overall.vishScore}/100
-                  </p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">Overall Rating</p>
-                </div>
-              </div>
-
-              {/* Detailed Analysis */}
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Nutrition Facts */}
-                <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                    <BarChart3 className="h-5 w-5 mr-2 text-green-600 dark:text-green-400" />
-                    Nutrition Facts
-                  </h4>
-                  <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">Calories:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.calories}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">Total Fat:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.totalFat}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">Sodium:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.sodium}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">Total Carbs:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.totalCarbohydrates}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-300">Protein:</span>
-                      <span className="font-medium text-gray-900 dark:text-white">{analysis.nutrition.protein}</span>
+              {/* Tab Content */}
+              <div className="flex-1 overflow-y-auto p-6">
+                {activeTab === 'overview' && (
+                  <div className="space-y-6">
+                    <VishScoreDisplay
+                      nutritionScore={analysis.overall.nutritionScore}
+                      tasteScore={analysis.overall.tasteScore}
+                      consumerScore={analysis.overall.consumerScore}
+                      vishScore={analysis.overall.vishScore}
+                      grade={analysis.overall.grade}
+                    />
+                    
+                    <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+                      <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Overall Summary</h4>
+                      <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
+                        {analysis.overall.summary}
+                      </p>
                     </div>
                   </div>
-                </div>
+                )}
 
-                {/* Consumer Insights */}
-                <div className="bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                    <Users className="h-5 w-5 mr-2 text-purple-600 dark:text-purple-400" />
-                    Consumer Insights
-                  </h4>
-                  <div className="space-y-3 text-sm">
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-300">Satisfaction:</span>
-                      <span className="font-medium text-gray-900 dark:text-white ml-2">{analysis.consumer.satisfaction}</span>
-                    </div>
-                    <div>
-                      <span className="text-gray-600 dark:text-gray-300">Feedback:</span>
-                      <p className="text-gray-900 dark:text-white mt-1">{analysis.consumer.feedback}</p>
-                    </div>
-                    {analysis.consumer.positiveAspects.length > 0 && (
-                      <div>
-                        <span className="text-green-600 dark:text-green-400 font-medium">👍 Liked:</span>
-                        <ul className="mt-1 space-y-1">
-                          {analysis.consumer.positiveAspects.slice(0, 2).map((aspect, index) => (
-                            <li key={index} className="text-xs text-gray-700 dark:text-gray-300">• {aspect}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+                {activeTab === 'nutrition' && (
+                  <NutritionAnalysisPanel
+                    nutrition={analysis.nutrition}
+                    health={analysis.health}
+                  />
+                )}
 
-              {/* Health Warnings */}
-              {analysis.health.warnings.length > 0 && (
-                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                    <AlertTriangle className="h-5 w-5 mr-2 text-red-600 dark:text-red-400" />
-                    Health Warnings
-                  </h4>
-                  <ul className="space-y-2">
-                    {analysis.health.warnings.map((warning, index) => (
-                      <li key={index} className="text-sm text-red-700 dark:text-red-300 flex items-start">
-                        <span className="w-2 h-2 bg-red-500 dark:bg-red-400 rounded-full mt-2 mr-2 flex-shrink-0"></span>
-                        {warning}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+                {activeTab === 'taste' && (
+                  <TasteAnalysisPanel
+                    taste={analysis.taste}
+                  />
+                )}
 
-              {/* Recommendations */}
-              {analysis.health.recommendations.length > 0 && (
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-                  <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Recommendations</h4>
-                  <ul className="space-y-2">
-                    {analysis.health.recommendations.map((rec, index) => (
-                      <li key={index} className="text-sm text-blue-700 dark:text-blue-300 flex items-start">
-                        <CheckCircle className="h-4 w-4 text-blue-500 dark:text-blue-400 mt-0.5 mr-2 flex-shrink-0" />
-                        {rec}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {/* Taste Profile */}
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-4">
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 flex items-center">
-                  <Star className="h-5 w-5 mr-2 text-yellow-600 dark:text-yellow-400" />
-                  Taste Profile
-                </h4>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mb-2">{analysis.taste.description}</p>
-                <div className="flex flex-wrap gap-2">
-                  {analysis.taste.profile.map((trait, index) => (
-                    <span key={index} className="bg-yellow-200 dark:bg-yellow-900/40 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded-full text-xs">
-                      {trait}
-                    </span>
-                  ))}
-                </div>
+                {activeTab === 'consumer' && (
+                  <ConsumerRatingsPanel
+                    rating={analysis.consumer}
+                  />
+                )}
               </div>
 
               {/* Action Buttons */}
-              <div className="flex justify-center space-x-4 pt-4">
-                <button
-                  onClick={() => {
-                    setAnalysis(null);
-                    setSelectedFile(null);
-                    setPreviewUrl(null);
-                    setError(null);
-                  }}
-                  className="bg-gray-500 text-white px-6 py-2 rounded-full hover:bg-gray-600 transition-colors"
-                >
-                  Analyze Another
-                </button>
-                <button
-                  onClick={onClose}
-                  className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105"
-                >
-                  Done
-                </button>
+              <div className="border-t border-gray-200 dark:border-gray-700 p-6">
+                <div className="flex justify-center space-x-4">
+                  <button
+                    onClick={() => {
+                      setAnalysis(null);
+                      setSelectedFile(null);
+                      setPreviewUrl(null);
+                      setError(null);
+                      setActiveTab('overview');
+                    }}
+                    className="bg-gray-500 text-white px-6 py-2 rounded-full hover:bg-gray-600 transition-colors"
+                  >
+                    Analyze Another
+                  </button>
+                  <button
+                    onClick={onClose}
+                    className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-6 py-2 rounded-full hover:shadow-lg transition-all duration-200 transform hover:scale-105"
+                  >
+                    Done
+                  </button>
+                </div>
               </div>
             </div>
           )}
