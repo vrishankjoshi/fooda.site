@@ -17,7 +17,6 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onClose, i
   const [voiceEnabled, setVoiceEnabled] = useState(true);
   const [speechSupported, setSpeechSupported] = useState(false);
   const [synthSupported, setSynthSupported] = useState(false);
-  const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [showVoiceSettings, setShowVoiceSettings] = useState(false);
   const [voiceSettings, setVoiceSettings] = useState({
     rate: 0.9,
@@ -32,23 +31,11 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onClose, i
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const currentUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
-  // Debug function
-  const addDebugInfo = (info: string) => {
-    setDebugInfo(prev => [...prev, `${new Date().toLocaleTimeString()}: ${info}`]);
-    console.log('🔍 DEBUG:', info);
-  };
-
   // Initialize speech recognition and synthesis
   useEffect(() => {
-    addDebugInfo('🚀 Starting voice initialization...');
-    
-    // Check user agent
-    addDebugInfo(`🌐 Browser: ${navigator.userAgent}`);
-    
     // Check for speech recognition support
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRecognition) {
-      addDebugInfo('✅ Speech Recognition API found!');
       setSpeechSupported(true);
       
       try {
@@ -56,46 +43,38 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onClose, i
         recognitionRef.current.continuous = false;
         recognitionRef.current.interimResults = false;
         recognitionRef.current.lang = 'en-US';
-        addDebugInfo('✅ Speech Recognition initialized successfully');
 
         recognitionRef.current.onresult = (event) => {
           const transcript = event.results[0][0].transcript;
-          addDebugInfo(`🎤 Voice input received: "${transcript}"`);
           setInputMessage(prev => prev + transcript);
           setIsListening(false);
         };
 
         recognitionRef.current.onerror = (event) => {
-          addDebugInfo(`❌ Speech recognition error: ${event.error}`);
+          console.error('Speech recognition error:', event.error);
           setIsListening(false);
         };
 
         recognitionRef.current.onend = () => {
-          addDebugInfo('🎤 Speech recognition ended');
           setIsListening(false);
         };
 
         recognitionRef.current.onstart = () => {
-          addDebugInfo('🎤 Speech recognition started');
+          // Speech recognition started
         };
       } catch (error) {
-        addDebugInfo(`❌ Error creating Speech Recognition: ${error}`);
+        console.error('Error creating Speech Recognition:', error);
       }
-    } else {
-      addDebugInfo('❌ Speech Recognition API not found');
     }
 
     // Check for speech synthesis support
     if ('speechSynthesis' in window) {
-      addDebugInfo('✅ Speech Synthesis API found!');
       setSynthSupported(true);
       synthRef.current = window.speechSynthesis;
       
       const loadVoices = () => {
         const voices = synthRef.current?.getVoices() || [];
-        addDebugInfo(`🔊 Found ${voices.length} voices`);
         const englishVoices = voices.filter(voice => voice.lang.startsWith('en'));
-        addDebugInfo(`🔊 Found ${englishVoices.length} English voices`);
         setAvailableVoices(englishVoices);
         
         if (englishVoices.length > 0 && !voiceSettings.voice) {
@@ -108,7 +87,6 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onClose, i
           ) || englishVoices[0];
           
           if (preferredVoice) {
-            addDebugInfo(`🔊 Selected voice: ${preferredVoice.name}`);
             setVoiceSettings(prev => ({ ...prev, voice: preferredVoice.name }));
           }
         }
@@ -118,17 +96,6 @@ export const ChatAssistant: React.FC<ChatAssistantProps> = ({ isOpen, onClose, i
       if (synthRef.current.onvoiceschanged !== undefined) {
         synthRef.current.onvoiceschanged = loadVoices;
       }
-    } else {
-      addDebugInfo('❌ Speech Synthesis API not found');
-    }
-
-    // Check permissions
-    if (navigator.permissions) {
-      navigator.permissions.query({ name: 'microphone' as PermissionName }).then(result => {
-        addDebugInfo(`🎤 Microphone permission: ${result.state}`);
-      }).catch(error => {
-        addDebugInfo(`🎤 Could not check microphone permission: ${error}`);
-      });
     }
 
     return () => {
@@ -177,36 +144,20 @@ What would you like to know?`;
 
   // Speech-to-text functions
   const startListening = () => {
-    addDebugInfo('🎤 Attempting to start listening...');
-    
-    if (!recognitionRef.current) {
-      addDebugInfo('❌ No recognition object available');
+    if (!recognitionRef.current || !speechSupported || !voiceEnabled) {
       return;
     }
     
-    if (!speechSupported) {
-      addDebugInfo('❌ Speech not supported');
-      return;
-    }
-    
-    if (!voiceEnabled) {
-      addDebugInfo('❌ Voice not enabled');
-      return;
-    }
-
     setIsListening(true);
     try {
-      addDebugInfo('🎤 Calling recognition.start()...');
       recognitionRef.current.start();
-      addDebugInfo('✅ Recognition.start() called successfully');
     } catch (error) {
-      addDebugInfo(`❌ Error starting speech recognition: ${error}`);
+      console.error('Error starting speech recognition:', error);
       setIsListening(false);
     }
   };
 
   const stopListening = () => {
-    addDebugInfo('🎤 Stopping listening...');
     if (recognitionRef.current) {
       recognitionRef.current.stop();
       setIsListening(false);
@@ -215,10 +166,7 @@ What would you like to know?`;
 
   // Text-to-speech functions
   const speakMessage = (text: string) => {
-    addDebugInfo(`🔊 Attempting to speak: "${text.substring(0, 50)}..."`);
-    
     if (!synthRef.current || !voiceEnabled || !synthSupported) {
-      addDebugInfo('❌ Speech synthesis not available');
       return;
     }
 
@@ -238,7 +186,6 @@ What would you like to know?`;
       .trim();
 
     if (!cleanText) {
-      addDebugInfo('❌ No clean text to speak');
       return;
     }
 
@@ -251,39 +198,33 @@ What would you like to know?`;
     const selectedVoice = availableVoices.find(voice => voice.name === voiceSettings.voice);
     if (selectedVoice) {
       utterance.voice = selectedVoice;
-      addDebugInfo(`🔊 Using voice: ${selectedVoice.name}`);
     }
 
     utterance.onstart = () => {
-      addDebugInfo('🔊 Speech started');
       setIsSpeaking(true);
     };
     utterance.onend = () => {
-      addDebugInfo('🔊 Speech ended');
       setIsSpeaking(false);
     };
     utterance.onerror = (event) => {
-      addDebugInfo(`❌ Speech error: ${event.error}`);
+      console.error('Speech error:', event.error);
       setIsSpeaking(false);
     };
 
     currentUtteranceRef.current = utterance;
     synthRef.current.speak(utterance);
-    addDebugInfo('✅ Speech synthesis started');
   };
 
   const stopSpeaking = () => {
     if (synthRef.current) {
       synthRef.current.cancel();
       setIsSpeaking(false);
-      addDebugInfo('🔊 Speech stopped');
     }
   };
 
   const toggleVoice = () => {
     const newState = !voiceEnabled;
     setVoiceEnabled(newState);
-    addDebugInfo(`🔄 Voice toggled: ${newState ? 'enabled' : 'disabled'}`);
     if (isSpeaking) {
       stopSpeaking();
     }
@@ -508,208 +449,110 @@ What would you like to know?`;
           </div>
         </div>
 
-        <div className="flex flex-1 overflow-hidden">
-          {/* Debug Panel */}
-          <div className="w-80 bg-gray-50 dark:bg-gray-900 p-4 overflow-y-auto border-r border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">🔍 Voice Debug Info</h3>
-            
-            {/* Status Summary */}
-            <div className="mb-4 p-3 bg-white dark:bg-gray-800 rounded-lg">
-              <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Status</h4>
-              <div className="space-y-1 text-sm">
-                <div className={`flex items-center space-x-2 ${speechSupported ? 'text-green-600' : 'text-red-600'}`}>
-                  <span>{speechSupported ? '✅' : '❌'}</span>
-                  <span>Speech Recognition</span>
-                </div>
-                <div className={`flex items-center space-x-2 ${synthSupported ? 'text-green-600' : 'text-red-600'}`}>
-                  <span>{synthSupported ? '✅' : '❌'}</span>
-                  <span>Speech Synthesis</span>
-                </div>
-                <div className={`flex items-center space-x-2 ${voiceEnabled ? 'text-green-600' : 'text-orange-600'}`}>
-                  <span>{voiceEnabled ? '✅' : '⚠️'}</span>
-                  <span>Voice Enabled</span>
-                </div>
-                <div className={`flex items-center space-x-2 ${isListening ? 'text-blue-600' : 'text-gray-600'}`}>
-                  <span>{isListening ? '🎤' : '⏸️'}</span>
-                  <span>Listening</span>
-                </div>
-                <div className={`flex items-center space-x-2 ${isSpeaking ? 'text-purple-600' : 'text-gray-600'}`}>
-                  <span>{isSpeaking ? '🔊' : '🔇'}</span>
-                  <span>Speaking</span>
-                </div>
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
+            >
+              <div
+                className={`max-w-[80%] p-4 rounded-lg ${
+                  message.type === 'user'
+                    ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white'
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
+                }`}
+              >
+                <div className="whitespace-pre-wrap">{message.message}</div>
+                
+                {/* Speak button for bot messages */}
+                {message.type === 'bot' && synthSupported && voiceEnabled && (
+                  <button
+                    onClick={() => speakMessage(message.message)}
+                    className="mt-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 flex items-center space-x-1 transition-colors"
+                    disabled={isSpeaking}
+                  >
+                    <Play className="h-3 w-3" />
+                    <span>Speak this message</span>
+                  </button>
+                )}
               </div>
             </div>
-
-            {/* Debug Log */}
-            <div className="bg-black text-green-400 p-3 rounded-lg text-xs font-mono max-h-96 overflow-y-auto">
-              <h4 className="text-white font-bold mb-2">Debug Log:</h4>
-              {debugInfo.map((info, index) => (
-                <div key={index} className="mb-1">{info}</div>
-              ))}
-              {debugInfo.length === 0 && (
-                <div className="text-gray-500">No debug info yet...</div>
-              )}
+          ))}
+          
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-center space-x-2">
+                <Loader2 className="h-4 w-4 animate-spin text-green-600" />
+                <span className="text-gray-600 dark:text-gray-300">Thinking...</span>
+              </div>
             </div>
+          )}
+          
+          <div ref={messagesEndRef} />
+        </div>
 
-            {/* Clear Debug */}
+        {/* Input Section */}
+        <div className="p-6 border-t border-gray-200 dark:border-gray-600">
+          {/* Voice Input Button */}
+          {speechSupported && voiceEnabled && (
+            <div className="mb-4 text-center">
+              <button
+                onClick={isListening ? stopListening : startListening}
+                disabled={isLoading}
+                className={`p-4 rounded-full shadow-lg border-2 transition-all duration-300 ${
+                  isListening 
+                    ? 'bg-red-500 border-red-600 text-white animate-pulse' 
+                    : 'bg-green-500 border-green-600 text-white hover:bg-green-600'
+                } disabled:opacity-50 disabled:cursor-not-allowed`}
+              >
+                {isListening ? (
+                  <MicOff className="h-6 w-6" />
+                ) : (
+                  <Mic className="h-6 w-6" />
+                )}
+              </button>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                {isListening ? 'Listening... Speak now' : 'Click to speak'}
+              </p>
+            </div>
+          )}
+
+          {/* Text Input */}
+          <div className="flex space-x-3">
+            <div className="flex-1">
+              <textarea
+                value={inputMessage}
+                onChange={(e) => setInputMessage(e.target.value)}
+                onKeyPress={handleKeyPress}
+                placeholder={isListening ? "🎤 Listening... Speak now" : "Ask about nutrition, health, or food analysis..."}
+                className={`w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300 resize-none ${
+                  isListening ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-600' : ''
+                }`}
+                rows={2}
+                disabled={isLoading}
+              />
+            </div>
+            
             <button
-              onClick={() => setDebugInfo([])}
-              className="mt-2 w-full bg-red-500 text-white py-1 px-2 rounded text-xs hover:bg-red-600"
+              onClick={handleSendMessage}
+              disabled={!inputMessage.trim() || isLoading || isListening}
+              className="bg-gradient-to-r from-green-500 to-blue-500 text-white p-3 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center"
             >
-              Clear Debug Log
+              {isLoading ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Send className="h-5 w-5" />
+              )}
             </button>
           </div>
 
-          {/* Main Chat Area */}
-          <div className="flex-1 flex flex-col">
-            {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              {messages.map((message, index) => (
-                <div
-                  key={index}
-                  className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-[80%] p-4 rounded-lg ${
-                      message.type === 'user'
-                        ? 'bg-gradient-to-r from-green-500 to-blue-500 text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white'
-                    }`}
-                  >
-                    <div className="whitespace-pre-wrap">{message.message}</div>
-                    
-                    {/* Speak button for bot messages */}
-                    {message.type === 'bot' && synthSupported && voiceEnabled && (
-                      <button
-                        onClick={() => speakMessage(message.message)}
-                        className="mt-2 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 flex items-center space-x-1 transition-colors"
-                        disabled={isSpeaking}
-                      >
-                        <Play className="h-3 w-3" />
-                        <span>Speak this message</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              ))}
-              
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg flex items-center space-x-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-green-600" />
-                    <span className="text-gray-600 dark:text-gray-300">Thinking...</span>
-                  </div>
-                </div>
-              )}
-              
-              <div ref={messagesEndRef} />
+          {/* Browser compatibility note */}
+          {!speechSupported && (
+            <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
+              <strong>🎤 Voice Input:</strong> For the best experience with voice features, please use Chrome, Edge, or Safari browser.
             </div>
-
-            {/* Input Section */}
-            <div className="p-6 border-t border-gray-200 dark:border-gray-600">
-              {/* 🚨 MEGA ULTRA SIMPLE VOICE BUTTON 🚨 */}
-              <div className="mb-6 text-center">
-                <div 
-                  className="inline-block p-6 rounded-3xl shadow-2xl border-4 mb-4"
-                  style={{
-                    background: isListening 
-                      ? 'linear-gradient(45deg, #dc2626, #ef4444)' 
-                      : speechSupported && voiceEnabled
-                        ? 'linear-gradient(45deg, #059669, #10b981)'
-                        : 'linear-gradient(45deg, #6b7280, #9ca3af)',
-                    borderColor: isListening ? '#dc2626' : speechSupported && voiceEnabled ? '#059669' : '#6b7280'
-                  }}
-                >
-                  <button
-                    onClick={() => {
-                      addDebugInfo('🔘 MEGA BUTTON CLICKED!');
-                      if (isListening) {
-                        stopListening();
-                      } else {
-                        startListening();
-                      }
-                    }}
-                    disabled={isLoading}
-                    className="bg-white rounded-full p-6 shadow-2xl hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ width: '150px', height: '150px' }}
-                  >
-                    <div className="flex flex-col items-center justify-center h-full">
-                      {isListening ? (
-                        <>
-                          <MicOff className="w-12 h-12 text-red-600 mb-1 animate-pulse" />
-                          <span className="text-red-600 font-bold text-sm">STOP</span>
-                        </>
-                      ) : (
-                        <>
-                          <Mic className="w-12 h-12 text-green-600 mb-1" />
-                          <span className="text-green-600 font-bold text-sm">TALK</span>
-                        </>
-                      )}
-                    </div>
-                  </button>
-                </div>
-                
-                <div className="text-center">
-                  <div className="text-xl font-bold mb-2">
-                    {isListening ? (
-                      <span className="text-red-600 animate-pulse">🔴 LISTENING NOW!</span>
-                    ) : speechSupported && voiceEnabled ? (
-                      <span className="text-green-600">🎤 CLICK TO TALK</span>
-                    ) : speechSupported ? (
-                      <span className="text-orange-600">⚠️ VOICE DISABLED</span>
-                    ) : (
-                      <span className="text-red-600">❌ SPEECH NOT SUPPORTED</span>
-                    )}
-                  </div>
-                  
-                  {speechSupported && !voiceEnabled && (
-                    <button
-                      onClick={toggleVoice}
-                      className="bg-green-500 text-white px-4 py-2 rounded-full font-bold hover:bg-green-600 transition-colors"
-                    >
-                      ENABLE VOICE
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* Text Input */}
-              <div className="flex space-x-3">
-                <div className="flex-1">
-                  <textarea
-                    value={inputMessage}
-                    onChange={(e) => setInputMessage(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    placeholder={isListening ? "🎤 Listening... Speak now" : "Ask about nutrition, health, or food analysis..."}
-                    className={`w-full border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-300 resize-none ${
-                      isListening ? 'bg-red-50 dark:bg-red-900/20 border-red-300 dark:border-red-600' : ''
-                    }`}
-                    rows={2}
-                    disabled={isLoading}
-                  />
-                </div>
-                
-                <button
-                  onClick={handleSendMessage}
-                  disabled={!inputMessage.trim() || isLoading || isListening}
-                  className="bg-gradient-to-r from-green-500 to-blue-500 text-white p-3 rounded-lg hover:shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:transform-none flex items-center"
-                >
-                  {isLoading ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <Send className="h-5 w-5" />
-                  )}
-                </button>
-              </div>
-
-              {/* Browser compatibility note */}
-              {!speechSupported && (
-                <div className="mt-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg text-sm text-yellow-700 dark:text-yellow-300">
-                  <strong>🎤 Voice Input:</strong> For the best experience with voice features, please use Chrome, Edge, or Safari browser.
-                </div>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
