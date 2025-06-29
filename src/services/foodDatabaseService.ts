@@ -200,7 +200,10 @@ class FoodDatabaseService {
       'breakfast': ['pancakes', 'waffles', 'cereal', 'bagel', 'muffin'],
       'dessert': ['cake', 'pie', 'cookies', 'brownies', 'ice cream'],
       'doritos': ['nacho cheese', 'cool ranch', 'spicy nacho', 'flamin hot', 'sweet chili', 'blaze'],
-      'deritors': ['doritos', 'nacho cheese', 'cool ranch', 'spicy nacho', 'flamin hot']
+      'deritors': ['doritos', 'nacho cheese', 'cool ranch', 'spicy nacho', 'flamin hot'],
+      'candy': ['chocolate', 'gummy', 'lollipop', 'hard candy', 'caramel'],
+      'unhealthy': ['junk food', 'processed', 'high sugar', 'high sodium', 'fried'],
+      'healthy': ['organic', 'natural', 'low fat', 'high fiber', 'whole grain']
     };
     
     if (aliases[query]) {
@@ -315,7 +318,8 @@ class FoodDatabaseService {
     const popularTasteBrands = [
       'doritos', 'lay\'s', 'cheetos', 'oreo', 'coca-cola', 'pepsi',
       'mcdonald\'s', 'kfc', 'burger king', 'ben jerry', 'haagen dazs',
-      'kit kat', 'snickers', 'reese\'s', 'hershey\'s'
+      'kit kat', 'snickers', 'reese\'s', 'hershey\'s', 'twix', 'mars',
+      'skittles', 'starburst', 'haribo', 'ferrero rocher'
     ];
     
     if (brand && popularTasteBrands.some(b => brand.toLowerCase().includes(b))) {
@@ -355,7 +359,8 @@ class FoodDatabaseService {
       'nestle', 'unilever', 'kraft', 'general mills', 'kellogg', 'mars',
       'ferrero', 'mondelez', 'danone', 'campbell', 'heinz', 'frito-lay',
       'nabisco', 'ben jerry', 'haagen dazs', 'cheerios', 'frosted flakes',
-      'taco bell', 'domino\'s', 'pizza hut', 'starbucks', 'dunkin'
+      'taco bell', 'domino\'s', 'pizza hut', 'starbucks', 'dunkin',
+      'hershey\'s', 'snickers', 'reese\'s', 'twix', 'skittles', 'haribo'
     ];
 
     if (brand) {
@@ -372,7 +377,8 @@ class FoodDatabaseService {
     // PRODUCT NAME RECOGNITION
     const iconicProducts = [
       'big mac', 'whopper', 'coca-cola', 'pepsi', 'oreo', 'doritos',
-      'cheerios', 'frosted flakes', 'kit kat', 'snickers', 'reese\'s'
+      'cheerios', 'frosted flakes', 'kit kat', 'snickers', 'reese\'s',
+      'twix', 'skittles', 'starburst', 'haribo', 'ferrero rocher'
     ];
 
     if (name) {
@@ -391,7 +397,7 @@ class FoodDatabaseService {
         score += 15; // Fast food has high consumer satisfaction
       } else if (categoryLower.includes('snack') || categoryLower.includes('chip')) {
         score += 12; // Snacks are impulse purchases with high satisfaction
-      } else if (categoryLower.includes('dessert') || categoryLower.includes('ice cream')) {
+      } else if (categoryLower.includes('dessert') || categoryLower.includes('ice cream') || categoryLower.includes('candy')) {
         score += 10; // Desserts make people happy
       } else if (categoryLower.includes('beverage') || categoryLower.includes('soda')) {
         score += 8; // Beverages have loyal followings
@@ -791,7 +797,7 @@ class FoodDatabaseService {
     }
   }
 
-  // Get local foods (fallback database) - ENHANCED WITH PROPER SCORING
+  // Get local foods (fallback database) - MASSIVELY EXPANDED WITH UNHEALTHY OPTIONS
   private getLocalFoods(): FoodItem[] {
     const foods = [
       // 🇺🇸 POPULAR AMERICAN FAST FOOD & RESTAURANT CHAINS
@@ -905,143 +911,6 @@ class FoodDatabaseService {
         lastUpdated: new Date().toISOString(),
         source: 'database' as const
       },
-      {
-        id: 'american_doritos_spicy_nacho',
-        name: 'Spicy Nacho Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 150,
-          protein: 2,
-          carbohydrates: 17,
-          fat: 8,
-          fiber: 1,
-          sugar: 1,
-          sodium: 200,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Spicy cheese seasoning', 'Salt', 'Chili pepper', 'Paprika'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        imageUrl: 'https://images.pexels.com/photos/4958793/pexels-photo-4958793.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database' as const
-      },
-      {
-        id: 'american_doritos_flamin_hot',
-        name: 'Flamin\' Hot Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 150,
-          protein: 2,
-          carbohydrates: 17,
-          fat: 8,
-          fiber: 1,
-          sugar: 1,
-          sodium: 250,
-          saturatedFat: 1.5,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Flamin\' Hot seasoning', 'Salt', 'Cayenne pepper', 'Chili extract'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        imageUrl: 'https://images.pexels.com/photos/4958795/pexels-photo-4958795.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database' as const
-      },
-      {
-        id: 'american_doritos_sweet_chili',
-        name: 'Sweet Chili Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 140,
-          protein: 2,
-          carbohydrates: 18,
-          fat: 7,
-          fiber: 1,
-          sugar: 2,
-          sodium: 170,
-          saturatedFat: 1,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Sweet chili seasoning', 'Sugar', 'Chili pepper', 'Garlic'],
-        allergens: [],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        imageUrl: 'https://images.pexels.com/photos/4958796/pexels-photo-4958796.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database' as const
-      },
-      {
-        id: 'american_doritos_blaze',
-        name: 'Blaze Doritos',
-        brand: 'Frito-Lay',
-        category: 'American Snacks',
-        nutrition: {
-          calories: 150,
-          protein: 2,
-          carbohydrates: 17,
-          fat: 8,
-          fiber: 1,
-          sugar: 1,
-          sodium: 270,
-          saturatedFat: 1.5,
-          transFat: 0,
-          cholesterol: 0,
-          vitamins: {},
-          minerals: {}
-        },
-        ingredients: ['Corn', 'Vegetable oil', 'Blaze seasoning', 'Salt', 'Ghost pepper', 'Carolina reaper'],
-        allergens: ['Contains milk'],
-        servingSize: '1 oz (28g)',
-        servingsPerContainer: 9,
-        imageUrl: 'https://images.pexels.com/photos/4958797/pexels-photo-4958797.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database' as const
-      },
-
-      // 🥤 FAIRLIFE CHOCOLATE MILK
-      {
-        id: 'american_fairlife_chocolate_milk',
-        name: 'Core Power Chocolate Protein Shake',
-        brand: 'Fairlife',
-        category: 'American Beverages',
-        nutrition: {
-          calories: 170,
-          protein: 26,
-          carbohydrates: 9,
-          fat: 4.5,
-          fiber: 0,
-          sugar: 8,
-          sodium: 380,
-          saturatedFat: 3,
-          transFat: 0,
-          cholesterol: 25,
-          vitamins: { 'Vitamin A': 10, 'Vitamin D': 25, 'Vitamin B12': 25 },
-          minerals: { calcium: 350, potassium: 490 }
-        },
-        ingredients: ['Fairlife ultrafiltered milk', 'Natural flavors', 'Cocoa', 'Stevia leaf extract', 'Monk fruit extract'],
-        allergens: ['Contains milk'],
-        servingSize: '1 bottle (414ml)',
-        servingsPerContainer: 1,
-        imageUrl: 'https://images.pexels.com/photos/4958798/pexels-photo-4958798.jpeg',
-        lastUpdated: new Date().toISOString(),
-        source: 'database' as const
-      },
 
       // 🥤 AMERICAN BEVERAGES
       {
@@ -1099,6 +968,649 @@ class FoodDatabaseService {
         imageUrl: 'https://images.pexels.com/photos/4958799/pexels-photo-4958799.jpeg',
         lastUpdated: new Date().toISOString(),
         source: 'database' as const
+      },
+
+      // 🍭 UNHEALTHY CANDY & SWEETS SECTION
+      {
+        id: 'unhealthy_snickers_bar',
+        name: 'Snickers Bar',
+        brand: 'Mars',
+        category: 'Unhealthy Candy',
+        nutrition: {
+          calories: 250,
+          protein: 4,
+          carbohydrates: 33,
+          fat: 12,
+          fiber: 1,
+          sugar: 27,
+          sodium: 120,
+          saturatedFat: 4.5,
+          transFat: 0,
+          cholesterol: 5,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Milk chocolate', 'Peanuts', 'Corn syrup', 'Sugar', 'Skim milk', 'Butter', 'Lactose', 'Salt', 'Egg whites'],
+        allergens: ['Contains milk', 'Contains peanuts', 'Contains eggs', 'May contain tree nuts'],
+        servingSize: '1 bar (52.7g)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958800/pexels-photo-4958800.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_kit_kat',
+        name: 'Kit Kat Bar',
+        brand: 'Hershey\'s',
+        category: 'Unhealthy Candy',
+        nutrition: {
+          calories: 210,
+          protein: 3,
+          carbohydrates: 27,
+          fat: 11,
+          fiber: 1,
+          sugar: 22,
+          sodium: 16,
+          saturatedFat: 7,
+          transFat: 0,
+          cholesterol: 5,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Sugar', 'Wheat flour', 'Cocoa butter', 'Nonfat milk', 'Chocolate', 'Refined palm kernel oil', 'Lactose'],
+        allergens: ['Contains milk', 'Contains wheat', 'Contains soy'],
+        servingSize: '1 package (42g)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958801/pexels-photo-4958801.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_skittles',
+        name: 'Skittles Original',
+        brand: 'Mars Wrigley',
+        category: 'Unhealthy Candy',
+        nutrition: {
+          calories: 230,
+          protein: 0,
+          carbohydrates: 56,
+          fat: 2.5,
+          fiber: 0,
+          sugar: 47,
+          sodium: 15,
+          saturatedFat: 2.5,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Sugar', 'Corn syrup', 'Hydrogenated palm kernel oil', 'Citric acid', 'Tapioca dextrin', 'Modified corn starch', 'Natural and artificial flavors'],
+        allergens: [],
+        servingSize: '1 package (61.5g)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958802/pexels-photo-4958802.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_twix',
+        name: 'Twix Caramel Cookie Bars',
+        brand: 'Mars',
+        category: 'Unhealthy Candy',
+        nutrition: {
+          calories: 250,
+          protein: 2,
+          carbohydrates: 37,
+          fat: 12,
+          fiber: 1,
+          sugar: 27,
+          sodium: 115,
+          saturatedFat: 6,
+          transFat: 0,
+          cholesterol: 5,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Milk chocolate', 'Corn syrup', 'Sugar', 'Palm oil', 'Skim milk', 'Lactose', 'Salt', 'Cocoa powder'],
+        allergens: ['Contains milk', 'Contains wheat', 'Contains soy'],
+        servingSize: '1 package (50.7g)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958803/pexels-photo-4958803.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_reeses_cups',
+        name: 'Reese\'s Peanut Butter Cups',
+        brand: 'Hershey\'s',
+        category: 'Unhealthy Candy',
+        nutrition: {
+          calories: 210,
+          protein: 5,
+          carbohydrates: 24,
+          fat: 13,
+          fiber: 2,
+          sugar: 21,
+          sodium: 160,
+          saturatedFat: 5,
+          transFat: 0,
+          cholesterol: 5,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Milk chocolate', 'Peanuts', 'Sugar', 'Dextrose', 'Cocoa butter', 'Skim milk', 'Salt', 'Soy lecithin'],
+        allergens: ['Contains milk', 'Contains peanuts', 'Contains soy'],
+        servingSize: '1 package (42g)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958804/pexels-photo-4958804.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🍰 UNHEALTHY DESSERTS & BAKED GOODS
+      {
+        id: 'unhealthy_oreo_cookies',
+        name: 'Oreo Original Cookies',
+        brand: 'Nabisco',
+        category: 'Unhealthy Desserts',
+        nutrition: {
+          calories: 160,
+          protein: 2,
+          carbohydrates: 25,
+          fat: 7,
+          fiber: 1,
+          sugar: 14,
+          sodium: 135,
+          saturatedFat: 2,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Unbleached enriched flour', 'Sugar', 'Palm oil', 'Cocoa', 'High fructose corn syrup', 'Leavening', 'Salt', 'Soy lecithin'],
+        allergens: ['Contains wheat', 'Contains soy'],
+        servingSize: '3 cookies (34g)',
+        servingsPerContainer: 15,
+        imageUrl: 'https://images.pexels.com/photos/4958805/pexels-photo-4958805.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_chips_ahoy',
+        name: 'Chips Ahoy! Original Cookies',
+        brand: 'Nabisco',
+        category: 'Unhealthy Desserts',
+        nutrition: {
+          calories: 160,
+          protein: 2,
+          carbohydrates: 22,
+          fat: 8,
+          fiber: 1,
+          sugar: 11,
+          sodium: 105,
+          saturatedFat: 2.5,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Unbleached enriched flour', 'Sugar', 'Vegetable oil', 'Chocolate chips', 'High fructose corn syrup', 'Leavening', 'Salt'],
+        allergens: ['Contains wheat', 'Contains soy'],
+        servingSize: '3 cookies (32g)',
+        servingsPerContainer: 18,
+        imageUrl: 'https://images.pexels.com/photos/4958806/pexels-photo-4958806.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_pop_tarts',
+        name: 'Pop-Tarts Strawberry',
+        brand: 'Kellogg\'s',
+        category: 'Unhealthy Breakfast',
+        nutrition: {
+          calories: 400,
+          protein: 4,
+          carbohydrates: 76,
+          fat: 10,
+          fiber: 1,
+          sugar: 30,
+          sodium: 370,
+          saturatedFat: 3,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: { 'Vitamin A': 10, 'Thiamin': 10, 'Riboflavin': 10, 'Niacin': 10 },
+          minerals: { iron: 10 }
+        },
+        ingredients: ['Enriched flour', 'Corn syrup', 'High fructose corn syrup', 'Sugar', 'Soybean oil', 'Strawberry puree', 'Salt', 'Citric acid'],
+        allergens: ['Contains wheat', 'Contains soy'],
+        servingSize: '1 pastry (104g)',
+        servingsPerContainer: 8,
+        imageUrl: 'https://images.pexels.com/photos/4958807/pexels-photo-4958807.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🍕 UNHEALTHY FROZEN FOODS
+      {
+        id: 'unhealthy_hot_pockets',
+        name: 'Hot Pockets Pepperoni Pizza',
+        brand: 'Nestle',
+        category: 'Unhealthy Frozen Food',
+        nutrition: {
+          calories: 300,
+          protein: 11,
+          carbohydrates: 39,
+          fat: 11,
+          fiber: 2,
+          sugar: 5,
+          sodium: 700,
+          saturatedFat: 4.5,
+          transFat: 0,
+          cholesterol: 25,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Enriched flour', 'Water', 'Pepperoni', 'Mozzarella cheese', 'Tomato paste', 'Vegetable oil', 'Salt', 'Yeast'],
+        allergens: ['Contains wheat', 'Contains milk'],
+        servingSize: '1 piece (127g)',
+        servingsPerContainer: 2,
+        imageUrl: 'https://images.pexels.com/photos/4958808/pexels-photo-4958808.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_bagel_bites',
+        name: 'Bagel Bites Cheese & Pepperoni',
+        brand: 'Kraft Heinz',
+        category: 'Unhealthy Frozen Food',
+        nutrition: {
+          calories: 190,
+          protein: 7,
+          carbohydrates: 27,
+          fat: 6,
+          fiber: 1,
+          sugar: 2,
+          sodium: 380,
+          saturatedFat: 2.5,
+          transFat: 0,
+          cholesterol: 10,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Enriched flour', 'Water', 'Mozzarella cheese', 'Pepperoni', 'Tomato paste', 'Yeast', 'Salt', 'Sugar'],
+        allergens: ['Contains wheat', 'Contains milk'],
+        servingSize: '4 pieces (88g)',
+        servingsPerContainer: 5,
+        imageUrl: 'https://images.pexels.com/photos/4958809/pexels-photo-4958809.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🥤 UNHEALTHY BEVERAGES
+      {
+        id: 'unhealthy_mountain_dew',
+        name: 'Mountain Dew',
+        brand: 'PepsiCo',
+        category: 'Unhealthy Beverages',
+        nutrition: {
+          calories: 170,
+          protein: 0,
+          carbohydrates: 46,
+          fat: 0,
+          fiber: 0,
+          sugar: 46,
+          sodium: 60,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Carbonated water', 'High fructose corn syrup', 'Concentrated orange juice', 'Citric acid', 'Natural flavor', 'Sodium benzoate', 'Caffeine'],
+        allergens: [],
+        servingSize: '12 fl oz (355ml)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958810/pexels-photo-4958810.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_energy_drink',
+        name: 'Red Bull Energy Drink',
+        brand: 'Red Bull',
+        category: 'Unhealthy Beverages',
+        nutrition: {
+          calories: 110,
+          protein: 1,
+          carbohydrates: 28,
+          fat: 0,
+          fiber: 0,
+          sugar: 27,
+          sodium: 105,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: { 'Niacin': 100, 'Vitamin B6': 250, 'Vitamin B12': 80, 'Pantothenic acid': 50 },
+          minerals: {}
+        },
+        ingredients: ['Carbonated water', 'Sucrose', 'Glucose', 'Citric acid', 'Taurine', 'Sodium bicarbonate', 'Magnesium carbonate', 'Caffeine'],
+        allergens: [],
+        servingSize: '8.4 fl oz (248ml)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958811/pexels-photo-4958811.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🍟 MORE UNHEALTHY SNACKS
+      {
+        id: 'unhealthy_cheetos',
+        name: 'Cheetos Crunchy',
+        brand: 'Frito-Lay',
+        category: 'Unhealthy Snacks',
+        nutrition: {
+          calories: 160,
+          protein: 2,
+          carbohydrates: 13,
+          fat: 10,
+          fiber: 1,
+          sugar: 1,
+          sodium: 250,
+          saturatedFat: 1.5,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Enriched corn meal', 'Vegetable oil', 'Cheese seasoning', 'Salt', 'Monosodium glutamate', 'Artificial color'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 9,
+        imageUrl: 'https://images.pexels.com/photos/4958812/pexels-photo-4958812.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_pringles',
+        name: 'Pringles Original',
+        brand: 'Kellogg\'s',
+        category: 'Unhealthy Snacks',
+        nutrition: {
+          calories: 150,
+          protein: 1,
+          carbohydrates: 15,
+          fat: 9,
+          fiber: 1,
+          sugar: 0,
+          sodium: 135,
+          saturatedFat: 2.5,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Dehydrated potatoes', 'Vegetable oil', 'Degerminated yellow corn flour', 'Cornstarch', 'Rice flour', 'Maltodextrin', 'Salt'],
+        allergens: ['Contains wheat'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 5,
+        imageUrl: 'https://images.pexels.com/photos/4958813/pexels-photo-4958813.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🍦 UNHEALTHY ICE CREAM
+      {
+        id: 'unhealthy_ben_jerry_chunky_monkey',
+        name: 'Chunky Monkey Ice Cream',
+        brand: 'Ben & Jerry\'s',
+        category: 'Unhealthy Desserts',
+        nutrition: {
+          calories: 300,
+          protein: 5,
+          carbohydrates: 32,
+          fat: 17,
+          fiber: 2,
+          sugar: 26,
+          sodium: 65,
+          saturatedFat: 11,
+          transFat: 0,
+          cholesterol: 65,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Cream', 'Skim milk', 'Liquid sugar', 'Water', 'Banana puree', 'Walnuts', 'Fudge chunks', 'Egg yolks'],
+        allergens: ['Contains milk', 'Contains eggs', 'Contains tree nuts'],
+        servingSize: '1/2 cup (104g)',
+        servingsPerContainer: 4,
+        imageUrl: 'https://images.pexels.com/photos/4958814/pexels-photo-4958814.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🥓 UNHEALTHY PROCESSED MEATS
+      {
+        id: 'unhealthy_spam',
+        name: 'SPAM Classic',
+        brand: 'Hormel',
+        category: 'Unhealthy Processed Meat',
+        nutrition: {
+          calories: 180,
+          protein: 7,
+          carbohydrates: 2,
+          fat: 16,
+          fiber: 0,
+          sugar: 1,
+          sodium: 790,
+          saturatedFat: 6,
+          transFat: 0,
+          cholesterol: 40,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Pork with ham', 'Salt', 'Water', 'Potato starch', 'Sugar', 'Sodium nitrite'],
+        allergens: [],
+        servingSize: '2 oz (56g)',
+        servingsPerContainer: 6,
+        imageUrl: 'https://images.pexels.com/photos/4958815/pexels-photo-4958815.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🥤 FAIRLIFE CHOCOLATE MILK (HEALTHIER OPTION)
+      {
+        id: 'healthy_fairlife_chocolate_milk',
+        name: 'Core Power Chocolate Protein Shake',
+        brand: 'Fairlife',
+        category: 'Healthy Beverages',
+        nutrition: {
+          calories: 170,
+          protein: 26,
+          carbohydrates: 9,
+          fat: 4.5,
+          fiber: 0,
+          sugar: 8,
+          sodium: 380,
+          saturatedFat: 3,
+          transFat: 0,
+          cholesterol: 25,
+          vitamins: { 'Vitamin A': 10, 'Vitamin D': 25, 'Vitamin B12': 25 },
+          minerals: { calcium: 350, potassium: 490 }
+        },
+        ingredients: ['Fairlife ultrafiltered milk', 'Natural flavors', 'Cocoa', 'Stevia leaf extract', 'Monk fruit extract'],
+        allergens: ['Contains milk'],
+        servingSize: '1 bottle (414ml)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958798/pexels-photo-4958798.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🥗 HEALTHY OPTIONS FOR BALANCE
+      {
+        id: 'healthy_greek_yogurt',
+        name: 'Greek Yogurt Plain',
+        brand: 'Chobani',
+        category: 'Healthy Dairy',
+        nutrition: {
+          calories: 100,
+          protein: 18,
+          carbohydrates: 6,
+          fat: 0,
+          fiber: 0,
+          sugar: 4,
+          sodium: 65,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 10,
+          vitamins: { 'Vitamin A': 0, 'Vitamin C': 0 },
+          minerals: { calcium: 200 }
+        },
+        ingredients: ['Cultured pasteurized nonfat milk', 'Live and active cultures'],
+        allergens: ['Contains milk'],
+        servingSize: '3/4 cup (170g)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958816/pexels-photo-4958816.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'healthy_almonds',
+        name: 'Raw Almonds',
+        brand: 'Blue Diamond',
+        category: 'Healthy Nuts',
+        nutrition: {
+          calories: 170,
+          protein: 6,
+          carbohydrates: 6,
+          fat: 15,
+          fiber: 4,
+          sugar: 1,
+          sodium: 0,
+          saturatedFat: 1,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: { 'Vitamin E': 35 },
+          minerals: { magnesium: 20, calcium: 8 }
+        },
+        ingredients: ['Almonds'],
+        allergens: ['Contains tree nuts'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 16,
+        imageUrl: 'https://images.pexels.com/photos/4958817/pexels-photo-4958817.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'healthy_quinoa',
+        name: 'Organic Quinoa',
+        brand: 'Ancient Harvest',
+        category: 'Healthy Grains',
+        nutrition: {
+          calories: 170,
+          protein: 6,
+          carbohydrates: 30,
+          fat: 2.5,
+          fiber: 3,
+          sugar: 1,
+          sodium: 0,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: {},
+          minerals: { iron: 8, magnesium: 15 }
+        },
+        ingredients: ['Organic quinoa'],
+        allergens: [],
+        servingSize: '1/4 cup dry (43g)',
+        servingsPerContainer: 11,
+        imageUrl: 'https://images.pexels.com/photos/4958818/pexels-photo-4958818.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🍞 MORE UNHEALTHY PROCESSED FOODS
+      {
+        id: 'unhealthy_wonder_bread',
+        name: 'Wonder Bread Classic White',
+        brand: 'Wonder',
+        category: 'Unhealthy Bread',
+        nutrition: {
+          calories: 80,
+          protein: 2,
+          carbohydrates: 15,
+          fat: 1,
+          fiber: 1,
+          sugar: 2,
+          sodium: 135,
+          saturatedFat: 0,
+          transFat: 0,
+          cholesterol: 0,
+          vitamins: { 'Thiamin': 10, 'Riboflavin': 6, 'Niacin': 8, 'Folic acid': 10 },
+          minerals: { iron: 6 }
+        },
+        ingredients: ['Enriched wheat flour', 'Water', 'High fructose corn syrup', 'Yeast', 'Salt', 'Soybean oil'],
+        allergens: ['Contains wheat', 'Contains soy'],
+        servingSize: '1 slice (28g)',
+        servingsPerContainer: 20,
+        imageUrl: 'https://images.pexels.com/photos/4958819/pexels-photo-4958819.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+      {
+        id: 'unhealthy_velveeta_cheese',
+        name: 'Velveeta Original Cheese',
+        brand: 'Kraft',
+        category: 'Unhealthy Processed Cheese',
+        nutrition: {
+          calories: 80,
+          protein: 5,
+          carbohydrates: 3,
+          fat: 6,
+          fiber: 0,
+          sugar: 3,
+          sodium: 410,
+          saturatedFat: 4,
+          transFat: 0,
+          cholesterol: 20,
+          vitamins: { 'Vitamin A': 6 },
+          minerals: { calcium: 15 }
+        },
+        ingredients: ['Milk', 'Water', 'Milkfat', 'Milk protein concentrate', 'Salt', 'Calcium phosphate', 'Sodium phosphate'],
+        allergens: ['Contains milk'],
+        servingSize: '1 oz (28g)',
+        servingsPerContainer: 32,
+        imageUrl: 'https://images.pexels.com/photos/4958820/pexels-photo-4958820.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
+      },
+
+      // 🥫 UNHEALTHY CANNED FOODS
+      {
+        id: 'unhealthy_chef_boyardee',
+        name: 'Chef Boyardee Beefaroni',
+        brand: 'ConAgra',
+        category: 'Unhealthy Canned Food',
+        nutrition: {
+          calories: 250,
+          protein: 9,
+          carbohydrates: 33,
+          fat: 9,
+          fiber: 3,
+          sugar: 6,
+          sodium: 900,
+          saturatedFat: 4,
+          transFat: 0,
+          cholesterol: 20,
+          vitamins: {},
+          minerals: {}
+        },
+        ingredients: ['Tomatoes', 'Water', 'Enriched pasta', 'Beef', 'Crackermeal', 'High fructose corn syrup', 'Salt'],
+        allergens: ['Contains wheat'],
+        servingSize: '1 cup (252g)',
+        servingsPerContainer: 1,
+        imageUrl: 'https://images.pexels.com/photos/4958821/pexels-photo-4958821.jpeg',
+        lastUpdated: new Date().toISOString(),
+        source: 'database' as const
       }
     ];
 
@@ -1137,7 +1649,7 @@ class FoodDatabaseService {
 
   // Initialize default database - FORCE REFRESH AND DETAILED LOGGING
   private initializeDefaultDatabase(): void {
-    console.log('🚀 INITIALIZING FOOD DATABASE WITH PROPER SCORING...');
+    console.log('🚀 INITIALIZING EXPANDED FOOD DATABASE WITH UNHEALTHY OPTIONS...');
     
     // Clear existing cache to ensure fresh data
     this.cache.clear();
@@ -1155,21 +1667,25 @@ class FoodDatabaseService {
     // Save to storage
     this.saveCacheToStorage();
     
-    // Verify Doritos are properly added
-    const doritosFoods = localFoods.filter(food => 
-      food.name.toLowerCase().includes('doritos') ||
-      food.brand?.toLowerCase().includes('frito-lay')
-    );
+    // Verify categories are properly distributed
+    const healthyFoods = localFoods.filter(food => food.vishScore >= 70);
+    const moderateFoods = localFoods.filter(food => food.vishScore >= 50 && food.vishScore < 70);
+    const unhealthyFoods = localFoods.filter(food => food.vishScore < 50);
     
-    console.log(`🌶️ DORITOS VERIFICATION:`);
-    console.log(`   Total Doritos varieties: ${doritosFoods.length}`);
-    doritosFoods.forEach((food, index) => {
-      console.log(`   ${index + 1}. ${food.name} - Nutrition: ${food.healthScore}, Taste: ${food.tasteScore}, Consumer: ${food.consumerScore}, Vish: ${food.vishScore}`);
+    console.log(`🍎 FOOD DISTRIBUTION:`);
+    console.log(`   Healthy (70+): ${healthyFoods.length} foods`);
+    console.log(`   Moderate (50-69): ${moderateFoods.length} foods`);
+    console.log(`   Unhealthy (<50): ${unhealthyFoods.length} foods`);
+    
+    // Log unhealthy foods specifically
+    console.log(`🚫 UNHEALTHY FOODS ADDED:`);
+    unhealthyFoods.forEach((food, index) => {
+      console.log(`   ${index + 1}. ${food.name} (${food.brand}) - Vish: ${food.vishScore}`);
     });
     
-    console.log(`🎉 DATABASE INITIALIZATION COMPLETE!`);
+    console.log(`🎉 EXPANDED DATABASE INITIALIZATION COMPLETE!`);
     console.log(`   Total foods in cache: ${this.cache.size}`);
-    console.log(`   All foods have proper Nutrition, Taste, Consumer, and Vish scores: ✅`);
+    console.log(`   Includes healthy, moderate, and unhealthy options: ✅`);
   }
 
   // Add custom food item
@@ -1209,6 +1725,15 @@ class FoodDatabaseService {
       .slice(0, limit);
   }
 
+  // Get unhealthy foods
+  getUnhealthyFoods(limit: number = 10): FoodItem[] {
+    const foods = Array.from(this.cache.values());
+    return foods
+      .filter(food => food.vishScore < 50)
+      .sort((a, b) => a.vishScore - b.vishScore)
+      .slice(0, limit);
+  }
+
   // Get American foods specifically
   getAmericanFoods(limit: number = 20): FoodItem[] {
     const foods = Array.from(this.cache.values());
@@ -1223,17 +1748,17 @@ class FoodDatabaseService {
       .slice(0, limit);
   }
 
-  // Get Indian foods specifically
-  getIndianFoods(limit: number = 10): FoodItem[] {
+  // Get foods by category
+  getFoodsByCategory(category: 'healthy' | 'moderate' | 'unhealthy', limit: number = 20): FoodItem[] {
     const foods = Array.from(this.cache.values());
     return foods
-      .filter(food => 
-        food.category.toLowerCase().includes('indian') ||
-        ['butter chicken', 'basmati', 'curry', 'naan', 'biryani'].some(brand => 
-          food.brand?.toLowerCase().includes(brand) || food.name.toLowerCase().includes(brand)
-        )
-      )
-      .sort((a, b) => b.vishScore - a.vishScore)
+      .filter(food => {
+        if (category === 'healthy') return food.vishScore >= 70;
+        if (category === 'moderate') return food.vishScore >= 50 && food.vishScore < 70;
+        if (category === 'unhealthy') return food.vishScore < 50;
+        return false;
+      })
+      .sort((a, b) => category === 'unhealthy' ? a.vishScore - b.vishScore : b.vishScore - a.vishScore)
       .slice(0, limit);
   }
 
@@ -1252,7 +1777,8 @@ class FoodDatabaseService {
     userSources: number;
     databaseSources: number;
     americanFoods: number;
-    indianFoods: number;
+    healthyFoods: number;
+    unhealthyFoods: number;
     cacheSize: string;
   } {
     const foods = Array.from(this.cache.values());
@@ -1265,12 +1791,8 @@ class FoodDatabaseService {
         f.brand?.toLowerCase().includes(brand) || f.name.toLowerCase().includes(brand)
       )
     ).length;
-    const indianFoods = foods.filter(f => 
-      f.category.toLowerCase().includes('indian') ||
-      ['butter chicken', 'basmati', 'curry', 'naan', 'biryani'].some(brand => 
-        f.brand?.toLowerCase().includes(brand) || f.name.toLowerCase().includes(brand)
-      )
-    ).length;
+    const healthyFoods = foods.filter(f => f.vishScore >= 70).length;
+    const unhealthyFoods = foods.filter(f => f.vishScore < 50).length;
     
     const cacheData = localStorage.getItem('foodcheck_food_cache');
     const cacheSize = cacheData ? `${(cacheData.length / 1024).toFixed(2)} KB` : '0 KB';
@@ -1281,7 +1803,8 @@ class FoodDatabaseService {
       userSources,
       databaseSources,
       americanFoods,
-      indianFoods,
+      healthyFoods,
+      unhealthyFoods,
       cacheSize
     };
   }
