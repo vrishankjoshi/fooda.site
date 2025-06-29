@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Globe, MessageCircle, Camera, Mail, Star, BarChart3, Heart, Users, TrendingUp, Award, Zap, Brain, Beaker, Eye, History, UserPlus, Settings, HelpCircle, Play, Copy, Check, Search, Target, ChefHat, Gamepad2 } from 'lucide-react';
+import { Moon, Sun, Globe, MessageCircle, Camera, Mail, Star, BarChart3, Heart, Users, TrendingUp, Award, Zap, Brain, Beaker, Eye, History, UserPlus, Settings, HelpCircle, Play, Copy, Check, Search, Target, ChefHat, Gamepad2, PieChart, Utensils } from 'lucide-react';
 import { ChatAssistant } from './components/ChatAssistant';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
@@ -11,6 +11,10 @@ import { FoodDatabase } from './components/FoodDatabase';
 import { FoodComparison } from './components/FoodComparison';
 import { RecipeAnalyzer } from './components/RecipeAnalyzer';
 import { HealthGoalTracker } from './components/HealthGoalTracker';
+import { SocialFeatures } from './components/SocialFeatures';
+import { BarcodeScanner } from './components/BarcodeScanner';
+import { MealPhotoAnalyzer } from './components/MealPhotoAnalyzer';
+import { AdvancedAnalytics } from './components/AdvancedAnalytics';
 import { useAuth } from './hooks/useAuth';
 import { emailService } from './services/emailService';
 
@@ -80,6 +84,10 @@ function App() {
   const [showFoodComparison, setShowFoodComparison] = useState(false);
   const [showRecipeAnalyzer, setShowRecipeAnalyzer] = useState(false);
   const [showHealthGoalTracker, setShowHealthGoalTracker] = useState(false);
+  const [showSocialFeatures, setShowSocialFeatures] = useState(false);
+  const [showBarcodeScanner, setShowBarcodeScanner] = useState(false);
+  const [showMealPhotoAnalyzer, setShowMealPhotoAnalyzer] = useState(false);
+  const [showAdvancedAnalytics, setShowAdvancedAnalytics] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [hasSeenTour, setHasSeenTour] = useState(false);
@@ -161,6 +169,12 @@ function App() {
     } catch (error) {
       alert('Error sending Hi messages: ' + error);
     }
+  };
+
+  const handleFoodFound = (food: any) => {
+    // Handle found food from barcode scanner
+    console.log('Food found:', food);
+    alert(`Found: ${food.name} - Vish Score: ${food.vishScore}`);
   };
 
   if (isLoading) {
@@ -283,6 +297,20 @@ function App() {
                         title="Health Goals"
                       >
                         <Target className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => setShowAdvancedAnalytics(true)}
+                        className="p-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                        title="Advanced Analytics"
+                      >
+                        <PieChart className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => setShowSocialFeatures(true)}
+                        className="p-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                        title="Community"
+                      >
+                        <Users className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setShowImageGallery(true)}
@@ -422,54 +450,54 @@ function App() {
                 </button>
               </div>
 
-              {/* Food Comparison */}
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                <div className="bg-purple-500 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                  <TrendingUp className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Food Comparison</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                  Compare up to 4 foods side-by-side to find the healthiest option
-                </p>
-                <button
-                  onClick={() => setShowFoodComparison(true)}
-                  className="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium"
-                >
-                  Compare Foods
-                </button>
-              </div>
-
-              {/* Recipe Analyzer */}
-              <div className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                <div className="bg-orange-500 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                  <ChefHat className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Recipe Analyzer</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                  Analyze homemade recipes and get Vish Scores for your cooking
-                </p>
-                <button
-                  onClick={() => setShowRecipeAnalyzer(true)}
-                  className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
-                >
-                  Analyze Recipe
-                </button>
-              </div>
-
-              {/* Health Goals */}
-              <div className="bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+              {/* Barcode Scanner */}
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
                 <div className="bg-green-500 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
-                  <Target className="h-6 w-6 text-white" />
+                  <Camera className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Health Goals</h3>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Barcode Scanner</h3>
                 <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-                  Set and track nutrition goals to improve your eating habits
+                  Scan product barcodes for instant food analysis and Vish Scores
                 </p>
                 <button
-                  onClick={() => setShowHealthGoalTracker(true)}
+                  onClick={() => setShowBarcodeScanner(true)}
                   className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
                 >
-                  Track Goals
+                  Scan Barcode
+                </button>
+              </div>
+
+              {/* Meal Photo Analyzer */}
+              <div className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <div className="bg-orange-500 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <Utensils className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Meal Analyzer</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                  Analyze complete meals with AI to identify all food components
+                </p>
+                <button
+                  onClick={() => setShowMealPhotoAnalyzer(true)}
+                  className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
+                >
+                  Analyze Meal
+                </button>
+              </div>
+
+              {/* Social Features */}
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <div className="bg-purple-500 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Community</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                  Join challenges, compete with friends, and share your healthy journey
+                </p>
+                <button
+                  onClick={() => setShowSocialFeatures(true)}
+                  className="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium"
+                >
+                  Join Community
                 </button>
               </div>
             </div>
@@ -887,6 +915,35 @@ function App() {
         <HealthGoalTracker 
           isOpen={showHealthGoalTracker}
           onClose={() => setShowHealthGoalTracker(false)}
+        />
+      )}
+
+      {showSocialFeatures && (
+        <SocialFeatures 
+          isOpen={showSocialFeatures}
+          onClose={() => setShowSocialFeatures(false)}
+        />
+      )}
+
+      {showBarcodeScanner && (
+        <BarcodeScanner 
+          isOpen={showBarcodeScanner}
+          onClose={() => setShowBarcodeScanner(false)}
+          onFoodFound={handleFoodFound}
+        />
+      )}
+
+      {showMealPhotoAnalyzer && (
+        <MealPhotoAnalyzer 
+          isOpen={showMealPhotoAnalyzer}
+          onClose={() => setShowMealPhotoAnalyzer(false)}
+        />
+      )}
+
+      {showAdvancedAnalytics && (
+        <AdvancedAnalytics 
+          isOpen={showAdvancedAnalytics}
+          onClose={() => setShowAdvancedAnalytics(false)}
         />
       )}
 
