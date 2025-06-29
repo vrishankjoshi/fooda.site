@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Moon, Sun, Globe, MessageCircle, Camera, Mail, Star, BarChart3, Heart, Users, TrendingUp, Award, Zap, Brain, Beaker, Eye, History, UserPlus, Settings, HelpCircle, Play, Copy, Check } from 'lucide-react';
-import { VisionAnalysis } from './components/VisionAnalysis';
 import { ChatAssistant } from './components/ChatAssistant';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
@@ -9,7 +8,6 @@ import { ImageGallery } from './components/ImageGallery';
 import { Tour } from './components/Tour';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
 import { useAuth } from './hooks/useAuth';
-import { NutritionAnalysis } from './services/visionService';
 import { emailService } from './services/emailService';
 
 type Language = 'en' | 'es' | 'fr' | 'de' | 'it' | 'pt' | 'hi';
@@ -68,7 +66,6 @@ const EmailCopyButton: React.FC<{ email: string; className?: string }> = ({ emai
 function App() {
   const [darkMode, setDarkMode] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<Language>('en');
-  const [showVisionAnalysis, setShowVisionAnalysis] = useState(false);
   const [showChatAssistant, setShowChatAssistant] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAdminPanel, setShowAdminPanel] = useState(false);
@@ -76,7 +73,6 @@ function App() {
   const [showImageGallery, setShowImageGallery] = useState(false);
   const [showTour, setShowTour] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
-  const [analysisForChat, setAnalysisForChat] = useState<NutritionAnalysis | null>(null);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [hasSeenTour, setHasSeenTour] = useState(false);
 
@@ -116,11 +112,6 @@ function App() {
     } else {
       document.documentElement.classList.remove('dark');
     }
-  };
-
-  const handleCameraAnalysis = (analysis: NutritionAnalysis) => {
-    setAnalysisForChat(analysis);
-    setShowChatAssistant(true);
   };
 
   const handleAuthSuccess = (userData: { email: string; name: string }) => {
@@ -192,13 +183,6 @@ function App() {
 
             {/* Navigation */}
             <nav className="hidden md:flex items-center space-x-6 main-navigation">
-              <button
-                onClick={() => setShowVisionAnalysis(true)}
-                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
-              >
-                <Camera className="h-4 w-4" />
-                <span>AI Analysis</span>
-              </button>
               <button
                 onClick={() => setShowChatAssistant(true)}
                 className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
@@ -323,23 +307,23 @@ function App() {
               <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
                 Analyze Your Food with{' '}
                 <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-                  AI Intelligence
+                  Expert Analysis
                 </span>
               </h1>
               <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
                 Get comprehensive nutrition analysis, health warnings, taste evaluation, and consumer insights 
-                for any packaged food. Powered by advanced AI and our revolutionary Vish Score system.
+                for any packaged food. Powered by expert analysis and our revolutionary Vish Score system.
               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
-              <button
-                onClick={() => setShowVisionAnalysis(true)}
+              <a
+                href="mailto:Vrishankjo@gmail.com?subject=Food Analysis Request&body=Hi FoodCheck Team,%0D%0A%0D%0AI would like to request a food analysis. I have attached clear photos of the nutrition label.%0D%0A%0D%0APlease provide a comprehensive analysis including:%0D%0A- Nutrition breakdown%0D%0A- Health assessment%0D%0A- Taste evaluation%0D%0A- Consumer insights%0D%0A%0D%0AThank you!"
                 className="bg-gradient-to-r from-green-500 to-blue-500 text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 transform hover:scale-105 flex items-center space-x-3 cta-button"
               >
-                <Camera className="h-6 w-6" />
-                <span>Start AI Analysis</span>
-              </button>
+                <Mail className="h-6 w-6" />
+                <span>Send for Analysis</span>
+              </a>
               
               <button
                 onClick={() => setShowChatAssistant(true)}
@@ -361,8 +345,8 @@ function App() {
                 <div className="text-sm text-gray-600 dark:text-gray-400">Nutrition, Taste, Consumer, Vish</div>
               </div>
               <div className="text-center">
-                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">AI Powered</div>
-                <div className="text-sm text-gray-600 dark:text-gray-400">Advanced Analysis</div>
+                <div className="text-3xl font-bold text-purple-600 dark:text-purple-400">Expert</div>
+                <div className="text-sm text-gray-600 dark:text-gray-400">Professional Analysis</div>
               </div>
               <div className="text-center">
                 <div className="text-3xl font-bold text-orange-600 dark:text-orange-400">Free</div>
@@ -435,40 +419,40 @@ function App() {
                 Choose Your Analysis Method
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300">
-                Multiple ways to get comprehensive food analysis powered by AI
+                Multiple ways to get comprehensive food analysis from our experts
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 gap-8">
-              {/* AI Vision Card */}
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 ai-vision-card">
+              {/* Email Analysis Card */}
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
                 <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4 rounded-full w-16 h-16 flex items-center justify-center mb-6">
-                  <Camera className="h-8 w-8 text-white" />
+                  <Mail className="h-8 w-8 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">AI Vision Analysis</h3>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Email Analysis</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-6">
-                  Upload photos instantly and get real-time analysis powered by advanced computer vision and AI.
+                  Send photos of nutrition labels via email and get detailed expert analysis with personalized recommendations.
                 </p>
                 <ul className="space-y-3 mb-8">
                   <li className="flex items-center text-gray-700 dark:text-gray-300">
                     <Zap className="h-5 w-5 text-green-500 mr-3" />
-                    Instant analysis in seconds
+                    Analysis in 1-20 minutes
                   </li>
                   <li className="flex items-center text-gray-700 dark:text-gray-300">
                     <Brain className="h-5 w-5 text-blue-500 mr-3" />
-                    Advanced AI processing
+                    Expert human analysis
                   </li>
                   <li className="flex items-center text-gray-700 dark:text-gray-300">
                     <Eye className="h-5 w-5 text-purple-500 mr-3" />
-                    Computer vision technology
+                    Detailed written reports
                   </li>
                 </ul>
-                <button
-                  onClick={() => setShowVisionAnalysis(true)}
-                  className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200"
+                <a
+                  href="mailto:Vrishankjo@gmail.com?subject=Food Analysis Request&body=Hi FoodCheck Team,%0D%0A%0D%0AI would like to request a food analysis. I have attached clear photos of the nutrition label.%0D%0A%0D%0APlease provide a comprehensive analysis including:%0D%0A- Nutrition breakdown%0D%0A- Health assessment%0D%0A- Taste evaluation%0D%0A- Consumer insights%0D%0A%0D%0AThank you!"
+                  className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-200 text-center block"
                 >
-                  Try AI Vision
-                </button>
+                  Send for Analysis
+                </a>
               </div>
 
               {/* Chat Assistant Card */}
@@ -601,9 +585,9 @@ function App() {
                 <div className="bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                   1
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Upload or Email</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Send Email</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Take a clear photo of the nutrition label and either upload it instantly or email it to us
+                  Take a clear photo of the nutrition label and email it to us at Vrishankjo@gmail.com
                 </p>
               </div>
 
@@ -611,9 +595,9 @@ function App() {
                 <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full w-16 h-16 flex items-center justify-center text-2xl font-bold mx-auto mb-6">
                   2
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">AI Analysis</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Expert Analysis</h3>
                 <p className="text-gray-600 dark:text-gray-300">
-                  Our advanced AI analyzes nutrition, taste quality, and consumer satisfaction data
+                  Our experts analyze nutrition, taste quality, and consumer satisfaction data
                 </p>
               </div>
 
@@ -720,21 +704,10 @@ function App() {
       </main>
 
       {/* Modals */}
-      {showVisionAnalysis && (
-        <VisionAnalysis 
-          onClose={() => setShowVisionAnalysis(false)}
-          onCameraAnalysis={handleCameraAnalysis}
-        />
-      )}
-
       {showChatAssistant && (
         <ChatAssistant 
           isOpen={showChatAssistant}
-          onClose={() => {
-            setShowChatAssistant(false);
-            setAnalysisForChat(null);
-          }}
-          initialAnalysis={analysisForChat}
+          onClose={() => setShowChatAssistant(false)}
         />
       )}
 
