@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Moon, Sun, Globe, MessageCircle, Camera, Mail, Star, BarChart3, Heart, Users, TrendingUp, Award, Zap, Brain, Beaker, Eye, History, UserPlus, Settings, HelpCircle, Play, Copy, Check } from 'lucide-react';
+import { Moon, Sun, Globe, MessageCircle, Camera, Mail, Star, BarChart3, Heart, Users, TrendingUp, Award, Zap, Brain, Beaker, Eye, History, UserPlus, Settings, HelpCircle, Play, Copy, Check, Search, Target, ChefHat, Gamepad2 } from 'lucide-react';
 import { ChatAssistant } from './components/ChatAssistant';
 import { AuthModal } from './components/AuthModal';
 import { AdminPanel } from './components/AdminPanel';
@@ -7,6 +7,10 @@ import { AnalysisHistory } from './components/AnalysisHistory';
 import { ImageGallery } from './components/ImageGallery';
 import { Tour } from './components/Tour';
 import { FoodCheckLogo } from './components/FoodCheckLogo';
+import { FoodDatabase } from './components/FoodDatabase';
+import { FoodComparison } from './components/FoodComparison';
+import { RecipeAnalyzer } from './components/RecipeAnalyzer';
+import { HealthGoalTracker } from './components/HealthGoalTracker';
 import { useAuth } from './hooks/useAuth';
 import { emailService } from './services/emailService';
 
@@ -72,6 +76,10 @@ function App() {
   const [showAnalysisHistory, setShowAnalysisHistory] = useState(false);
   const [showImageGallery, setShowImageGallery] = useState(false);
   const [showTour, setShowTour] = useState(false);
+  const [showFoodDatabase, setShowFoodDatabase] = useState(false);
+  const [showFoodComparison, setShowFoodComparison] = useState(false);
+  const [showRecipeAnalyzer, setShowRecipeAnalyzer] = useState(false);
+  const [showHealthGoalTracker, setShowHealthGoalTracker] = useState(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [hasSeenTour, setHasSeenTour] = useState(false);
@@ -184,6 +192,27 @@ function App() {
             {/* Navigation */}
             <nav className="hidden md:flex items-center space-x-6 main-navigation">
               <button
+                onClick={() => setShowFoodDatabase(true)}
+                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+              >
+                <Search className="h-4 w-4" />
+                <span>Food Database</span>
+              </button>
+              <button
+                onClick={() => setShowFoodComparison(true)}
+                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+              >
+                <TrendingUp className="h-4 w-4" />
+                <span>Compare Foods</span>
+              </button>
+              <button
+                onClick={() => setShowRecipeAnalyzer(true)}
+                className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+              >
+                <ChefHat className="h-4 w-4" />
+                <span>Recipe Analyzer</span>
+              </button>
+              <button
                 onClick={() => setShowChatAssistant(true)}
                 className="flex items-center space-x-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
               >
@@ -247,6 +276,13 @@ function App() {
                         title="Analysis History"
                       >
                         <History className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => setShowHealthGoalTracker(true)}
+                        className="p-2 text-gray-700 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 transition-colors"
+                        title="Health Goals"
+                      >
+                        <Target className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => setShowImageGallery(true)}
@@ -356,8 +392,92 @@ function App() {
           </div>
         </section>
 
+        {/* New Features Section */}
+        <section className="py-20 bg-white dark:bg-gray-800 transition-colors duration-300">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
+                🚀 Comprehensive Food Analysis Platform
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300">
+                Everything you need to make better food choices
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Food Database */}
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <div className="bg-blue-500 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <Search className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Food Database</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                  Search thousands of foods with Vish Scores, nutrition facts, and detailed analysis
+                </p>
+                <button
+                  onClick={() => setShowFoodDatabase(true)}
+                  className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition-colors text-sm font-medium"
+                >
+                  Explore Foods
+                </button>
+              </div>
+
+              {/* Food Comparison */}
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <div className="bg-purple-500 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <TrendingUp className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Food Comparison</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                  Compare up to 4 foods side-by-side to find the healthiest option
+                </p>
+                <button
+                  onClick={() => setShowFoodComparison(true)}
+                  className="w-full bg-purple-500 text-white py-2 rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium"
+                >
+                  Compare Foods
+                </button>
+              </div>
+
+              {/* Recipe Analyzer */}
+              <div className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <div className="bg-orange-500 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <ChefHat className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Recipe Analyzer</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                  Analyze homemade recipes and get Vish Scores for your cooking
+                </p>
+                <button
+                  onClick={() => setShowRecipeAnalyzer(true)}
+                  className="w-full bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors text-sm font-medium"
+                >
+                  Analyze Recipe
+                </button>
+              </div>
+
+              {/* Health Goals */}
+              <div className="bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                <div className="bg-green-500 p-3 rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                  <Target className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Health Goals</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+                  Set and track nutrition goals to improve your eating habits
+                </p>
+                <button
+                  onClick={() => setShowHealthGoalTracker(true)}
+                  className="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition-colors text-sm font-medium"
+                >
+                  Track Goals
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Email Analysis Section */}
-        <section className="py-20 bg-white dark:bg-gray-800 transition-colors duration-300 email-section">
+        <section className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 email-section">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
@@ -412,13 +532,14 @@ function App() {
         </section>
 
         {/* Features Grid */}
-        <section className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+        <section className="py-20 bg-white dark:bg-gray-800 transition-colors duration-300">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
                 Choose Your Analysis Method
               </h2>
               <p className="text-xl text-gray-600 dark:text-gray-300">
+                
                 Multiple ways to get comprehensive food analysis from our experts
               </p>
             </div>
@@ -490,7 +611,7 @@ function App() {
         </section>
 
         {/* Vish Score Section */}
-        <section className="py-20 bg-white dark:bg-gray-800 transition-colors duration-300 vish-score-section">
+        <section className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 vish-score-section">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-8 py-4 rounded-full text-2xl font-bold inline-block mb-6">
@@ -571,7 +692,7 @@ function App() {
         </section>
 
         {/* How It Works */}
-        <section className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 how-it-works-section">
+        <section className="py-20 bg-white dark:bg-gray-800 transition-colors duration-300 how-it-works-section">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">How It Works</h2>
@@ -615,7 +736,7 @@ function App() {
         </section>
 
         {/* Features Section */}
-        <section className="py-20 bg-white dark:bg-gray-800 transition-colors duration-300 features-section">
+        <section className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 features-section">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
@@ -738,6 +859,34 @@ function App() {
         <ImageGallery 
           isOpen={showImageGallery}
           onClose={() => setShowImageGallery(false)}
+        />
+      )}
+
+      {showFoodDatabase && (
+        <FoodDatabase 
+          isOpen={showFoodDatabase}
+          onClose={() => setShowFoodDatabase(false)}
+        />
+      )}
+
+      {showFoodComparison && (
+        <FoodComparison 
+          isOpen={showFoodComparison}
+          onClose={() => setShowFoodComparison(false)}
+        />
+      )}
+
+      {showRecipeAnalyzer && (
+        <RecipeAnalyzer 
+          isOpen={showRecipeAnalyzer}
+          onClose={() => setShowRecipeAnalyzer(false)}
+        />
+      )}
+
+      {showHealthGoalTracker && (
+        <HealthGoalTracker 
+          isOpen={showHealthGoalTracker}
+          onClose={() => setShowHealthGoalTracker(false)}
         />
       )}
 
