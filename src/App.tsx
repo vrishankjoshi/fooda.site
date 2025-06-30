@@ -15,6 +15,7 @@ import { SocialFeatures } from './components/SocialFeatures';
 import { BarcodeScanner } from './components/BarcodeScanner';
 import { MealPhotoAnalyzer } from './components/MealPhotoAnalyzer';
 import { AdvancedAnalytics } from './components/AdvancedAnalytics';
+import BoltBadge from './components/BoltBadge';
 import { useAuth } from './hooks/useAuth';
 import { emailService } from './services/emailService';
 
@@ -962,6 +963,9 @@ function App() {
           onClick={() => setShowLanguageDropdown(false)}
         />
       )}
+
+      {/* Bolt Badge */}
+      <BoltBadge />
     </div>
   );
 }
